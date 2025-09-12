@@ -1,19 +1,26 @@
 {
-  "name": "webwim",
-  "version": "1.0.0",
-  "description": "warehouse inventory manager (web version)",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gosukel/WebWIM.git"
-  },
-  "author": "gosuKel",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/gosukel/WebWIM/issues"
-  },
-  "homepage": "https://github.com/gosukel/WebWIM#readme"
+    "name": "webwim",
+    "version": "1.0.0",
+    "description": "warehouse inventory manager (web version)",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/gosukel/WebWIM.git"
+    },
+    "author": "gosuKel",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/gosukel/WebWIM/issues"
+    },
+    "homepage": "https://github.com/gosukel/WebWIM#readme",
+    "dependencies": {
+        "dotenv": "^17.2.2",
+        "ejs": "^3.1.10",
+        "express": "^5.1.0",
+        "prettier-plugin-ejs": "^1.0.3"
+    }
 }
