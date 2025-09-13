@@ -38,19 +38,22 @@
                         <path d="M6 17h12" />
                     </svg>
                 </div>
-                <input
-                    type="text"
-                    name="username"
-                    id="username"
-                    placeholder="Username"
-                />
-                <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="Password"
-                />
-                <button class="login-btn">Login</button>
+                <form action="/" method="post">
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        placeholder="Username"
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Password"
+                    />
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+                <!-- <a href="/home" class="login-btn">Login</a> -->
                 <a class="forgot-link" href="">Forgot password?</a>
             </div>
         </main>
