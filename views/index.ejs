@@ -22,5 +22,9 @@
     <body>
         <div class="sidebar-div"><%- include('partials/sidebar') %></div>
         <div class="main-div"><%- include(`partials/${main}`) %></div>
+
+        <% if (main === "calculator") { %>
+            <script src="js/calculate.js"></script>
+        <% } %>
     </body>
 </html>

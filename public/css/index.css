@@ -17,12 +17,14 @@ a {
     padding: 20px;
     display: flex;
     flex-direction: column;
+    box-shadow: 2px 0 5px #4563e68f;
 }
 
 .sidebar-title {
     /* color: rgb(58, 67, 73); */
     font-size: 1.3rem;
     font-weight: bold;
+    color: #4563e6;
 }
 
 .user {
@@ -66,4 +68,8 @@ a {
     margin-left: auto;
     width: 100%;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: linear-gradient(to left top, #4563e693, rgb(220, 226, 230));
 }

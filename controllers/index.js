@@ -1,6 +1,7 @@
+const user = "Richard Routh";
 async function indexGet(req, res) {
     // let user = req.session.user?.fullName;
-    let user = "Richard Routh";
+    // let user = "Richard Routh";
     if (!user) {
         res.redirect("/login");
     } else {
@@ -12,8 +13,17 @@ async function indexGet(req, res) {
     }
 }
 
+async function calculateGet(req, res) {
+    res.render("index", {
+        fullName: user,
+        main: "calculator",
+        styles: ["calculator"],
+    });
+}
+
 const indexController = {
     indexGet,
+    calculateGet,
 };
 
 export default indexController;

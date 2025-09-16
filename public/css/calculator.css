@@ -1,0 +1,123 @@
+.calc-container {
+    border: 2px solid #fff;
+    height: 600px;
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-container {
+    width: 100%;
+    display: flex;
+}
+
+.btn-refresh {
+    width: 11%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    color: #4563e6;
+    transition: all 0.2 ease-out;
+}
+
+.btn-container button {
+    font-size: 1.5rem;
+    height: 50px;
+    width: 45%;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    background-color: #fff;
+    color: #4563e6;
+    transition: all 0.2 ease-out;
+}
+
+.btn-refresh,
+#btn-add-pallet {
+    border-right: 2px solid #4563e6;
+}
+
+.btn-container button:hover,
+.btn-refresh:hover {
+    background-color: #4563e6;
+    color: #fff;
+    cursor: pointer;
+}
+
+.skid-container {
+    overflow: auto;
+}
+
+.label-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    font-size: 0.8rem;
+    padding: 5px 20px 0;
+    color: #fff;
+}
+
+.skid {
+    margin-bottom: 20px;
+    display: flex;
+    padding: 10px 15px;
+}
+
+.skid .skid-details {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    transform: translateX(-20px);
+    transition: transform 0.3s ease-out;
+}
+
+.skid-details.slide {
+    transform: translateX(10px);
+}
+
+.density {
+    align-self: center;
+    opacity: 0;
+    /* height: 100%; */
+    width: 45px;
+    height: 38px;
+    font-size: 1rem;
+    border-radius: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease-out;
+}
+
+.density.active {
+    opacity: 100%;
+}
+
+.dense-max {
+    background-color: #31da3c;
+}
+
+.dense-med {
+    background-color: #d7db25;
+}
+
+.dense-min {
+    background-color: #da4531;
+}
+
+.skid input {
+    width: 75px;
+    outline: none;
+    border: none;
+    padding: 8px 0;
+    border-radius: 3px;
+    font-size: 1.2rem;
+    text-align: right;
+}
+
+.skid span {
+    align-self: flex-end;
+}
