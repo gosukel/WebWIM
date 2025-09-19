@@ -1,7 +1,16 @@
-const fakeUser = {
-    username: "routhrj",
-    password: "Tucker006!",
-    fullName: "Richard Routh",
-};
+import { PrismaClient } from "@prisma/client";
 
-export default fakeUser;
+const prisma = new PrismaClient();
+
+const results = await prisma.location.findMany({
+    include: {
+        items: {
+            select: {
+                item: true,
+            },
+        },
+    },
+    take: 3,
+});
+
+console.log(JSON.stringify(results, null, 2));

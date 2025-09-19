@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Item {
+  id          Int            @id @default(autoincrement())
+  item        String         @unique
+  number      String         @unique
+  type        String
+  brand       String
+  weight      Int
+  onHand      Int            @default(0) @map("on_hand")
+  palletQty   Int            @map("pallet_qty")
+  locations   ItemLocation[]
+  itemHistory String?        @map("item_history")
+
+  @@map("items")
+}
+
+model Location {
+  id       Int            @id @default(autoincrement())
+  location String         @unique
+  zone     String
+  utn      String?
+  items    ItemLocation[]
+
+  @@map("locations")
+}
+
+model ItemLocation {
+  id         Int @id @default(autoincrement())
+  itemId     Int @map("item_id")
+  locationId Int @map("location_id")
+  stock      Int @default(0)
+
+  // relation fields
+  item     Item     @relation(fields: [itemId], references: [id])
+  location Location @relation(fields: [locationId], references: [id])
+
+  @@unique([itemId, locationId])
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  fullName String @unique @map("full_name")
+  email    String @unique
+  username String @unique
+  password String
+  role     Role   @default(USER)
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}

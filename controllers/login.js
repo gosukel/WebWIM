@@ -1,4 +1,4 @@
-import fakeUser from "../models/fakeDB.js";
+// import fakeUser from "../models/fakeDB.js";
 
 async function loginPost(req, res) {
     const { username, password } = req.body;

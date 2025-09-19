@@ -1,0 +1,131 @@
+.process-container {
+    height: 600px;
+    width: 980px;
+    background-color: #ffffff83;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left-container,
+.right-container {
+    width: 48%;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.left-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-container {
+    position: relative;
+}
+
+.search-container input {
+    width: 100%;
+    outline: none;
+    border: 2px solid #9797977c;
+    padding: 8px;
+    border-radius: 3px;
+    font-size: 1.2rem;
+    text-align: left;
+}
+
+.search-container input:focus {
+    border-color: #4563e6;
+}
+
+.search-icon {
+    position: absolute;
+    height: 26px;
+    width: 26px;
+    color: #4563e6;
+    bottom: 5px;
+    right: 5px;
+}
+
+.search-icon:hover {
+    cursor: pointer;
+    color: #000;
+}
+
+.brand-buttons {
+    margin-top: 10px;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.brand-btn {
+    padding: 4px;
+    font-size: 1rem;
+    background-color: #ccd5ff6b;
+    border: 1px solid #9797977c;
+    text-align: center;
+    transition: all 0.1s ease-out;
+}
+
+.brand-btn:hover {
+    border-color: #4563e6;
+    background-color: #4563e6;
+    color: #fff;
+}
+
+.item-display {
+    margin-top: 10px;
+    border: 1px solid #9797977c;
+    height: 320px;
+    overflow: auto;
+    padding: 4px 0;
+}
+
+li {
+    padding: 3px;
+    cursor: default;
+}
+
+li:nth-child(even) {
+    background-color: #6782fd2c;
+}
+
+li.selected {
+    background-color: #6783fd;
+    color: #fff;
+}
+
+.add-container {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.add-btn {
+    height: 100%;
+    border: none;
+    width: calc(100% - 90px);
+    background-color: #6783fd;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.1s ease-out;
+}
+
+.add-btn:hover {
+    background-color: #4563e6;
+}
+
+input.add-qty {
+    width: 80px;
+    outline: none;
+    border: 2px solid #9797977c;
+    padding: 8px;
+    border-radius: 3px;
+    font-size: 1.2rem;
+    text-align: right;
+}

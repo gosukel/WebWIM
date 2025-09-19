@@ -141,3 +141,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+/prisma/generated/prisma
+
+trash.js
+/models/fakeDB.js
