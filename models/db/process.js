@@ -9,6 +9,7 @@ async function getItems(query = "", brand = "") {
                 item: true,
                 weight: true,
                 palletQty: true,
+                brand: true,
             },
         });
         return items;
