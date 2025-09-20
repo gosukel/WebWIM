@@ -24,7 +24,8 @@ a {
     /* color: rgb(58, 67, 73); */
     font-size: 1.3rem;
     font-weight: bold;
-    color: #4563e6;
+    /* background-color: #4563e6; */
+    color: #3d5ce6;
 }
 
 .user {

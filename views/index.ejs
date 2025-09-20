@@ -27,7 +27,10 @@
             <script src="js/calculate.js"></script>
         <% } %>
         <% if (main === "process") { %>
-            <script src="js/process.js"></script>
+            <script>
+                window.items = <%- JSON.stringify(items) %>;   
+            </script>
+            <script src="js/process.js" type="module"></script>
         <% } %>
     </body>
 </html>

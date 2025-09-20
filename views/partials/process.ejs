@@ -1,4 +1,5 @@
 <div class="process-container">
+    <div class="overlay hidden"></div>
     <div class="left-container">
         <div class="search-container">
             <input type="text" name="search" id="search" />
@@ -35,16 +36,20 @@
             <button class="add-btn">Add To Order</button>
             <input type="number" class="add-qty" value="1">
         </div>
+
         <dialog class="modal" id="modal">
             <div class="modal-content-wrapper">
-                <h2 class="modal-title">Order #: -------</h2>
+                <h2 class="modal-title"></h2>
                 <div class="modal-details-wrapper">
-                    <p>Est. Pallets: 2 &#10088;1.56&#10089;</p>
-                    <p>Pieces: 15</p>
-                    <p>Est. Weight: 955lbs</p>
+                    <p class="modal-pallet">Est. Pallets: 2 &#10088;1.56&#10089;</p>
+                    <p class="modal-piece">Pieces: 15</p>
+                    <p class="modal-weight">Est. Weight: 955lbs</p>
 
                 </div>
-                <button class="modal-save-btn">Save Order</button>
+                <div class="modal-btns">
+                    <button class="modal-close-btn">X</button>
+                    <button class="modal-save-btn">Save Order</button>
+                </div>
 
             </div>
         </dialog>
@@ -59,27 +64,13 @@
                 <thead>
                     <tr scope="col">
                         <th>Qty</th>
-                        <th>Item</th>
+                        <th class="col-item-header">Item</th>
                         <th>Weight</th>
                         <th>Pallet</th>
-                        <th></th>
+                        <th class="col-remove-header"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>MUL36HP230V1R32AO</td>
-                        <td>185</td>
-                        <td>0.25</td>
-                        <td class="remove-item">x</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>MUL42HP230V1R32AO</td>
-                        <td>290</td>
-                        <td>0.5</td>
-                        <td class="remove-item">x</td>
-                    </tr>
                 </tbody>
             </table>
         </div>

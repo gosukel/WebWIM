@@ -36,7 +36,7 @@
 .search-container input {
     width: 100%;
     outline: none;
-    border: 2px solid #9797977c;
+    border: 2px solid #666666c2;
     padding: 8px;
     border-radius: 3px;
     font-size: 1.2rem;
@@ -52,7 +52,7 @@
     height: 26px;
     width: 26px;
     color: #4563e6;
-    bottom: 5px;
+    bottom: 3px;
     right: 5px;
 }
 
@@ -75,6 +75,7 @@
     border: 1px solid #9797977c;
     text-align: center;
     transition: all 0.1s ease-out;
+    cursor: pointer;
 }
 
 .brand-btn:hover {
@@ -94,10 +95,15 @@
 li {
     padding: 3px;
     cursor: default;
+    cursor: pointer;
 }
 
 li:nth-child(even) {
     background-color: #6782fd2c;
+}
+
+li:hover {
+    background-color: #a6b6ffa8;
 }
 
 li.selected {
@@ -178,6 +184,14 @@ input.add-qty {
     font-size: 1.1rem;
 }
 
+.col-item-header {
+    min-width: 189px;
+}
+
+.col-remove-header {
+    min-width: 30px;
+}
+
 .order-details-table th,
 .order-details-table td {
     padding: 10px;
@@ -188,12 +202,20 @@ input.add-qty {
     font-size: 0.9rem;
 }
 
+td.col-name {
+    font-weight: bold;
+}
+
 .order-details-table tbody tr:nth-of-type(even) {
     background-color: #ccd5ff6b;
 }
 
-.remove-item {
-    font-size: 1;
+/* tbody tr {
+    color: green;
+} */
+
+.col-remove {
+    font-size: 1rem;
     color: rgb(228, 74, 74);
     font-weight: bold;
     align-self: center;
@@ -201,8 +223,8 @@ input.add-qty {
     cursor: pointer;
 }
 
-.remove-item:hover {
-    transform: scale(2);
+.col-remove:hover {
+    transform: scale(1.3);
 }
 
 .order-btns {
@@ -232,7 +254,7 @@ input.add-qty {
     background-color: #45bd59;
 }
 
-/*                  MODAL CONTAINER              */
+/*                  MODAL CONTAINER + OVERLAY DIV             */
 .modal {
     position: absolute;
     top: 0;
@@ -241,6 +263,7 @@ input.add-qty {
     width: 432px;
     padding: 30px;
     border: 4px solid #6783fd;
+    z-index: 20;
 }
 
 .modal-content-wrapper {
@@ -263,14 +286,44 @@ input.add-qty {
     margin-bottom: 8px;
 }
 
+.modal-btns {
+    display: flex;
+    justify-content: space-between;
+    height: 43px;
+    margin-top: 50px;
+}
+
+.modal-close-btn {
+    border: none;
+    height: 100%;
+    width: 18%;
+    color: #fff;
+    background-color: rgb(228, 74, 74);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
 .modal-save-btn {
     border: none;
-    height: 43px;
-    width: 100%;
+    height: 100%;
+    width: 80%;
     background-color: #6783fd;
     color: #fff;
     font-size: 1.2rem;
     cursor: pointer;
-    margin-top: 50px;
     transition: background-color 0.1s ease-out;
+}
+
+.hidden {
+    display: none;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 250px;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 10;
 }
