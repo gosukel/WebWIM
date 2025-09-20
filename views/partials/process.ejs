@@ -35,10 +35,57 @@
             <button class="add-btn">Add To Order</button>
             <input type="number" class="add-qty" value="1">
         </div>
+        <dialog class="modal" id="modal">
+            <div class="modal-content-wrapper">
+                <h2 class="modal-title">Order #: -------</h2>
+                <div class="modal-details-wrapper">
+                    <p>Est. Pallets: 2 &#10088;1.56&#10089;</p>
+                    <p>Pieces: 15</p>
+                    <p>Est. Weight: 955lbs</p>
+
+                </div>
+                <button class="modal-save-btn">Save Order</button>
+
+            </div>
+        </dialog>
     </div>
     <div class="right-container">
-        <div class="order-input"></div>
-        <div class="order-details"></div>
-        <div class="order-btns"></div>
+        <div class="order-input-container">
+            <p class="order-label">Order #:</p>
+            <input type="text" name="order-num" id="order-num">
+        </div>
+        <div class="order-details">
+            <table class="order-details-table">
+                <thead>
+                    <tr scope="col">
+                        <th>Qty</th>
+                        <th>Item</th>
+                        <th>Weight</th>
+                        <th>Pallet</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>MUL36HP230V1R32AO</td>
+                        <td>185</td>
+                        <td>0.25</td>
+                        <td class="remove-item">x</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>MUL42HP230V1R32AO</td>
+                        <td>290</td>
+                        <td>0.5</td>
+                        <td class="remove-item">x</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="order-btns">
+            <button class="clear-btn">Clear</button>
+            <button class="process-btn">Process</button>
+        </div>
     </div>
 </div>

@@ -47,6 +47,7 @@ function queryBrand(brand = "") {
     return;
 }
 
+// <li> event listener - makes items in list selectable
 document.querySelectorAll(".item-list-item").forEach((li) => {
     li.addEventListener("click", () => {
         // console.log("clicked");
@@ -58,6 +59,7 @@ document.querySelectorAll(".item-list-item").forEach((li) => {
     });
 });
 
+// <button class="add-btn"> event listener - adds selected item to order details
 document.querySelector(".add-btn").addEventListener("click", () => {
     let itemElement = document.querySelector(".selected");
     let qty = Number(document.querySelector(".add-qty").value);
@@ -68,7 +70,21 @@ document.querySelector(".add-btn").addEventListener("click", () => {
         palletQty: Number(itemElement.dataset.palletqty),
         qty: qty,
     };
-    // console.log(item);
+
     addToOrder(item.name, item);
-    // console.log(orderItems);
 });
+
+// <button class="process-btn"> event listener - opens modal and (WIP) calculates order
+document.querySelector(".process-btn").addEventListener("click", () => {
+    let modalDiv = document.querySelector(".modal");
+    modalDiv.show();
+});
+
+// <button class="modal-save-btn"> event listener - closes modal and (WIP) saves order details
+document.querySelector(".modal-save-btn").addEventListener("click", () => {
+    let modalDiv = document.querySelector(".modal");
+    modalDiv.close();
+});
+
+// modularize the dom manipulation
+// client side filtering on the item list (with debouncing)

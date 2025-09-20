@@ -24,11 +24,7 @@ async function getBrands() {
     });
     console.log(brands);
 }
-// GMV - LS - PART
-// HVAC - OTHER
-// CAS - CONS - DUCT - FLEXX - FLR
-// LIVV - MULTI - SAP - UMAT - VIR
-// GMV - LS - HVAC - PART - OTHER
+
 const processQueries = {
     getItems,
     getBrands,

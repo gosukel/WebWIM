@@ -22,7 +22,6 @@ async function calculateGet(req, res) {
 
 async function processGet(req, res) {
     const items = await processQueries.getItems();
-    // console.log(items);
     const brands = [
         "CAS",
         "CONS",
@@ -40,9 +39,6 @@ async function processGet(req, res) {
         "PART",
         "OTHER",
     ];
-    // CAS - CONS - DUCT - FLEXX - FLR
-    // LIVV - MULTI - SAP - UMAT - VIR
-    // GMV - LS - HVAC - PART - OTHER
     res.render("index", {
         fullName: user,
         main: "process",
