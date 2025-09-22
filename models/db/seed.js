@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "./client.js";
 import items from "../items.json" with { type: "json" };
 import locations from "../locations.json" with { type: "json" };
-
-const prisma = new PrismaClient();
 
 // let firstItem = items[0];
 // console.log(firstItem.location);

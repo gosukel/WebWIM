@@ -6,5 +6,5 @@ const indexRouter = Router();
 indexRouter.get("/", indexController.indexGet);
 indexRouter.get("/calculate", indexController.calculateGet);
 indexRouter.get("/process", indexController.processGet);
-
+indexRouter.get("/items", indexController.itemsGet);
 export default indexRouter;

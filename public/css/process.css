@@ -52,7 +52,7 @@
     height: 26px;
     width: 26px;
     color: #4563e6;
-    bottom: 3px;
+    bottom: 8px;
     right: 5px;
 }
 
@@ -166,9 +166,9 @@ input.add-qty {
 .order-details {
     margin: 10px 0;
     height: 414px;
-    border: 1px solid #9797977c;
     overflow-x: clip;
     overflow-y: auto;
+    border: 1px solid #9797977c;
 }
 
 .order-details-table {

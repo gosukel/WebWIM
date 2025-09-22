@@ -32,5 +32,11 @@
             </script>
             <script src="js/process.js" type="module"></script>
         <% } %>
+        <% if (main === "items") { %>
+            <script>
+                window.items = <%- JSON.stringify(items) %>;   
+            </script>
+            <script src="js/items.js" type="module"></script>
+        <% } %>
     </body>
 </html>

@@ -1,4 +1,5 @@
 import processQueries from "../models/db/process.js";
+import itemQueries from "../models/db/items.js";
 const user = "Richard Routh";
 async function indexGet(req, res) {
     if (!user) {
@@ -48,10 +49,22 @@ async function processGet(req, res) {
     });
 }
 
+async function itemsGet(req, res) {
+    const items = await itemQueries.getAllItems();
+    res.render("index", {
+        fullName: user,
+        main: "items",
+        styles: ["items"],
+        items: items,
+        testItem: items[0],
+    });
+}
+
 const indexController = {
     indexGet,
     calculateGet,
     processGet,
+    itemsGet,
 };
 
 export default indexController;
