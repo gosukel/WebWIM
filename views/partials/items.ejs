@@ -49,8 +49,10 @@
                             <td class="col-pallet">x<%= items[i].palletQty %></td>
                             <td class="col-onhand"><%= items[i].onHand %></td>
                         </tr>
-                        <tr class="item-child-locations hidden">
-                            <td colspan="7">locations</td>
+                        <tr class="item-child">
+                            <td colspan="7"><div class="item-child-content">Locations <% items[i].locations.forEach(loc => { %>
+                             <%= `- ${loc.location.location}` %>
+                            <% }) %></div></td>
                         </tr>
                     <% } %>
                 </tbody>

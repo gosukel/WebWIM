@@ -3,6 +3,10 @@ body {
     width: 100vw;
     background-color: rgb(220, 226, 230);
     display: flex;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 a {
