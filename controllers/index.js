@@ -60,11 +60,32 @@ async function itemsGet(req, res) {
     });
 }
 
+async function itemQuery(req, res) {
+    const search = req.query.search || "";
+    const sortParam = req.query.sortParams || "";
+    const sortDirection = req.query.sortDirection || "";
+    const filters = search.split(" ").filter(Boolean);
+    let items = await itemQueries.itemQuery(filters, sortParam, sortDirection);
+    res.json(items);
+    return;
+}
+
+async function itemSort(req, res) {
+    const sortParam = req.query.sortParams;
+    const sortDirection = req.query.sortDirection;
+    const sortQuery = req.query.sortQuery;
+    const items = await itemQueries.sortItems(sortParam, sortDirection);
+    res.json(items);
+    return;
+}
+
 const indexController = {
     indexGet,
     calculateGet,
     processGet,
     itemsGet,
+    itemQuery,
+    itemSort,
 };
 
 export default indexController;

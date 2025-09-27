@@ -67,10 +67,32 @@
     position: sticky;
     top: 0;
     z-index: 2;
+    /* display: flex;
+    align-items: center; */
 }
 
-.items-table th:hover {
+.items-table th:hover,
+.items-table th.sorted {
     background-color: #4563e6;
+}
+
+th.col-item-head {
+    width: 192px;
+}
+
+th.col-num-head,
+th.col-brand-head,
+th.col-type-head,
+th.col-weight-head,
+th.col-pallet-head {
+    width: 90px;
+}
+
+span.th-sort-direction {
+    font-size: 0.5rem;
+    margin-left: 5px;
+    /* padding-bottom: 15px; */
+    align-self: center;
 }
 
 .items-table tbody {
