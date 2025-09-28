@@ -1,4 +1,5 @@
 <div class="items-container">
+    <div class="overlay hidden"></div>
     <div class="items-left-container">
         <div class="items-search-container">
             <input
@@ -40,7 +41,7 @@
                 <tbody>
                     
                     <% for( let i = 0; i < items.length; i++ ) { %>
-                        <tr class="item-parent <%= (i + 1) % 2 === 0 ? 'even' : 'odd' %>">
+                        <tr class="item-parent <%= (i + 1) % 2 === 0 ? 'even' : 'odd' %>" data-itemid="<%= items[i].id %>">
                             <td class="col-item"><%= items[i].item %></td>
                             <td class="col-num"><%= items[i].number %></td>
                             <td class="col-brand"><%= items[i].brand %></td>
@@ -58,6 +59,47 @@
                 </tbody>
             </table>
         </div>
+        <dialog class="modal" id="modal">
+            <form action="" method="post" class="item-form">
+                <div class="form-title-container">
+                    <p class="item-form-header"></p>
+                    <input type="text" name="item-id" id="item-id" class="item-id input-hidden" readonly>
+                </div>
+                <!-- item, number, type, brand, weight, onHand, palletQty, location -->
+                 <div class="form-input-container">
+                     <label for="item-name">Item: </label>
+                     <input type="text" name="item-name" id="item-name" class="item-name">
+                 </div>
+                 <div class="form-input-container">
+                    <label for="item-number">Number: </label>
+                    <input type="text" name="item-number" id="item-number" class="item-number">
+                 </div>
+                 <div class="form-input-container">
+                    <label for="item-brand">Brand: </label>
+                    <input type="text" name="item-brand" id="item-brand" class="item-brand">
+                 </div>
+                 <div class="form-input-container">
+                    <label for="item-type">Type: </label>
+                    <input type="text" name="item-type" id="item-type" class="item-type">
+                 </div>
+                 <div class="form-input-container">
+                    <label for="item-weight">Weight: </label>
+                    <input type="number" name="item-weight" id="item-weight" class="item-weight">
+                 </div>
+                 <div class="form-input-container">
+                    <label for="item-pallet">Full Pallet: </label>
+                    <input type="number" name="item-pallet" id="item-pallet" class="item-pallet">
+                 </div>
+                 <div class="form-input-container">
+                    <label for="item-location">Location: </label>
+                    <input type="text" name="item-location" id="item-location" class="item-location">
+                 </div>
+                 <div class="form-buttons">
+                    <button type="button" class="modal-close-btn">X</button>
+                    <button type="submit" class="modal-submit-btn"></button>
+                 </div>
+            </form>
+        </dialog>
     </div>
     <div class="items-menu-container">
         <button class="btn-add-item">Add Item</button>

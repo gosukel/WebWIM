@@ -60,7 +60,7 @@ async function itemsGet(req, res) {
     });
 }
 
-async function itemQuery(req, res) {
+async function itemsQuery(req, res) {
     const search = req.query.search || "";
     const sortParam = req.query.sortParams || "";
     const sortDirection = req.query.sortDirection || "";
@@ -70,7 +70,7 @@ async function itemQuery(req, res) {
     return;
 }
 
-async function itemSort(req, res) {
+async function itemsSort(req, res) {
     const sortParam = req.query.sortParams;
     const sortDirection = req.query.sortDirection;
     const sortQuery = req.query.sortQuery;
@@ -79,13 +79,37 @@ async function itemSort(req, res) {
     return;
 }
 
+async function itemsAdd(req, res) {
+    return;
+}
+
+async function itemsEdit(req, res) {
+    // VALIDATION NEEDED
+    let item = {
+        itemId: req.body["item-id"],
+        item: req.body["item-name"],
+        number: req.body["item-number"],
+        brand: req.body["item-brand"],
+        type: req.body["item-type"],
+        weight: req.body["item-weight"],
+        pallet: req.body["item-pallet"],
+        locations: req.body["item-location"],
+    };
+    await itemQueries.editItem(item);
+    console.log(item);
+    res.redirect("/items");
+    return;
+}
+
 const indexController = {
     indexGet,
     calculateGet,
     processGet,
     itemsGet,
-    itemQuery,
-    itemSort,
+    itemsQuery,
+    itemsSort,
+    itemsAdd,
+    itemsEdit,
 };
 
 export default indexController;
