@@ -21,7 +21,12 @@
     </head>
     <body>
         <div class="sidebar-div"><%- include('partials/sidebar') %></div>
-        <div class="main-div"><%- include(`partials/${main}`) %></div>
+        <div class="main-div">
+            <% if (typeof errors !== "undefined") { %>
+             <%- include('partials/error') %>
+            <% } %>
+            <%- include(`partials/${main}`) %>
+        </div>
 
         <% if (main === "calculator") { %>
             <script src="js/calculate.js"></script>
@@ -38,5 +43,6 @@
             </script>
             <script src="js/items.js" type="module"></script>
         <% } %>
+        <script src="js/error.js" type="module"></script>
     </body>
 </html>

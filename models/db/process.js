@@ -14,19 +14,8 @@ async function getItems(query = "", brand = "") {
     }
 }
 
-async function getBrands() {
-    const brands = await prisma.item.findMany({
-        select: {
-            brand: true,
-        },
-        distinct: ["brand"],
-    });
-    console.log(brands);
-}
-
 const processQueries = {
     getItems,
-    getBrands,
 };
 
 export default processQueries;

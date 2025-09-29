@@ -1,6 +1,9 @@
+import { validationResult } from "express-validator";
 import processQueries from "../models/db/process.js";
 import itemQueries from "../models/db/items.js";
+
 const user = "Richard Routh";
+
 async function indexGet(req, res) {
     if (!user) {
         res.redirect("/login");
@@ -13,6 +16,7 @@ async function indexGet(req, res) {
     }
 }
 
+// calculate
 async function calculateGet(req, res) {
     res.render("index", {
         fullName: user,
@@ -21,8 +25,9 @@ async function calculateGet(req, res) {
     });
 }
 
+// process
 async function processGet(req, res) {
-    const items = await processQueries.getItems();
+    const items = await itemQueries.itemQuery();
     const brands = [
         "CAS",
         "CONS",
@@ -49,14 +54,18 @@ async function processGet(req, res) {
     });
 }
 
+// items
 async function itemsGet(req, res) {
-    const items = await itemQueries.getAllItems();
+    const items = await itemQueries.itemQuery();
+    const brands = await itemQueries.getAllBrands();
+    const types = await itemQueries.getAllTypes();
     res.render("index", {
         fullName: user,
         main: "items",
         styles: ["items"],
         items: items,
-        testItem: items[0],
+        brands: brands,
+        types: types,
     });
 }
 
@@ -79,12 +88,54 @@ async function itemsSort(req, res) {
     return;
 }
 
+async function itemsBrands(req, res) {
+    const brands = await itemQueries.getAllBrands();
+    res.json(items);
+    return;
+}
+
+async function itemsTypes(req, res) {
+    const types = await itemQueries.getAllTypes();
+    res.json(types);
+    return;
+}
+
 async function itemsAdd(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const items = await itemQueries.itemQuery();
+        const brands = await itemQueries.getAllBrands();
+        const types = await itemQueries.getAllTypes();
+        console.log(errors.array());
+        return res.status(400).render("index", {
+            fullName: user,
+            main: "items",
+            styles: ["items"],
+            items: items,
+            brands: brands,
+            types: types,
+            errors: errors.array().map((e) => `${e.path} - ${e.msg}, `),
+        });
+    }
+    let item = {
+        item: req.body["item-name"],
+        number: req.body["item-number"],
+        brand: req.body["item-brand"],
+        type: req.body["item-type"],
+        weight: req.body["item-weight"],
+        pallet: req.body["item-pallet"],
+        locations: req.body["item-location"],
+    };
+    console.log(item);
+    // let itemCheck = await itemQueries.itemQueryExact(item);
+    // if (itemCheck) console.log("item exists");
+    // console.log(itemCheck);
+    res.redirect("/items");
     return;
 }
 
 async function itemsEdit(req, res) {
-    // VALIDATION NEEDED
+    // validation code here?
     let item = {
         itemId: req.body["item-id"],
         item: req.body["item-name"],
@@ -95,8 +146,8 @@ async function itemsEdit(req, res) {
         pallet: req.body["item-pallet"],
         locations: req.body["item-location"],
     };
+
     await itemQueries.editItem(item);
-    console.log(item);
     res.redirect("/items");
     return;
 }
@@ -110,6 +161,8 @@ const indexController = {
     itemsSort,
     itemsAdd,
     itemsEdit,
+    itemsBrands,
+    itemsTypes,
 };
 
 export default indexController;

@@ -259,10 +259,19 @@ td.col-num {
     text-align: left;
 }
 
+.form-input-container select {
+    width: 70%;
+    outline: none;
+    border: 2px solid #666666c2;
+    font-size: 1.1rem;
+    padding: 6px;
+}
+
 .form-input-container:focus-within label {
     color: #4563e6;
 }
-.form-input-container:focus-within input {
+.form-input-container:focus-within input,
+.form-input-container:focus-within select {
     border-color: #4563e6;
 }
 

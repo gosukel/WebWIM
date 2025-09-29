@@ -76,14 +76,26 @@
                  </div>
                  <div class="form-input-container">
                     <label for="item-brand">Brand: </label>
-                    <input type="text" name="item-brand" id="item-brand" class="item-brand">
+                    <select name="item-brand" id="item-brand">
+                        <option value="">-Select a Brand-</option>
+                        <% brands.forEach(brand => { %>
+                         <option value="<%= brand %>"><%= brand %></option>
+                        <% }) %>
+                    </select>
+                    <!-- <input type="text" name="item-brand" id="item-brand" class="item-brand"> -->
                  </div>
                  <div class="form-input-container">
                     <label for="item-type">Type: </label>
-                    <input type="text" name="item-type" id="item-type" class="item-type">
+                    <!-- <input type="text" name="item-type" id="item-type" class="item-type"> -->
+                     <select name="item-type" id="item-type">
+                        <option value="">-Select a Type-</option>
+                        <% types.forEach(type => { %>
+                         <option value="<%= type %>"><%= type %></option>
+                        <% }) %>
+                     </select>
                  </div>
                  <div class="form-input-container">
-                    <label for="item-weight">Weight: </label>
+                    <label for="item-weight">Weight(lbs): </label>
                     <input type="number" name="item-weight" id="item-weight" class="item-weight">
                  </div>
                  <div class="form-input-container">

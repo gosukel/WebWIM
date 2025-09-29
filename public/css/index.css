@@ -78,3 +78,48 @@ a {
     height: 100%;
     background: linear-gradient(to left top, #4563e693, rgb(220, 226, 230));
 }
+
+.error-container {
+    border: 2px solid rgb(243, 103, 87);
+    color: rgb(243, 103, 87);
+    border-radius: 15px;
+    position: absolute;
+    text-align: center;
+    width: 60%;
+    padding: 5px 0;
+    font-size: 1.1rem;
+    background-color: #fff;
+    top: 20px;
+    left: 20%;
+    display: flex;
+    justify-content: center;
+    opacity: 100%;
+    /* transition: opacity 0.3s ease-out; */
+}
+
+.error-close {
+    position: absolute;
+    top: 4px;
+    right: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.error-container.error-hidden {
+    animation: errorFade 0.3s ease-out;
+    opacity: 0;
+    display: none;
+}
+
+@keyframes errorFade {
+    0% {
+        opacity: 100%;
+        display: flex;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        dipslay: none;
+    }
+}

@@ -3,18 +3,11 @@ const allItems = window.items;
 const orderItems = {};
 
 // SEARCH/FILTER FUNCTIONS
-function filterSearch(q) {
-    const filteredItems = allItems.filter((item) =>
-        item.item.includes(q.toUpperCase())
-    );
-    filteredItems.sort((a, b) => {
-        if (a.item < b.item) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
-    updateItemList(filteredItems);
+async function fetchItems(q) {
+    console.log(q);
+    const rest = await fetch(`/items/query?search=${encodeURIComponent(q)}`);
+    const items = await rest.json();
+    updateItemList(items);
 }
 
 function debounce(func, delay) {
@@ -27,7 +20,7 @@ function debounce(func, delay) {
     };
 }
 
-const debouncedSearch = debounce(filterSearch, 300);
+const debouncedSearch = debounce(fetchItems, 300);
 
 function filterBrand(brand) {
     const filteredItems = allItems.filter((item) => item.brand === brand);
@@ -184,15 +177,31 @@ function getOrderTotal() {
 // <input id="search"> event listener - debounce search query
 const q = document.querySelector("input#search");
 q.addEventListener("input", () => {
-    debouncedSearch(q.value);
+    let query = q.value;
+    let selectedBrand = document.querySelector(".brand-btn.selected");
+
+    if (selectedBrand) {
+        query = `${query} ${selectedBrand.dataset.brand}`;
+    }
+    debouncedSearch(query);
 });
 
 // <button class="brand-btn"> event listener - filter items by brand
 document.querySelectorAll(".brand-btn").forEach((btn) => {
     let brand = btn.dataset.brand;
     btn.addEventListener("click", () => {
-        let newItems = filterBrand(brand);
-        updateItemList(newItems);
+        if (btn.classList.contains("selected")) {
+            document.querySelectorAll(".brand-btn.selected").forEach((b) => {
+                b.classList.remove("selected");
+            });
+            fetchItems("");
+            return;
+        }
+        document.querySelectorAll(".brand-btn.selected").forEach((b) => {
+            b.classList.remove("selected");
+        });
+        btn.classList.add("selected");
+        fetchItems(brand);
     });
 });
 
@@ -203,7 +212,7 @@ document.querySelectorAll(".item-list-item").forEach((li) => {
 
 // <button class="add-btn"> event listener - adds selected item to order details
 document.querySelector(".add-btn").addEventListener("click", () => {
-    let itemElement = document.querySelector(".selected");
+    let itemElement = document.querySelector("li.selected");
     let qty = Number(document.querySelector(".add-qty").value);
     if (!itemElement || qty < 1) return;
     let item = {

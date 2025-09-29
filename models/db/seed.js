@@ -81,4 +81,18 @@ async function main() {
     console.log("database successfully seeded!");
 }
 
-main();
+// main();
+
+async function convertBrands() {
+    // convert 3VIR to VIR
+    const updateItems = await prisma.item.updateManyAndReturn({
+        where: {
+            brand: "VIRU",
+        },
+        data: {
+            brand: "VIR",
+        },
+    });
+    console.log(updateItems);
+}
+// convertBrands();

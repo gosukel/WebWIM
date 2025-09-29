@@ -1,17 +1,33 @@
 import prisma from "./client.js";
 
-async function getAllItems() {
-    const items = await prisma.item.findMany({
-        include: {
-            locations: {
-                select: {
-                    location: true,
-                    stock: true,
-                },
-            },
+async function getAllBrands() {
+    const brands = await prisma.item.findMany({
+        select: {
+            brand: true,
+        },
+        distinct: ["brand"],
+    });
+    let brandList = brands.map((item) => item.brand);
+    return brandList;
+}
+
+async function getAllTypes() {
+    const types = await prisma.item.findMany({
+        select: {
+            type: true,
+        },
+        distinct: ["type"],
+    });
+    let typesList = types.map((item) => item.type);
+    return typesList;
+}
+
+async function itemQueryExactBrand(brand) {
+    const result = await prisma.item.findFirst({
+        where: {
+            brand: brand,
         },
     });
-    return items;
 }
 
 async function itemQuery(filters = [], sort = "", direction = "") {
@@ -67,7 +83,9 @@ async function itemQuery(filters = [], sort = "", direction = "") {
             ? {
                   [sort]: direction,
               }
-            : {};
+            : {
+                  item: "asc",
+              };
 
     const items = await prisma.item.findMany({
         where,
@@ -84,6 +102,32 @@ async function itemQuery(filters = [], sort = "", direction = "") {
     return items;
 }
 
+async function itemQueryExactName(item) {
+    const existingItem = await prisma.item.findFirst({
+        where: {
+            item: item,
+        },
+    });
+    return existingItem;
+}
+
+async function itemQueryExactNumber(num) {
+    const existingItem = await prisma.item.findFirst({
+        where: {
+            number: num,
+        },
+    });
+    return existingItem;
+}
+// item = {
+//     item: req.body["item-name"],
+//     number: req.body["item-number"],
+//     brand: req.body["item-brand"],
+//     type: req.body["item-type"],
+//     weight: req.body["item-weight"],
+//     pallet: req.body["item-pallet"],
+//     locations: req.body["item-location"],
+// };
 async function addItem(item) {
     return;
 }
@@ -93,8 +137,12 @@ async function editItem(item) {
 }
 
 const itemQueries = {
-    getAllItems,
+    getAllBrands,
+    getAllTypes,
     itemQuery,
+    itemQueryExactName,
+    itemQueryExactNumber,
+    itemQueryExactBrand,
     addItem,
     editItem,
 };
