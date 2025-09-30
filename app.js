@@ -4,6 +4,9 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import indexRouter from "./routes/indexRouter.js";
 import loginRouter from "./routes/loginRouter.js";
+import calculateRouter from "./routes/calculateRouter.js";
+import processRouter from "./routes/processRouter.js";
+import itemsRouter from "./routes/itemsRouter.js";
 
 if (process.env.NODE_ENV !== "production") {
     await import("dotenv/config");
@@ -32,6 +35,9 @@ app.use(
 // paths
 app.use("/", indexRouter);
 app.use("/login", loginRouter);
+app.use("/calculate", calculateRouter);
+app.use("/process", processRouter);
+app.use("/items", itemsRouter);
 
 // app listen
 app.listen(process.env.PORT, () => {

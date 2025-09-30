@@ -5,7 +5,7 @@ const orderItems = {};
 // SEARCH/FILTER FUNCTIONS
 async function fetchItems(q) {
     console.log(q);
-    const rest = await fetch(`/items/query?search=${encodeURIComponent(q)}`);
+    const rest = await fetch(`/process/query?search=${encodeURIComponent(q)}`);
     const items = await rest.json();
     updateItemList(items);
 }

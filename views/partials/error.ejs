@@ -1,4 +1,8 @@
-<div class="error-container">
-    <p class="error-text"><%= errors %></p>
+<div class="error-container <%= (typeof errors === "undefined") ? 'error-hidden' : '' %>">
+    <p class="error-text">
+        <% if (typeof errors !== "undefined") { %>
+         <%= errors %>
+         <% } %>
+    </p>
     <p class="error-close">x</p>
 </div>

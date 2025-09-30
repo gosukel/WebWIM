@@ -1,65 +1,13 @@
 import { validationResult } from "express-validator";
-import processQueries from "../models/db/process.js";
 import itemQueries from "../models/db/items.js";
 
 const user = "Richard Routh";
 
-async function indexGet(req, res) {
-    if (!user) {
-        res.redirect("/login");
-    } else {
-        res.render("index", {
-            fullName: user,
-            main: "home",
-            styles: ["home"],
-        });
-    }
-}
-
-// calculate
-async function calculateGet(req, res) {
-    res.render("index", {
-        fullName: user,
-        main: "calculator",
-        styles: ["calculator"],
-    });
-}
-
-// process
-async function processGet(req, res) {
-    const items = await itemQueries.itemQuery();
-    const brands = [
-        "CAS",
-        "CONS",
-        "DUCT",
-        "FLEXX",
-        "FLR",
-        "LIVV",
-        "MULTI",
-        "SAP",
-        "UMAT",
-        "VIR",
-        "GMV",
-        "LS",
-        "HVAC",
-        "PART",
-        "OTHER",
-    ];
-    res.render("index", {
-        fullName: user,
-        main: "process",
-        styles: ["process"],
-        items: items,
-        brands,
-    });
-}
-
-// items
 async function itemsGet(req, res) {
     const items = await itemQueries.itemQuery();
     const brands = await itemQueries.getAllBrands();
     const types = await itemQueries.getAllTypes();
-    res.render("index", {
+    return res.render("index", {
         fullName: user,
         main: "items",
         styles: ["items"],
@@ -75,34 +23,34 @@ async function itemsQuery(req, res) {
     const sortDirection = req.query.sortDirection || "";
     const filters = search.split(" ").filter(Boolean);
     let items = await itemQueries.itemQuery(filters, sortParam, sortDirection);
-    res.json(items);
-    return;
+    return res.json(items);
+    // return;
 }
 
-async function itemsSort(req, res) {
-    const sortParam = req.query.sortParams;
-    const sortDirection = req.query.sortDirection;
-    const sortQuery = req.query.sortQuery;
-    const items = await itemQueries.sortItems(sortParam, sortDirection);
-    res.json(items);
-    return;
-}
+// async function itemsSort(req, res) {
+//     const sortParam = req.query.sortParams;
+//     const sortDirection = req.query.sortDirection;
+//     const items = await itemQueries.sortItems(sortParam, sortDirection);
+//     return res.json(items);
+//     // return;
+// }
 
-async function itemsBrands(req, res) {
-    const brands = await itemQueries.getAllBrands();
-    res.json(items);
-    return;
-}
+// async function itemsBrands(req, res) {
+//     const brands = await itemQueries.getAllBrands();
+//     return res.json(items);
+//     // return;
+// }
 
-async function itemsTypes(req, res) {
-    const types = await itemQueries.getAllTypes();
-    res.json(types);
-    return;
-}
+// async function itemsTypes(req, res) {
+//     const types = await itemQueries.getAllTypes();
+//     return res.json(types);
+//     // return;
+// }
 
 async function itemsAdd(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        return res.redirect("/items");
         const items = await itemQueries.itemQuery();
         const brands = await itemQueries.getAllBrands();
         const types = await itemQueries.getAllTypes();
@@ -130,8 +78,8 @@ async function itemsAdd(req, res) {
     // let itemCheck = await itemQueries.itemQueryExact(item);
     // if (itemCheck) console.log("item exists");
     // console.log(itemCheck);
-    res.redirect("/items");
-    return;
+    return res.redirect("/items");
+    // return;
 }
 
 async function itemsEdit(req, res) {
@@ -148,21 +96,18 @@ async function itemsEdit(req, res) {
     };
 
     await itemQueries.editItem(item);
-    res.redirect("/items");
-    return;
+    return res.redirect("/items");
+    // return;
 }
 
-const indexController = {
-    indexGet,
-    calculateGet,
-    processGet,
+const itemsController = {
     itemsGet,
     itemsQuery,
-    itemsSort,
+    // itemsSort,
     itemsAdd,
     itemsEdit,
-    itemsBrands,
-    itemsTypes,
+    // itemsBrands,
+    // itemsTypes,
 };
 
-export default indexController;
+export default itemsController;

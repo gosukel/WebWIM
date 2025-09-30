@@ -22,9 +22,9 @@
     <body>
         <div class="sidebar-div"><%- include('partials/sidebar') %></div>
         <div class="main-div">
-            <% if (typeof errors !== "undefined") { %>
-             <%- include('partials/error') %>
-            <% } %>
+            
+            <%- include('partials/error') %>
+            
             <%- include(`partials/${main}`) %>
         </div>
 

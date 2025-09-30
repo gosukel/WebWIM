@@ -40,10 +40,12 @@ const debouncedFetch = debounce(fetchItems, 300);
 
 function createTableRowSet(item, idx) {
     // tr item-parent odd/even
+    // data-itemid="<%= items[i].id %>
     let parentRow = document.createElement("tr");
     let oddEven = (idx + 1) % 2 === 0 ? "even" : "odd";
     parentRow.classList.add("item-parent");
     parentRow.classList.add(oddEven);
+    parentRow.dataset.itemid = item.id;
     parentRow.addEventListener("click", () => {
         itemParentListener(parentRow);
     });
@@ -159,7 +161,7 @@ function getItemDetails(parent, child) {
         ),
         locations: locationString,
     };
-    console.log(curItem);
+    // console.log(curItem);
     return curItem;
 }
 
@@ -185,6 +187,7 @@ document.querySelectorAll(".item-parent").forEach((parent) => {
 document.querySelectorAll("th").forEach((el) => {
     el.addEventListener("click", () => {
         resetHeaders(el);
+        el.classList.add("sorted");
         let curSearch = document.querySelector("input#items-search").value;
         let sortParams = el.dataset.sort;
         let sortDirection = el.dataset.direction;
