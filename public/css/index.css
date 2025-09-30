@@ -44,14 +44,18 @@ a {
 }
 
 .sidebar-item {
-    margin-top: 40px;
+    margin-top: 25px;
+    height: 35px;
     display: flex;
     align-items: center;
+    /* justify-content: center; */
+    transition: transform 0.3s ease-in-out;
 }
 
 .sidebar-item:hover {
     color: #4563e6;
     cursor: pointer;
+    transform: translateX(20px);
 }
 
 .icon {
