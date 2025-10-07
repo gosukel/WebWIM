@@ -161,7 +161,7 @@ function getItemDetails(parent, child) {
         ),
         locations: locationString,
     };
-    // console.log(curItem);
+
     return curItem;
 }
 
@@ -199,15 +199,62 @@ document.querySelectorAll("th").forEach((el) => {
     });
 });
 
+// ADD ITEM FUNCTION
+async function addItem(e) {
+    // e.preventDefault();
+    // get data from form
+    let form = modal.querySelector(".item-form");
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    let errorContainer = document.querySelector(".error-container");
+    let errorText = errorContainer.querySelector(".error-text");
+
+    // try to submit form data
+    try {
+        const res = await fetch("/items/new", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        const result = await res.json();
+
+        // check for error
+        if (!res.ok) {
+            // error has occurred
+
+            errorContainer.classList.remove("error-hidden");
+            errorText.textContent = result.error || "something went wrong";
+            return;
+        }
+
+        closeModal();
+    } catch (err) {
+        console.err();
+        errorContainer.classList.remove("error-hidden");
+        errorText.textContent = "Network error, please try again.";
+    }
+    return;
+}
+
 // OPEN MODAL TO ADD ITEM
 document.querySelector(".btn-add-item").addEventListener("click", () => {
     // activate overlay
     document.querySelector(".overlay").classList.remove("hidden");
+
     // open modal
     let modal = document.querySelector("dialog");
-    modal.querySelector("form").setAttribute("action", "items/new");
+
+    // prep modal text
     modal.querySelector("p").textContent = "ADD ITEM TO WAREHOUSE";
-    modal.querySelector(".modal-submit-btn").textContent = "Add Item";
+    let submitBtn = modal.querySelector(".modal-submit-btn");
+    submitBtn.textContent = "Add Item";
+
+    // add listener to submit button
+    submitBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        await addItem(e);
+    });
     modal.show();
 });
 
@@ -233,17 +280,23 @@ document.querySelector(".btn-edit-item").addEventListener("click", () => {
 });
 
 // CLOSE MODAL BUTTON
-document.querySelector(".modal-close-btn").addEventListener("click", () => {
+document
+    .querySelector(".modal-close-btn")
+    .addEventListener("click", closeModal);
+
+// CLOSE MODAL BUTTON FUNCTION
+function closeModal() {
     // remove overlay
     document.querySelector(".overlay").classList.add("hidden");
     // close modal
     let modal = document.querySelector("dialog");
     modal.querySelector("form").setAttribute("action", "");
     modal.querySelector("p").textContent = "";
-    modal.querySelectorAll("input").forEach((i) => {
+    modal.querySelectorAll("input, select").forEach((i) => {
         i.value = "";
     });
+
     modal.querySelector(".modal-submit-btn").textContent = "";
     modal.querySelector("#item-id").classList.remove("input-show");
     modal.close();
-});
+}

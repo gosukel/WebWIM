@@ -28,6 +28,16 @@ async function itemQueryExactBrand(brand) {
             brand: brand,
         },
     });
+    return result;
+}
+
+async function itemQueryExactType(type) {
+    const result = await prisma.item.findFirst({
+        where: {
+            type: type,
+        },
+    });
+    return result;
 }
 
 async function itemQuery(filters = [], sort = "", direction = "") {
@@ -143,6 +153,7 @@ const itemQueries = {
     itemQueryExactName,
     itemQueryExactNumber,
     itemQueryExactBrand,
+    itemQueryExactType,
     addItem,
     editItem,
 };

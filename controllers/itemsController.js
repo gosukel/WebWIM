@@ -27,58 +27,20 @@ async function itemsQuery(req, res) {
     // return;
 }
 
-// async function itemsSort(req, res) {
-//     const sortParam = req.query.sortParams;
-//     const sortDirection = req.query.sortDirection;
-//     const items = await itemQueries.sortItems(sortParam, sortDirection);
-//     return res.json(items);
-//     // return;
-// }
-
-// async function itemsBrands(req, res) {
-//     const brands = await itemQueries.getAllBrands();
-//     return res.json(items);
-//     // return;
-// }
-
-// async function itemsTypes(req, res) {
-//     const types = await itemQueries.getAllTypes();
-//     return res.json(types);
-//     // return;
-// }
-
 async function itemsAdd(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.redirect("/items");
-        const items = await itemQueries.itemQuery();
-        const brands = await itemQueries.getAllBrands();
-        const types = await itemQueries.getAllTypes();
-        console.log(errors.array());
-        return res.status(400).render("index", {
-            fullName: user,
-            main: "items",
-            styles: ["items"],
-            items: items,
-            brands: brands,
-            types: types,
-            errors: errors.array().map((e) => `${e.path} - ${e.msg}, `),
-        });
-    }
-    let item = {
-        item: req.body["item-name"],
-        number: req.body["item-number"],
-        brand: req.body["item-brand"],
-        type: req.body["item-type"],
-        weight: req.body["item-weight"],
-        pallet: req.body["item-pallet"],
-        locations: req.body["item-location"],
-    };
-    console.log(item);
-    // let itemCheck = await itemQueries.itemQueryExact(item);
-    // if (itemCheck) console.log("item exists");
-    // console.log(itemCheck);
-    return res.redirect("/items");
+    const newItem = req.body.newItem;
+    // let item = {
+    //     item: req.body["item-name"],
+    //     number: req.body["item-number"],
+    //     brand: req.body["item-brand"],
+    //     type: req.body["item-type"],
+    //     weight: req.body["item-weight"],
+    //     pallet: req.body["item-pallet"],
+    //     locations: req.body["item-location"],
+    // };
+    console.log(newItem);
+
+    return res.status(201).json({ item: newItem });
     // return;
 }
 

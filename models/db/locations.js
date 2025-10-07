@@ -11,9 +11,7 @@ async function locationQueryExact(q) {
                 {
                     location: q,
                 },
-                {
-                    id: q,
-                },
+
                 {
                     utn: q,
                 },
