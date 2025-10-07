@@ -77,24 +77,27 @@ a {
     /* margin-left: auto; */
     width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100%;
     background: linear-gradient(to left top, #4563e693, rgb(220, 226, 230));
+    position: relative;
 }
 
 .error-container {
     border: 2px solid rgb(243, 103, 87);
     color: rgb(243, 103, 87);
     border-radius: 15px;
-    position: absolute;
+    position: relative;
     text-align: center;
-    width: 60%;
+    width: 910px;
+    height: 35px;
     padding: 5px 0;
     font-size: 1.1rem;
     background-color: #fff;
-    top: 20px;
-    left: 20%;
+    margin-top: -20px;
+    margin-bottom: 10px;
     display: flex;
     justify-content: center;
     opacity: 100%;
@@ -113,7 +116,7 @@ a {
 .error-container.error-hidden {
     animation: errorFade 0.3s ease-out;
     opacity: 0;
-    display: none;
+    /* display: none; */
 }
 
 @keyframes errorFade {
