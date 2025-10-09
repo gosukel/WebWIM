@@ -22,24 +22,6 @@ async function getAllTypes() {
     return typesList;
 }
 
-async function itemQueryExactBrand(brand) {
-    const result = await prisma.item.findFirst({
-        where: {
-            brand: brand,
-        },
-    });
-    return result;
-}
-
-async function itemQueryExactType(type) {
-    const result = await prisma.item.findFirst({
-        where: {
-            type: type,
-        },
-    });
-    return result;
-}
-
 async function itemQuery(filters = [], sort = "", direction = "") {
     // build filter obj
     const where =
@@ -112,22 +94,48 @@ async function itemQuery(filters = [], sort = "", direction = "") {
     return items;
 }
 
-async function itemQueryExactName(item) {
-    const existingItem = await prisma.item.findFirst({
-        where: {
+async function itemQueryExactName(item, id = null) {
+    let where;
+    if (id) {
+        where = {
+            AND: [{ item: item }, { id: { not: id } }],
+        };
+    } else {
+        where = {
             item: item,
-        },
+        };
+    }
+    const existingItem = await prisma.item.findFirst({
+        where,
     });
     return existingItem;
 }
 
-async function itemQueryExactNumber(num) {
+async function itemQueryExactNumber(num, id = null) {
     const existingItem = await prisma.item.findFirst({
         where: {
             number: num,
         },
     });
     return existingItem;
+}
+
+async function itemQueryExactBrand(brand, id = null) {
+    const result = await prisma.item.findFirst({
+        where: {
+            brand: brand,
+        },
+    });
+    return result;
+}
+
+async function itemQueryExactType(type, id = null) {
+    const result = await prisma.item.findFirst({
+        where: {
+            type: type,
+        },
+    });
+    return result;
 }
 // item = {
 //     item: req.body["item-name"],
@@ -139,7 +147,22 @@ async function itemQueryExactNumber(num) {
 //     locations: req.body["item-location"],
 // };
 async function addItem(item) {
-    return;
+    const newItem = await prisma.item.create({
+        data: {
+            item: item.name,
+            number: item.number,
+            type: item.type,
+            brand: item.brand,
+            weight: item.weight,
+            palletQty: item.pallet,
+            locations: {
+                create: item.locations.map((loc) => ({
+                    location: { connect: { id: loc.id } },
+                })),
+            },
+        },
+    });
+    return newItem;
 }
 
 async function editItem(item) {

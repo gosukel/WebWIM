@@ -201,7 +201,6 @@ document.querySelectorAll("th").forEach((el) => {
 
 // ADD ITEM FUNCTION
 async function addItem(e) {
-    // e.preventDefault();
     // get data from form
     let form = modal.querySelector(".item-form");
     const formData = new FormData(form);
@@ -213,6 +212,44 @@ async function addItem(e) {
     // try to submit form data
     try {
         const res = await fetch("/items/new", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        const result = await res.json();
+
+        // check for error
+        if (!res.ok) {
+            // error has occurred
+
+            errorContainer.classList.remove("error-hidden");
+            errorText.textContent = result.error || "something went wrong";
+            return;
+        }
+
+        closeModal();
+    } catch (err) {
+        console.err();
+        errorContainer.classList.remove("error-hidden");
+        errorText.textContent = "Network error, please try again.";
+    }
+    return;
+}
+
+// EDIT ITEM FUNCTION
+async function editItem(e) {
+    // e.preventDefault();
+    // get data from form
+    let form = modal.querySelector(".item-form");
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    let errorContainer = document.querySelector(".error-container");
+    let errorText = errorContainer.querySelector(".error-text");
+
+    // try to submit form data
+    try {
+        const res = await fetch("/items/edit", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -266,16 +303,28 @@ document.querySelector(".btn-edit-item").addEventListener("click", () => {
     let childElement = selectedItem.nextElementSibling.querySelector(
         ".item-child-content"
     );
+
     // prepare edit form with current values
     let curItem = getItemDetails(selectedItem, childElement);
     prepEditForm(curItem);
+
     // activate overlay
     document.querySelector(".overlay").classList.remove("hidden");
+
     // open modal
     let modal = document.querySelector("dialog");
-    modal.querySelector("form").setAttribute("action", "items/edit");
+
+    // prep modal text
     modal.querySelector("p").textContent = "EDIT ITEM";
-    modal.querySelector(".modal-submit-btn").textContent = "Edit Item";
+    let submitBtn = modal.querySelector(".modal-submit-btn");
+    submitBtn.textContent = "Edit Item";
+
+    // add listener to submit button
+    submitBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        console.log("clicked");
+        await editItem(e);
+    });
     modal.show();
 });
 

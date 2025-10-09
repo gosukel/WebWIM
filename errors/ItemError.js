@@ -1,4 +1,4 @@
-class ItemAddError extends Error {
+class ItemError extends Error {
     constructor(message) {
         super(message);
         this.statusCode = 400;
@@ -6,4 +6,4 @@ class ItemAddError extends Error {
     }
 }
 
-export default ItemAddError;
+export default ItemError;

@@ -38,8 +38,14 @@ async function itemsAdd(req, res) {
     //     pallet: req.body["item-pallet"],
     //     locations: req.body["item-location"],
     // };
-    console.log(newItem);
 
+    console.log(`item to add to DB: ${newItem}`);
+    try {
+        await itemQueries.addItem(newItem);
+        return res.status(201).json({ item: newItem });
+    } catch {
+        return res.status(400).json({ message: "error adding item" });
+    }
     return res.status(201).json({ item: newItem });
     // return;
 }
@@ -56,8 +62,7 @@ async function itemsEdit(req, res) {
         pallet: req.body["item-pallet"],
         locations: req.body["item-location"],
     };
-
-    await itemQueries.editItem(item);
+    // await itemQueries.editItem(item);
     return res.redirect("/items");
     // return;
 }
@@ -65,11 +70,8 @@ async function itemsEdit(req, res) {
 const itemsController = {
     itemsGet,
     itemsQuery,
-    // itemsSort,
     itemsAdd,
     itemsEdit,
-    // itemsBrands,
-    // itemsTypes,
 };
 
 export default itemsController;
