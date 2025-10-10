@@ -21,9 +21,7 @@ async function checkItemNumber(value) {
     }
     let itemNumberString = value;
 
-    let itemNumber = Number(itemNumberString);
-
-    if (!itemNumber) {
+    if (!Number(itemNumberString)) {
         throw new ItemError("Item number not valid number");
     }
 

@@ -71,7 +71,7 @@ async function itemQuery(filters = [], sort = "", direction = "") {
             : {};
     // build sorter obj
     const orderBy =
-        sort != "" && direction != ""
+        sort != "" && sort != "locations" && direction != ""
             ? {
                   [sort]: direction,
               }
@@ -91,6 +91,26 @@ async function itemQuery(filters = [], sort = "", direction = "") {
             },
         },
     });
+
+    // special sort for location id
+    if (sort === "locations") {
+        let sortedItems;
+        if (direction === "asc") {
+            sortedItems = items.sort((a, b) => {
+                const locA = a.locations[0]?.location?.id || 10000;
+                const locB = b.locations[0]?.location?.id || 10000;
+                return locA - locB;
+            });
+        } else {
+            sortedItems = items.sort((a, b) => {
+                const locA = a.locations[0]?.location?.id || 10000;
+                const locB = b.locations[0]?.location?.id || 10000;
+                return locB - locA;
+            });
+        }
+
+        return sortedItems;
+    }
     return items;
 }
 
@@ -98,7 +118,8 @@ async function itemQueryExactName(item, id = null) {
     let where;
     if (id) {
         where = {
-            AND: [{ item: item }, { id: { not: id } }],
+            item: item,
+            id: { not: id },
         };
     } else {
         where = {
@@ -108,19 +129,54 @@ async function itemQueryExactName(item, id = null) {
     const existingItem = await prisma.item.findFirst({
         where,
     });
+
+    console.log(existingItem);
     return existingItem;
 }
 
+async function testItemQueryExactName(item, id = null) {
+    try {
+        let where;
+        if (id) {
+            where = {
+                item: item,
+                id: { not: Number(id) },
+            };
+        } else {
+            where = {
+                item: item,
+            };
+        }
+        const existingItem = await prisma.item.findFirst({
+            where,
+        });
+
+        // console.log(existingItem);
+        return existingItem;
+    } catch (err) {
+        console.log(`error: ${err}`);
+    }
+}
+
 async function itemQueryExactNumber(num, id = null) {
-    const existingItem = await prisma.item.findFirst({
-        where: {
+    let where;
+    if (id) {
+        where = {
             number: num,
-        },
+            id: { not: id },
+        };
+    } else {
+        where = {
+            number: num,
+        };
+    }
+    const existingItem = await prisma.item.findFirst({
+        where,
     });
     return existingItem;
 }
 
-async function itemQueryExactBrand(brand, id = null) {
+async function itemQueryExactBrand(brand) {
     const result = await prisma.item.findFirst({
         where: {
             brand: brand,
@@ -129,7 +185,7 @@ async function itemQueryExactBrand(brand, id = null) {
     return result;
 }
 
-async function itemQueryExactType(type, id = null) {
+async function itemQueryExactType(type) {
     const result = await prisma.item.findFirst({
         where: {
             type: type,
@@ -137,15 +193,7 @@ async function itemQueryExactType(type, id = null) {
     });
     return result;
 }
-// item = {
-//     item: req.body["item-name"],
-//     number: req.body["item-number"],
-//     brand: req.body["item-brand"],
-//     type: req.body["item-type"],
-//     weight: req.body["item-weight"],
-//     pallet: req.body["item-pallet"],
-//     locations: req.body["item-location"],
-// };
+
 async function addItem(item) {
     const newItem = await prisma.item.create({
         data: {
@@ -174,6 +222,7 @@ const itemQueries = {
     getAllTypes,
     itemQuery,
     itemQueryExactName,
+    testItemQueryExactName,
     itemQueryExactNumber,
     itemQueryExactBrand,
     itemQueryExactType,

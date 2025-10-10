@@ -59,6 +59,11 @@ function createTableRowSet(item, idx) {
     colNum.classList.add("col-num");
     colNum.textContent = item.number;
     parentRow.appendChild(colNum);
+    // td col-loc
+    let colLoc = document.createElement("td");
+    colLoc.classList.add("col-loc");
+    colLoc.textContent = item.locations[0]?.location?.location || "-";
+    parentRow.appendChild(colLoc);
     // td col-brand
     let colBrand = document.createElement("td");
     colBrand.classList.add("col-brand");
@@ -90,14 +95,14 @@ function createTableRowSet(item, idx) {
     childRow.classList.add("item-child");
     // td
     let locTd = document.createElement("td");
-    locTd.setAttribute("colspan", "7");
+    locTd.setAttribute("colspan", "8");
     childRow.appendChild(locTd);
     // div item-child-content
     let childDiv = document.createElement("div");
     childDiv.classList.add("item-child-content");
-    let locationString = "Locations ";
+    let locationString = "All Locations - ";
     item.locations.forEach((loc) => {
-        locationString += `- ${loc.location.location}`;
+        locationString += ` ${loc.location.location}`;
     });
     childDiv.textContent = locationString;
     locTd.appendChild(childDiv);
@@ -136,15 +141,16 @@ search.addEventListener("input", () => {
 });
 
 function getItemDetails(parent, child) {
+    console.log(child.textContent);
     let locations = child.textContent
-        .replaceAll(" ", "")
-        .replaceAll("\n", "")
-        .split("-")
-        .slice(1);
-
+        .replace("\n", "")
+        .replace("All Locations - ", "")
+        .trim()
+        .split(" ");
+    console.log(locations);
     let locationString = "";
     locations.forEach((loc) => {
-        locationString += `${loc}, `;
+        locationString += `${loc} `;
     });
 
     let curItem = {
@@ -229,7 +235,7 @@ async function addItem(e) {
 
         closeModal();
     } catch (err) {
-        console.err();
+        console.error();
         errorContainer.classList.remove("error-hidden");
         errorText.textContent = "Network error, please try again.";
     }
@@ -237,12 +243,32 @@ async function addItem(e) {
 }
 
 // EDIT ITEM FUNCTION
-async function editItem(e) {
-    // e.preventDefault();
+async function editItem(curItem) {
     // get data from form
+
     let form = modal.querySelector(".item-form");
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    console.log(data);
+    console.log(curItem);
+
+    // check for no change
+    let noChange = true;
+    if (
+        data["item-brand"] != curItem.brand ||
+        data["item-location"] != curItem.locations ||
+        data["item-name"] != curItem.item ||
+        data["item-number"] != curItem.number ||
+        data["item-type"] != curItem.type ||
+        Number(data["item-pallet"]) != curItem.pallet ||
+        Number(data["item-weight"]) != curItem.weight
+    ) {
+        noChange = false;
+    }
+    if (noChange) {
+        console.log("no change");
+        return;
+    }
 
     let errorContainer = document.querySelector(".error-container");
     let errorText = errorContainer.querySelector(".error-text");
@@ -256,10 +282,8 @@ async function editItem(e) {
         });
         const result = await res.json();
 
-        // check for error
         if (!res.ok) {
             // error has occurred
-
             errorContainer.classList.remove("error-hidden");
             errorText.textContent = result.error || "something went wrong";
             return;
@@ -267,11 +291,19 @@ async function editItem(e) {
 
         closeModal();
     } catch (err) {
-        console.err();
+        // console.error();
+        console.log(err);
         errorContainer.classList.remove("error-hidden");
         errorText.textContent = "Network error, please try again.";
     }
     return;
+}
+
+function createAddHandler() {
+    return async function (e) {
+        e.preventDefault();
+        await addItem(e);
+    };
 }
 
 // OPEN MODAL TO ADD ITEM
@@ -287,14 +319,21 @@ document.querySelector(".btn-add-item").addEventListener("click", () => {
     let submitBtn = modal.querySelector(".modal-submit-btn");
     submitBtn.textContent = "Add Item";
 
+    // create handler function
+    const handler = createAddHandler();
+    submitBtn._handler = handler;
+
     // add listener to submit button
-    submitBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        await addItem(e);
-    });
+    submitBtn.addEventListener("click", handler);
     modal.show();
 });
 
+function createEditHandler(item) {
+    return async function (e) {
+        e.preventDefault();
+        await editItem(item);
+    };
+}
 // OPEN MODAL TO EDIT ITEM
 document.querySelector(".btn-edit-item").addEventListener("click", () => {
     // check for selected item
@@ -303,7 +342,12 @@ document.querySelector(".btn-edit-item").addEventListener("click", () => {
     let childElement = selectedItem.nextElementSibling.querySelector(
         ".item-child-content"
     );
-
+    console.log(
+        childElement.textContent
+            .replace("\n", "")
+            .replace("All Locations - ", "")
+            .trim()
+    );
     // prepare edit form with current values
     let curItem = getItemDetails(selectedItem, childElement);
     prepEditForm(curItem);
@@ -319,12 +363,12 @@ document.querySelector(".btn-edit-item").addEventListener("click", () => {
     let submitBtn = modal.querySelector(".modal-submit-btn");
     submitBtn.textContent = "Edit Item";
 
-    // add listener to submit button
-    submitBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        console.log("clicked");
-        await editItem(e);
-    });
+    // create handler function for button
+    const handler = createEditHandler(curItem);
+    submitBtn._handler = handler;
+
+    // add handler function to submit button
+    submitBtn.addEventListener("click", handler);
     modal.show();
 });
 
@@ -345,7 +389,13 @@ function closeModal() {
         i.value = "";
     });
 
-    modal.querySelector(".modal-submit-btn").textContent = "";
+    const submitBtn = modal.querySelector(".modal-submit-btn");
+    submitBtn.textContent = "";
+    if (submitBtn._handler) {
+        submitBtn.removeEventListener("click", submitBtn._handler);
+        delete submitBtn._handler;
+    }
+
     modal.querySelector("#item-id").classList.remove("input-show");
     modal.close();
 }

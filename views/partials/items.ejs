@@ -32,6 +32,7 @@
                     <tr scope="col">
                         <th data-sort="item" data-direction="asc" class="col-item-head">Item<span class="th-sort-direction"></span></th>
                         <th data-sort="number" data-direction="asc" class="col-num-head">Item #<span class="th-sort-direction"></span></th>
+                        <th data-sort="locations" data-direction="asc" class="col-loc-head">Location<span class="th-sort-direction"></span></th>
                         <th data-sort="brand" data-direction="asc" class="col-brand-head">Brand<span class="th-sort-direction"></span></th>
                         <th data-sort="type" data-direction="asc" class="col-type-head">Type<span class="th-sort-direction"></span></th>
                         <th data-sort="weight" data-direction="asc" class="col-weight-head">Weight<span class="th-sort-direction"></span></th>
@@ -45,6 +46,7 @@
                         <tr class="item-parent <%= (i + 1) % 2 === 0 ? 'even' : 'odd' %>" data-itemid="<%= items[i].id %>">
                             <td class="col-item"><%= items[i].item %></td>
                             <td class="col-num"><%= items[i].number %></td>
+                            <td class="col-loc"><%= items[i].locations[0]?.location?.location || "-" %></td>
                             <td class="col-brand"><%= items[i].brand %></td>
                             <td class="col-type"><%= items[i].type %></td>
                             <td class="col-weight"><%= items[i].weight %>lbs</td>
@@ -52,8 +54,8 @@
                             <td class="col-onhand"><%= items[i].onHand %></td>
                         </tr>
                         <tr class="item-child">
-                            <td colspan="7"><div class="item-child-content">Locations <% items[i].locations.forEach(loc => { %>
-                             <%= `- ${loc.location.location}` %>
+                            <td colspan="8"><div class="item-child-content">All Locations -<% items[i].locations.forEach(loc => { %>
+                             <%= ` ${loc.location.location}` %>
                             <% }) %></div></td>
                         </tr>
                     <% } %>
