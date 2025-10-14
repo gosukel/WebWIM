@@ -88,13 +88,17 @@ async function checkItemPallet(value) {
 async function checkItemLocations(value) {
     let locations = value.trim();
     if (locations === "") {
-        throw new ItemError("Item location required");
+        return locations;
     }
     let locationList = locations.split(" ");
     let locationsWithIds = [];
-
+    // console.log(locationList);
     for (const loc of locationList) {
+        if (!loc) {
+            continue;
+        }
         let locId = await locationQueries.locationQueryExact(loc.toUpperCase());
+        // console.log(locId);
         if (!locId) {
             throw new ItemError(`Location '${loc}' does not exist`);
         }
@@ -115,19 +119,20 @@ async function checkItemLocations(value) {
 // };
 
 async function validateEditItem(req, res, next) {
-    console.log(req.body);
+    // console.log(req.body);
     let itemId = Number(req.body["item-id"]);
-    const newItem = {
-        name: await checkItemName(req.body["item-name"], itemId),
+    const editItem = {
+        id: itemId,
+        item: await checkItemName(req.body["item-name"], itemId),
         number: await checkItemNumber(req.body["item-number"], itemId),
         brand: await checkItemBrand(req.body["item-brand"]),
         type: await checkItemType(req.body["item-type"]),
         weight: await checkItemWeight(req.body["item-weight"]),
-        pallet: await checkItemPallet(req.body["item-pallet"]),
+        palletQty: await checkItemPallet(req.body["item-pallet"]),
         locations: await checkItemLocations(req.body["item-location"]),
     };
     // console.log(newItem);
-    req.newItem = newItem;
+    req.editItem = editItem;
     next();
 }
 

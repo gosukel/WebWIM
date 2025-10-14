@@ -141,13 +141,13 @@ search.addEventListener("input", () => {
 });
 
 function getItemDetails(parent, child) {
-    console.log(child.textContent);
+    // console.log(child.textContent);
     let locations = child.textContent
         .replace("\n", "")
         .replace("All Locations - ", "")
         .trim()
         .split(" ");
-    console.log(locations);
+    // console.log(locations);
     let locationString = "";
     locations.forEach((loc) => {
         locationString += `${loc} `;
@@ -228,7 +228,7 @@ async function addItem(e) {
         if (!res.ok) {
             // error has occurred
 
-            errorContainer.classList.remove("error-hidden");
+            errorContainer.classList.add("error-show");
             errorText.textContent = result.error || "something went wrong";
             return;
         }
@@ -249,8 +249,8 @@ async function editItem(curItem) {
     let form = modal.querySelector(".item-form");
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-    console.log(data);
-    console.log(curItem);
+    // console.log(data);
+    // console.log(curItem);
 
     // check for no change
     let noChange = true;
@@ -284,15 +284,14 @@ async function editItem(curItem) {
 
         if (!res.ok) {
             // error has occurred
-            errorContainer.classList.remove("error-hidden");
+            errorContainer.classList.add("error-show");
             errorText.textContent = result.error || "something went wrong";
             return;
         }
-
+        fetchItems("");
         closeModal();
     } catch (err) {
-        // console.error();
-        console.log(err);
+        console.log(`error - ${err}`);
         errorContainer.classList.remove("error-hidden");
         errorText.textContent = "Network error, please try again.";
     }
@@ -342,12 +341,12 @@ document.querySelector(".btn-edit-item").addEventListener("click", () => {
     let childElement = selectedItem.nextElementSibling.querySelector(
         ".item-child-content"
     );
-    console.log(
-        childElement.textContent
-            .replace("\n", "")
-            .replace("All Locations - ", "")
-            .trim()
-    );
+    // console.log(
+    //     childElement.textContent
+    //         .replace("\n", "")
+    //         .replace("All Locations - ", "")
+    //         .trim()
+    // );
     // prepare edit form with current values
     let curItem = getItemDetails(selectedItem, childElement);
     prepEditForm(curItem);

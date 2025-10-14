@@ -130,7 +130,7 @@ async function itemQueryExactName(item, id = null) {
         where,
     });
 
-    console.log(existingItem);
+    // console.log(`existingItem - ${existingItem}`);
     return existingItem;
 }
 
@@ -213,7 +213,121 @@ async function addItem(item) {
     return newItem;
 }
 
+async function updateItemWithLocations(itemId, update, connect, disconnect) {
+    return await prisma.$transaction(async (tx) => {
+        // update any changes on item record
+        if (update.status) {
+            const updatedItem = await tx.item.update({
+                where: { id: itemId },
+                data: update.data,
+            });
+        }
+
+        // disconnect locations
+        if (disconnect.status && disconnect.ids.length > 0) {
+            await tx.itemLocation.deleteMany({
+                where: {
+                    itemId: itemId,
+                    locationId: { in: disconnect.ids },
+                },
+            });
+        }
+
+        // connect locations
+        if (connect.status && connect.ids.length > 0) {
+            const newRelations = connect.ids.map((locId) => ({
+                itemId,
+                locationId: locId,
+            }));
+            await tx.itemLocation.createMany({
+                data: newRelations,
+                skipDuplicates: true,
+            });
+        }
+    });
+}
+
 async function editItem(item) {
+    // get current item details
+    const curItem = await prisma.item.findFirst({
+        where: {
+            id: item.id,
+        },
+        include: {
+            locations: {
+                select: {
+                    location: true,
+                },
+            },
+        },
+    });
+
+    // prep obj variables
+    let update = {
+        status: false,
+        data: {},
+    };
+    let disconnect = {
+        status: false,
+        ids: [],
+    };
+    let connect = {
+        status: false,
+        ids: [],
+    };
+
+    // check for values that changed, assign to data obj
+    for (const prop in curItem) {
+        // ignored values
+        if (prop === "onHand" || prop === "itemHistory") {
+            continue;
+        }
+
+        // special locations check
+        if (prop === "locations") {
+            // no new location, no old location - NO CHANGE
+            if (item[prop].length === 0 && curItem[prop].length === 0) {
+                continue;
+            }
+            // no old location, new location - CONNECT ALL
+            if (curItem[prop].length === 0 && item[prop].length > 0) {
+                connect.ids = item[prop].map((loc) => loc.id);
+                connect.status = true;
+                continue;
+            }
+            // no new location, remove old locations - DISCONNECT ALL
+            if (item[prop].length === 0 && curItem[prop].length > 0) {
+                disconnect.status = true;
+                disconnect.ids = curItem[prop].map((loc) => loc.location.id);
+                continue;
+            }
+            // check new ids vs old ids
+            let curLocIds = curItem[prop].map((loc) => loc.location.id);
+            let newLocIds = item[prop].map((loc) => loc.id);
+            for (let curId of curLocIds) {
+                if (!newLocIds.includes(curId)) {
+                    disconnect.status = true;
+                    disconnect.ids.push(curId);
+                }
+            }
+            for (let newId of newLocIds) {
+                if (!curLocIds.includes(newId)) {
+                    connect.status = true;
+                    connect.ids.push(newId);
+                }
+            }
+            continue;
+        }
+        if (curItem[prop] != item[prop]) {
+            if (!update.status) {
+                update.status = true;
+            }
+            update.data[prop] = item[prop];
+        }
+    }
+
+    // run edit query
+    await updateItemWithLocations(item.id, update, connect, disconnect);
     return;
 }
 

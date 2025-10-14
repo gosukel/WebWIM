@@ -100,9 +100,9 @@ a {
     margin-bottom: 10px;
     display: flex;
     justify-content: center;
-    opacity: 100%;
+    opacity: 0;
     z-index: 20;
-    /* transition: opacity 0.3s ease-out; */
+    transition: opacity 0.3s ease-out;
 }
 
 .error-close {
@@ -113,13 +113,11 @@ a {
     cursor: pointer;
 }
 
-.error-container.error-hidden {
-    animation: errorFade 0.3s ease-out;
-    opacity: 0;
-    /* display: none; */
+.error-container.error-show {
+    opacity: 100%;
 }
 
-@keyframes errorFade {
+/* @keyframes errorFade {
     0% {
         opacity: 100%;
         display: flex;
@@ -130,4 +128,4 @@ a {
     100% {
         dipslay: none;
     }
-}
+} */

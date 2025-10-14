@@ -41,25 +41,13 @@ async function itemsAdd(req, res) {
 }
 
 async function itemsEdit(req, res) {
-    // validation code here?
-    let item = {
-        itemId: req.body["item-id"],
-        item: req.body["item-name"],
-        number: req.body["item-number"],
-        brand: req.body["item-brand"],
-        type: req.body["item-type"],
-        weight: req.body["item-weight"],
-        pallet: req.body["item-pallet"],
-        locations: req.body["item-location"],
-    };
-    // await itemQueries.editItem(item);
+    const editItem = req.editItem;
     try {
-        // await itemQueries.addItem(newItem);
-        return res.status(201).json({ item: item });
+        await itemQueries.editItem(editItem);
+        return res.status(201).json({ item: editItem });
     } catch {
         return res.status(400).json({ message: "error adding item" });
     }
-    // return;
 }
 
 const itemsController = {
