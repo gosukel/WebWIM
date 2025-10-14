@@ -212,8 +212,8 @@ async function addItem(e) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    let errorContainer = document.querySelector(".error-container");
-    let errorText = errorContainer.querySelector(".error-text");
+    let noticeContainer = document.querySelector(".notice-container");
+    let noticeText = noticeContainer.querySelector(".notice-text");
 
     // try to submit form data
     try {
@@ -228,16 +228,25 @@ async function addItem(e) {
         if (!res.ok) {
             // error has occurred
 
-            errorContainer.classList.add("error-show");
-            errorText.textContent = result.error || "something went wrong";
+            noticeContainer.classList.remove("success");
+            noticeContainer.classList.add("error");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = result.error || "something went wrong";
             return;
+        } else {
+            noticeContainer.classList.remove("error");
+            noticeContainer.classList.add("success");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = "Item Added Successfully!";
         }
 
         closeModal();
     } catch (err) {
-        console.error();
-        errorContainer.classList.remove("error-hidden");
-        errorText.textContent = "Network error, please try again.";
+        // console.error();
+        noticeContainer.classList.remove("success");
+        noticeContainer.classList.add("error");
+        noticeContainer.classList.add("show");
+        noticeText.textContent = "Network error, please try again.";
     }
     return;
 }
@@ -270,8 +279,8 @@ async function editItem(curItem) {
         return;
     }
 
-    let errorContainer = document.querySelector(".error-container");
-    let errorText = errorContainer.querySelector(".error-text");
+    let noticeContainer = document.querySelector(".notice-container");
+    let noticeText = noticeContainer.querySelector(".notice-text");
 
     // try to submit form data
     try {
@@ -284,16 +293,25 @@ async function editItem(curItem) {
 
         if (!res.ok) {
             // error has occurred
-            errorContainer.classList.add("error-show");
-            errorText.textContent = result.error || "something went wrong";
+            noticeContainer.classList.remove("success");
+            noticeContainer.classList.add("error");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = result.error || "something went wrong";
             return;
+        } else {
+            noticeContainer.classList.remove("error");
+            noticeContainer.classList.add("success");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = "Edit Successful!";
         }
         fetchItems("");
         closeModal();
     } catch (err) {
-        console.log(`error - ${err}`);
-        errorContainer.classList.remove("error-hidden");
-        errorText.textContent = "Network error, please try again.";
+        // console.log(`error - ${err}`);
+        noticeContainer.classList.remove("success");
+        noticeContainer.classList.add("error");
+        noticeContainer.classList.add("show");
+        noticeText.textContent = "Network error, please try again.";
     }
     return;
 }

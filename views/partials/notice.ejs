@@ -1,0 +1,11 @@
+<div class="notice-container <%= (typeof errors === "undefined") ? '' : 'error show' %> <%= (typeof success === 'undefined') ? '' : 'success show'  %>">
+    <p class="notice-text">
+        <% if (typeof errors !== "undefined") { %>
+         <%= errors %>
+        <% } else if (typeof success !== "undefined") { %>
+            <%= success %>
+        <% } %>
+          
+    </p>
+    <p class="notice-close">x</p>
+</div>

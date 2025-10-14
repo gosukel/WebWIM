@@ -85,9 +85,8 @@ a {
     position: relative;
 }
 
-.error-container {
-    border: 2px solid rgb(243, 103, 87);
-    color: rgb(243, 103, 87);
+.notice-container {
+    border: 2px solid rgba(0, 0, 0, 0);
     border-radius: 15px;
     position: relative;
     text-align: center;
@@ -101,11 +100,12 @@ a {
     display: flex;
     justify-content: center;
     opacity: 0;
+    pointer-events: none;
     z-index: 20;
     transition: opacity 0.3s ease-out;
 }
 
-.error-close {
+.notice-close {
     position: absolute;
     top: 4px;
     right: 15px;
@@ -113,8 +113,19 @@ a {
     cursor: pointer;
 }
 
-.error-container.error-show {
+.notice-container.show {
     opacity: 100%;
+    pointer-events: auto;
+}
+
+.notice-container.error {
+    border-color: rgb(243, 103, 87);
+    color: rgb(243, 103, 87);
+}
+
+.notice-container.success {
+    border-color: rgb(76, 245, 98);
+    color: rgb(76, 245, 98);
 }
 
 /* @keyframes errorFade {

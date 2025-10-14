@@ -34,7 +34,7 @@ async function itemsAdd(req, res) {
 
     try {
         await itemQueries.addItem(newItem);
-        return res.status(201).json({ item: newItem });
+        return res.status(201).json({ success: "Item Added Successfully!" });
     } catch {
         return res.status(400).json({ message: "error adding item" });
     }
@@ -44,7 +44,7 @@ async function itemsEdit(req, res) {
     const editItem = req.editItem;
     try {
         await itemQueries.editItem(editItem);
-        return res.status(201).json({ item: editItem });
+        return res.status(201).json({ success: "Edit Successful!" });
     } catch {
         return res.status(400).json({ message: "error adding item" });
     }
