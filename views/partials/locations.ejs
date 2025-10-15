@@ -1,0 +1,84 @@
+<div class="loc-container">
+    <div class="loc-left-container">
+        <div class="loc-search-container">
+            <input
+                type="text"
+                name="loc-search"
+                id="loc-search"
+                class="loc-search"
+            />
+            <span class="loc-search-icon">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="item-search-icon"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                    />
+                </svg>
+            </span>
+        </div>
+        <div class="loc-table-container">
+            <table class="loc-table">
+                <thead>
+                    <tr scope="col">
+                        <th
+                            data-sort="location"
+                            data-direction="asc"
+                            class="col-loc-head"
+                        >
+                            Location<span class="th-sort-direction"></span>
+                        </th>
+                        <th
+                            data-sort="utn"
+                            data-direction="asc"
+                            class="col-utn-head"
+                        >
+                            UTN<span class="th-sort-direction"></span>
+                        </th>
+                        <th
+                            data-sort="zone"
+                            data-direction="asc"
+                            class="col-zone-head"
+                        >
+                            Zone<span class="th-sort-direction"></span>
+                        </th>
+                        <th
+                            data-sort="items"
+                            data-direction="asc"
+                            class="col-item-head"
+                        >
+                            Item (stock)<span class="th-sort-direction"></span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for( let i = 0; i < locations.length; i++ ) { %>
+                        <tr class="loc-parent <%= (i + 1) % 2 === 0 ? 'even' : 'odd' %>" data-locid="<%= locations[i].id %>">
+                            <td class="col-loc"><%= locations[i].location %></td>
+                            <td class="col-utn"><%= locations[i].utn %></td>
+                            <td class="col-zone"><%= locations[i].zone %></td>
+                            <td class="col-item"><%= locations[i].items[0]?.item?.item || "-" %></td>
+                        </tr>
+                        <tr class="loc-child">
+                            <td colspan="8"><div class="loc-child-content">All Items -<% locations[i].items.forEach(item => { %>
+                                <%= ` ${item.item.item}` %>
+                            <% }) %></div></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="loc-menu-container">
+        <button class="btn-loc-add">Add Location</button>
+        <button class="btn-loc-edit">Edit Location</button>
+        <button class="btn-loc-history">Location History</button>
+    </div>
+</div>

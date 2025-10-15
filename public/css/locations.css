@@ -1,0 +1,186 @@
+/* <div class="loc-container">
+    <div class="loc-left-container">
+        <div class="loc-search-container"></div>
+        <div class="loc-table-container"></div>
+    </div>
+    <div class="loc-menu-container">
+        <button class="btn-loc-add">Add Location</button>
+        <button class="btn-loc-edit">Edit Location</button>
+        <button class="btn-loc-history">Location History</button>
+    </div>
+</div> */
+.loc-container {
+    width: 1100px;
+    height: 600px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffffff83;
+    border-radius: 10px;
+}
+
+.loc-left-container {
+    width: 880px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 8px;
+    position: relative;
+}
+
+.loc-search-container {
+    position: relative;
+}
+
+.loc-search-container input {
+    width: 100%;
+    outline: none;
+    border: 2px solid #b3b3b377;
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 1.1rem;
+    text-align: left;
+}
+
+.loc-search-container input:focus {
+    border-color: #4563e6;
+}
+
+.loc-search-icon {
+    position: absolute;
+    height: 23px;
+    width: 23px;
+    color: #4563e6;
+    top: 5px;
+    right: 10px;
+}
+
+/*              LOCATIONS TABLE              */
+.loc-table-container {
+    width: 100%;
+    height: 500px;
+    margin-top: 10px;
+    border: 2px solid #9797977c;
+    overflow: auto;
+}
+
+.loc-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.loc-table thead th {
+    background-color: #6783fd;
+    color: #fff;
+    padding: 8px 6px;
+    cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.loc-table th:hover,
+.loc-table th.sorted {
+    background-color: #4563e6;
+}
+
+th.col-loc-head,
+th.col-utn-head,
+th.col-zone-head {
+    width: 150px;
+}
+
+span.th-sort-direction {
+    font-size: 0.5rem;
+    margin-left: 5px;
+    align-self: center;
+}
+
+.loc-table tbody {
+    overflow: auto;
+}
+
+tr.loc-parent {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.loc-table tr.loc-parent.even {
+    background-color: #6782fd2c;
+}
+
+.loc-table tr.loc-parent:hover {
+    background-color: #a6b6ffa8;
+}
+
+.loc-table tr.loc-parent.selected {
+    background-color: #4f6df3a8;
+    color: #fff;
+}
+
+.loc-table td {
+    padding: 5px;
+    font-size: 0.9rem;
+}
+
+td.col-loc {
+    padding-left: 20px;
+}
+
+td.col-utn,
+td.col-zone,
+td.col-item {
+    text-align: center;
+}
+
+.loc-child {
+    background-color: #4f6df3a8;
+    color: #fff;
+}
+
+.loc-child td {
+    padding: 0;
+}
+
+.loc-table tr.loc-child .loc-child-content {
+    height: 0px;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+        height 0.2s ease,
+        opacity 0.2s ease,
+        padding 0.2s ease;
+}
+
+.loc-table tr.loc-child .loc-child-content.show {
+    height: 25px;
+    opacity: 1;
+    padding: 5px 0 5px 30px;
+}
+
+/*              RIGHT SIDE MENU              */
+.loc-menu-container {
+    width: 170px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    border-radius: 10px;
+}
+
+.loc-menu-container button {
+    width: 100%;
+    border: none;
+    color: #fff;
+    font-size: 1.1rem;
+    padding: 5px 0;
+    cursor: pointer;
+    background-color: #6783fd;
+    margin-bottom: 20px;
+    transition: background-color 0.1s ease-out;
+}
+
+.loc-menu-container button:hover {
+    background-color: #4563e6;
+}

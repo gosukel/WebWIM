@@ -1,4 +1,3 @@
-import { validationResult } from "express-validator";
 import itemQueries from "../models/db/items.js";
 
 const user = "Richard Routh";

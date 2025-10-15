@@ -68,8 +68,6 @@
     position: sticky;
     top: 0;
     z-index: 2;
-    /* display: flex;
-    align-items: center; */
 }
 
 .items-table th:hover,
@@ -92,7 +90,6 @@ th.col-pallet-head {
 span.th-sort-direction {
     font-size: 0.5rem;
     margin-left: 5px;
-    /* padding-bottom: 15px; */
     align-self: center;
 }
 
@@ -166,7 +163,7 @@ td.col-num {
 /*                  RIGHT SIDE MENU                  */
 
 .items-menu-container {
-    width: 160px;
+    width: 170px;
     background-color: #fff;
     display: flex;
     flex-direction: column;

@@ -7,6 +7,7 @@ import loginRouter from "./routes/loginRouter.js";
 import calculateRouter from "./routes/calculateRouter.js";
 import processRouter from "./routes/processRouter.js";
 import itemsRouter from "./routes/itemsRouter.js";
+import locationsRouter from "./routes/locationsRouter.js";
 
 if (process.env.NODE_ENV !== "production") {
     await import("dotenv/config");
@@ -38,6 +39,7 @@ app.use("/login", loginRouter);
 app.use("/calculate", calculateRouter);
 app.use("/process", processRouter);
 app.use("/items", itemsRouter);
+app.use("/locations", locationsRouter);
 
 // app listen
 app.listen(process.env.PORT, () => {
