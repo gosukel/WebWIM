@@ -258,8 +258,6 @@ async function editItem(curItem) {
     let form = modal.querySelector(".item-form");
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-    // console.log(data);
-    // console.log(curItem);
 
     // check for no change
     let noChange = true;
