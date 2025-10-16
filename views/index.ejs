@@ -27,22 +27,10 @@
             
             <%- include(`partials/${main}`) %>
         </div>
+        <% if (main !== "home") { %>
+            <script src="<%= `js/${main}.js` %>"></script>
+        <% } %>
 
-        <% if (main === "calculator") { %>
-            <script src="js/calculate.js"></script>
-        <% } %>
-        <% if (main === "process") { %>
-            <script>
-                window.items = <%- JSON.stringify(items) %>;   
-            </script>
-            <script src="js/process.js" type="module"></script>
-        <% } %>
-        <% if (main === "items") { %>
-            <script>
-                window.items = <%- JSON.stringify(items) %>;   
-            </script>
-            <script src="js/items.js" type="module"></script>
-        <% } %>
         <script src="js/notice.js" type="module"></script>
     </body>
 </html>

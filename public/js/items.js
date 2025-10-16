@@ -1,4 +1,4 @@
-const allItems = window.items;
+// const allItems = window.items;
 
 function itemParentListener(parent) {
     let childElement = parent.nextElementSibling.querySelector(

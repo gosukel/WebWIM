@@ -1,12 +1,13 @@
 // ITEM VARIABLES
-const allItems = window.items;
+// const allItems = window.items;
 const orderItems = {};
 
 // SEARCH/FILTER FUNCTIONS
 async function fetchItems(q) {
-    console.log(q);
-    const rest = await fetch(`/process/query?search=${encodeURIComponent(q)}`);
-    const items = await rest.json();
+    const result = await fetch(
+        `/process/query?search=${encodeURIComponent(q)}`
+    );
+    const items = await result.json();
     updateItemList(items);
 }
 
@@ -22,17 +23,17 @@ function debounce(func, delay) {
 
 const debouncedSearch = debounce(fetchItems, 300);
 
-function filterBrand(brand) {
-    const filteredItems = allItems.filter((item) => item.brand === brand);
-    filteredItems.sort((a, b) => {
-        if (a.item < b.item) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
-    return filteredItems;
-}
+// function filterBrand(brand) {
+//     const filteredItems = allItems.filter((item) => item.brand === brand);
+//     filteredItems.sort((a, b) => {
+//         if (a.item < b.item) {
+//             return -1;
+//         } else {
+//             return 1;
+//         }
+//     });
+//     return filteredItems;
+// }
 
 function updateItemList(items) {
     // delete previous list elements

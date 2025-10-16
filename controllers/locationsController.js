@@ -5,8 +5,8 @@ const user = "Richard Routh";
 async function locationsGet(req, res) {
     const locations = await locationQueries.locationQuery();
     const zones = await locationQueries.getAllZones();
-    console.log("locations - ");
-    console.dir(locations, { depth: null, colors: true });
+    // console.log("locations - ");
+    // console.dir(locations, { depth: null, colors: true });
     // console.log(items[0].locations);
     return res.render("index", {
         fullName: user,
