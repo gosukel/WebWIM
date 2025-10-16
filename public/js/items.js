@@ -1,5 +1,3 @@
-// const allItems = window.items;
-
 function itemParentListener(parent) {
     let childElement = parent.nextElementSibling.querySelector(
         ".item-child-content"
@@ -9,9 +7,9 @@ function itemParentListener(parent) {
         childElement.classList.toggle("show");
         parent.classList.remove("selected");
     } else {
-        document.querySelectorAll(".item-parent.selected").forEach((p) => {
-            p.classList.remove("selected");
-            p.nextElementSibling
+        document.querySelectorAll(".item-parent.selected").forEach((e) => {
+            e.classList.remove("selected");
+            e.nextElementSibling
                 .querySelector(".item-child-content")
                 .classList.remove("show");
         });

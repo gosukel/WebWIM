@@ -25,7 +25,7 @@ locationsRouter.get("/", locationsController.locationsGet);
 // );
 
 // api
-// locationsRouter.get("/query", locationsController.locationsQuery);
+locationsRouter.get("/query", locationsController.locationsQuery);
 
 // locationsRouter.use((err, req, res, next) => {
 //     if (err instanceof LocationError) {

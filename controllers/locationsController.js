@@ -17,6 +17,19 @@ async function locationsGet(req, res) {
     });
 }
 
+async function locationsQuery(req, res) {
+    const search = req.query.search || "";
+    const sortParam = req.query.sortParams || "";
+    const sortDirection = req.query.sortDirection || "";
+    const filters = search.split(" ").filter(Boolean);
+    let locations = await locationQueries.locationQuery(
+        filters,
+        sortParam,
+        sortDirection
+    );
+    // console.log(`controller locations - ${locations}`);
+    return res.json(locations);
+}
 // async function itemsQuery(req, res) {
 //     const search = req.query.search || "";
 //     const sortParam = req.query.sortParams || "";
@@ -51,6 +64,7 @@ async function locationsGet(req, res) {
 
 const locationsController = {
     locationsGet,
+    locationsQuery,
 };
 
 export default locationsController;

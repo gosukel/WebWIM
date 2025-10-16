@@ -70,6 +70,7 @@ async function itemQuery(filters = [], sort = "", direction = "") {
               }
             : {};
     // build sorter obj
+    console.dir(where, { depth: null, colors: true });
     const orderBy =
         sort != "" && sort != "locations" && direction != ""
             ? {
@@ -95,22 +96,15 @@ async function itemQuery(filters = [], sort = "", direction = "") {
     // special sort for location id
     if (sort === "locations") {
         let sortedItems;
-        if (direction === "asc") {
-            sortedItems = items.sort((a, b) => {
-                const locA = a.locations[0]?.location?.id || 10000;
-                const locB = b.locations[0]?.location?.id || 10000;
-                return locA - locB;
-            });
-        } else {
-            sortedItems = items.sort((a, b) => {
-                const locA = a.locations[0]?.location?.id || 10000;
-                const locB = b.locations[0]?.location?.id || 10000;
-                return locB - locA;
-            });
-        }
-
+        const dir = direction === "asc" ? 1 : -1;
+        sortedItems = items.toSorted((a, b) => {
+            const locA = a.locations[0]?.location?.id ?? 10000;
+            const locB = b.locations[0]?.location?.id ?? 10000;
+            return dir * (locA - locB);
+        });
         return sortedItems;
     }
+
     return items;
 }
 

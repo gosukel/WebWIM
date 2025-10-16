@@ -29,7 +29,7 @@
                 <thead>
                     <tr scope="col">
                         <th
-                            data-sort="location"
+                            data-sort="id"
                             data-direction="asc"
                             class="col-loc-head"
                         >
@@ -67,8 +67,8 @@
                             <td class="col-item"><%= locations[i].items[0]?.item?.item || "-" %></td>
                         </tr>
                         <tr class="loc-child">
-                            <td colspan="8"><div class="loc-child-content">All Items -<% locations[i].items.forEach(item => { %>
-                                <%= ` ${item.item.item}` %>
+                            <td colspan="4"><div class="loc-child-content">All Items <% locations[i].items.forEach(item => { %>
+                                <%= `- ${item.item.item}` %>
                             <% }) %></div></td>
                         </tr>
                     <% } %>

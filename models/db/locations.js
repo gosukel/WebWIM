@@ -29,18 +29,26 @@ async function locationQuery(filters = [], sort = "", direction = "") {
                               items: {
                                   some: {
                                       item: {
-                                          item: {
-                                              contains: term,
-                                              mode: "insensitive",
-                                          },
-                                          type: {
-                                              contains: term,
-                                              mode: "insensitive",
-                                          },
-                                          brand: {
-                                              contains: term,
-                                              mode: "insensitive",
-                                          },
+                                          OR: [
+                                              {
+                                                  item: {
+                                                      contains: term,
+                                                      mode: "insensitive",
+                                                  },
+                                              },
+                                              {
+                                                  type: {
+                                                      contains: term,
+                                                      mode: "insensitive",
+                                                  },
+                                              },
+                                              {
+                                                  brand: {
+                                                      contains: term,
+                                                      mode: "insensitive",
+                                                  },
+                                              },
+                                          ],
                                       },
                                   },
                               },
@@ -49,6 +57,7 @@ async function locationQuery(filters = [], sort = "", direction = "") {
                   })),
               }
             : {};
+
     const orderBy =
         sort != "" && sort != "items" && direction != ""
             ? { [sort]: direction }
@@ -65,6 +74,18 @@ async function locationQuery(filters = [], sort = "", direction = "") {
             },
         },
     });
+
+    // special sort for items
+    if (sort === "items") {
+        let sortedLocations;
+        const dir = direction === "asc" ? 1 : -1;
+        sortedLocations = locations.toSorted((a, b) => {
+            const itemA = a.items[0]?.item?.item ?? "zzz";
+            const itemB = b.items[0]?.item?.item ?? "zzz";
+            return dir * itemA.localeCompare(itemB);
+        });
+        return sortedLocations;
+    }
 
     return locations;
 }
