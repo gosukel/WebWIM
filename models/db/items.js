@@ -70,7 +70,7 @@ async function itemQuery(filters = [], sort = "", direction = "") {
               }
             : {};
     // build sorter obj
-    console.dir(where, { depth: null, colors: true });
+
     const orderBy =
         sort != "" && sort != "locations" && direction != ""
             ? {

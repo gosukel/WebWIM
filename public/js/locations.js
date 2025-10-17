@@ -156,3 +156,71 @@ document.querySelectorAll("th").forEach((e) => {
         e.dataset.direction = sortDirection === "asc" ? "desc" : "asc";
     });
 });
+
+//                      modal buttons
+// add location
+document.querySelector(".btn-loc-add").addEventListener("click", () => {
+    // activate overlay
+    document.querySelector(".overlay").classList.remove("hidden");
+
+    // open modal
+    let modal = document.querySelector("dialog");
+
+    // prep modal text
+    modal.querySelector("p").textContent = "ADD NEW LOCATION";
+    let submitBtn = modal.querySelector(".modal-submit-btn");
+
+    // show loc-prev-container
+    document.querySelector(".loc-prev-container").classList.add("show");
+
+    modal.show();
+});
+
+// edit location
+document.querySelector(".btn-loc-edit").addEventListener("click", () => {
+    // activate overlay
+    document.querySelector(".overlay").classList.remove("hidden");
+
+    // open modal
+    let modal = document.querySelector("dialog");
+
+    // prep modal text
+    modal.querySelector("p").textContent = "EDIT LOCATION";
+    let submitBtn = modal.querySelector(".modal-submit-btn");
+
+    // temp show loc id for styling
+    document.querySelector("#loc-id").classList.add("show");
+
+    // show loc-items-container
+    document.querySelector(".loc-items-container").classList.add("show");
+
+    modal.show();
+});
+
+// temp close modal button
+document
+    .querySelector(".modal-close-btn")
+    .addEventListener("click", closeModal);
+
+function closeModal() {
+    // remove overlay
+    document.querySelector(".overlay").classList.add("hidden");
+
+    // reset modal inputs
+    let modal = document.querySelector("dialog");
+    modal.querySelector("form").setAttribute("action", "");
+    modal.querySelector("p").textContent = "";
+    modal.querySelectorAll("input, select, textarea").forEach((i) => {
+        i.value = "";
+    });
+    modal
+        .querySelectorAll("#loc-id, .loc-items-container, .loc-prev-container")
+        .forEach((e) => {
+            e.classList.remove("show");
+        });
+
+    // remove submit handler here
+
+    // close modal
+    modal.close();
+}

@@ -172,7 +172,7 @@ function getItemDetails(parent, child) {
 function prepEditForm(item) {
     // set placeholder values
     document.querySelector("#item-id").value = item.itemId;
-    document.querySelector("#item-id").classList.add("input-show");
+    document.querySelector("#item-id").classList.add("show");
     document.querySelector("#item-name").value = item.item;
     document.querySelector("#item-number").value = item.number;
     document.querySelector("#item-brand").value = item.brand;
@@ -330,7 +330,6 @@ document.querySelector(".btn-add-item").addEventListener("click", () => {
     // prep modal text
     modal.querySelector("p").textContent = "ADD ITEM TO WAREHOUSE";
     let submitBtn = modal.querySelector(".modal-submit-btn");
-    submitBtn.textContent = "Add Item";
 
     // create handler function
     const handler = createAddHandler();
@@ -374,7 +373,6 @@ document.querySelector(".btn-edit-item").addEventListener("click", () => {
     // prep modal text
     modal.querySelector("p").textContent = "EDIT ITEM";
     let submitBtn = modal.querySelector(".modal-submit-btn");
-    submitBtn.textContent = "Edit Item";
 
     // create handler function for button
     const handler = createEditHandler(curItem);
@@ -403,12 +401,11 @@ function closeModal() {
     });
 
     const submitBtn = modal.querySelector(".modal-submit-btn");
-    submitBtn.textContent = "";
     if (submitBtn._handler) {
         submitBtn.removeEventListener("click", submitBtn._handler);
         delete submitBtn._handler;
     }
 
-    modal.querySelector("#item-id").classList.remove("input-show");
+    modal.querySelector("#item-id").classList.remove("show");
     modal.close();
 }

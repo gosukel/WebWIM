@@ -1,4 +1,5 @@
 <div class="loc-container">
+    <div class="overlay hidden"></div>
     <div class="loc-left-container">
         <div class="loc-search-container">
             <input
@@ -75,6 +76,50 @@
                 </tbody>
             </table>
         </div>
+        <dialog class="modal" id="modal">
+            <form action="" method="post" class="loc-form">
+                <div class="form-title-container">
+                    <p class="loc-form-header"></p>
+                    <input type="text" name="loc-id" id="loc-id" class="loc-id" readonly value="100">
+                </div>
+                <!-- location / zone / utn / items -->
+                <div class="form-input-container">
+                    <label for="loc-name">Location: </label>
+                    <input type="text" name="loc-name" id="loc-name" class="loc-name">
+                </div>
+                <div class="form-input-container">
+                    <label for="loc-zone">Zone: </label>
+                    <select name="loc-zone" id="loc-zone" class="loc-zone">
+                        <option value="">-Select a Zone</option>
+                        <% zones.forEach(zone => { %>
+                            <option value="<%= zone %>"><%= zone %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-input-container">
+                    <label for="loc-utn">UTN: </label>
+                    <input type="text" name="loc-utn" id="loc-utn" class="loc-utn">
+                </div>
+                <div class="form-input-container loc-prev-container">
+                    <label for="loc-prev">Comes After: </label>
+                    <select name="loc-prev" id="loc-prev" class="loc-prev">
+                        <option value="">-Select a Location-</option>
+                        <% locations.forEach(location => { %>
+                            <option value="<%= location.id %>"><%= location.location %></option>
+                        <% }) %>
+
+                    </select>
+                </div>
+                <div class="form-input-container loc-items-container">
+                    <label for="loc-items">Items: </label>
+                    <textarea name="loc-items" id="loc-items" class="loc-items" rows="6"></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="modal-close-btn">X</button>
+                    <button type="submit" class="modal-submit-btn">Submit</button>
+                </div>
+            </form>
+        </dialog>
     </div>
     <div class="loc-menu-container">
         <button class="btn-loc-add">Add Location</button>

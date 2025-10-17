@@ -173,3 +173,158 @@ td.col-item {
 .loc-menu-container button:hover {
     background-color: #4563e6;
 }
+
+/*                  MODAL                  */
+.modal {
+    position: absolute;
+    top: 0;
+    left: 224px;
+    height: 560px;
+    width: 432px;
+    padding: 20px 30px;
+    border: 4px solid #6783fd;
+    z-index: 20;
+}
+
+.modal form {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal .form-title-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-title-container p.loc-form-header {
+    font-size: 1.5rem;
+}
+
+.form-title-container input {
+    width: 20%;
+    height: 30px;
+    position: absolute;
+    right: 0;
+    outline: none;
+    border: 1px solid #666666c2;
+    text-align: center;
+    display: none;
+}
+
+.form-input-container {
+    width: 80%;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-input-container input {
+    width: 75%;
+    outline: none;
+    border: 2px solid #666666c2;
+    padding: 6px;
+    border-radius: 3px;
+    font-size: 1.1rem;
+    text-align: left;
+}
+
+.loc-items-container textarea {
+    resize: none;
+    width: 75%;
+    outline: none;
+    border: 2px solid #666666c2;
+    padding: 6px;
+    border-radius: 3px;
+    font-size: 1.1rem;
+    text-align: left;
+}
+
+.loc-prev-container label {
+    width: 20%;
+}
+
+.loc-prev-container,
+.loc-items-container {
+    display: none;
+}
+
+.loc-prev-container.show,
+.loc-items-container.show {
+    display: flex;
+}
+
+.form-title-container .show {
+    display: inline-block;
+}
+
+.form-input-container select {
+    width: 75%;
+    outline: none;
+    border: 2px solid #666666c2;
+    font-size: 1.1rem;
+    padding: 6px;
+    border-radius: 3px;
+}
+
+.form-input-container:focus-within label {
+    color: #4563e6;
+}
+
+.form-input-container:focus-within input,
+.form-input-container:focus-within select,
+.form-input-container:focus-within textarea {
+    border-color: #4563e6;
+}
+
+.form-buttons {
+    margin-top: auto;
+    display: flex;
+    width: 80%;
+    justify-content: space-between;
+    height: 40px;
+}
+
+.form-buttons button {
+    height: 100%;
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.modal-close-btn {
+    background-color: rgb(228, 74, 74);
+    width: 26%;
+}
+
+.modal-submit-btn {
+    width: 70%;
+    background-color: #6783fd;
+    transition: background-color 0.1s ease-out;
+}
+
+.modal-submit-btn:hover {
+    background-color: #4563e6;
+}
+
+/*                  OVERLAY                  */
+.hidden {
+    display: none;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 250px;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
