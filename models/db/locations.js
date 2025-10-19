@@ -125,6 +125,7 @@ async function locationQueryExact(q) {
 const locationQueries = {
     locationQuery,
     getAllZones,
+    locationQueryExact,
 };
 
 export default locationQueries;
