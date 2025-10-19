@@ -94,6 +94,7 @@ a {
     height: 35px;
     padding: 5px 0;
     font-size: 1.1rem;
+    font-weight: bold;
     background-color: #fff;
     margin-top: -20px;
     margin-bottom: 10px;
@@ -125,7 +126,7 @@ a {
 
 .notice-container.success {
     border-color: rgb(76, 245, 98);
-    color: rgb(76, 245, 98);
+    color: rgb(56, 190, 74);
 }
 
 /* @keyframes errorFade {
