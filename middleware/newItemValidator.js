@@ -9,7 +9,6 @@ async function checkItemName(value) {
     const itemName = value.toUpperCase();
     const doesExist = await itemQueries.itemQueryExactName(itemName);
     if (doesExist) {
-        console.log("duplicate name");
         throw new ItemError("Item name already exists");
     }
     return itemName;
