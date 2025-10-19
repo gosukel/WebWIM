@@ -124,32 +124,7 @@ async function itemQueryExactName(item, id = null) {
         where,
     });
 
-    // console.log(`existingItem - ${existingItem}`);
     return existingItem;
-}
-
-async function testItemQueryExactName(item, id = null) {
-    try {
-        let where;
-        if (id) {
-            where = {
-                item: item,
-                id: { not: Number(id) },
-            };
-        } else {
-            where = {
-                item: item,
-            };
-        }
-        const existingItem = await prisma.item.findFirst({
-            where,
-        });
-
-        // console.log(existingItem);
-        return existingItem;
-    } catch (err) {
-        console.log(`error: ${err}`);
-    }
 }
 
 async function itemQueryExactNumber(num, id = null) {
@@ -183,6 +158,15 @@ async function itemQueryExactType(type) {
     const result = await prisma.item.findFirst({
         where: {
             type: type,
+        },
+    });
+    return result;
+}
+
+async function itemQueryExactID(id) {
+    const result = await prisma.item.findFirst({
+        where: {
+            id: id,
         },
     });
     return result;
@@ -325,17 +309,32 @@ async function editItem(item) {
     return;
 }
 
+async function deleteItem(id) {
+    return await prisma.$transaction(async (tx) => {
+        // remove item-location relation
+        const deletedRelations = await tx.itemLocation.deleteMany({
+            where: { itemId: id },
+        });
+
+        // delete item itself
+        const deletedItem = await tx.item.delete({
+            where: { id: id },
+        });
+    });
+}
+
 const itemQueries = {
     getAllBrands,
     getAllTypes,
     itemQuery,
     itemQueryExactName,
-    testItemQueryExactName,
     itemQueryExactNumber,
     itemQueryExactBrand,
     itemQueryExactType,
+    itemQueryExactID,
     addItem,
     editItem,
+    deleteItem,
 };
 
 export default itemQueries;
