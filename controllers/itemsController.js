@@ -30,9 +30,8 @@ async function itemsQuery(req, res) {
 
 async function itemsAdd(req, res) {
     const newItem = req.body.newItem;
-
     try {
-        await itemQueries.addItem(newItem);
+        const itemAdded = await itemQueries.addItem(newItem);
         return res.status(201).json({ success: "Item Added Successfully!" });
     } catch {
         return res.status(400).json({ message: "error adding item" });
@@ -49,11 +48,26 @@ async function itemsEdit(req, res) {
     }
 }
 
+async function itemsDelete(req, res) {
+    const delId = req.body.delId;
+
+    try {
+        await itemQueries.deleteItem(delId);
+        console.log("controller success");
+        return res.status(201).json({ success: "Edit Successful!" });
+    } catch {
+        console.log("controller catch");
+        return res.status(400).json({ message: "error deleting item" });
+    }
+    return;
+}
+
 const itemsController = {
     itemsGet,
     itemsQuery,
     itemsAdd,
     itemsEdit,
+    itemsDelete,
 };
 
 export default itemsController;

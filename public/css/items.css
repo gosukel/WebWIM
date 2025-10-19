@@ -180,7 +180,15 @@ td.col-num {
     cursor: pointer;
     background-color: #6783fd;
     margin-bottom: 20px;
-    transition: background-color 0.1s ease-out;
+    transition: background-color 0.3s ease-out;
+}
+
+.items-menu-container .btn-del-item {
+    background-color: rgb(238, 106, 106);
+}
+
+.items-menu-container .btn-del-item:hover {
+    background-color: rgb(221, 53, 53);
 }
 
 .items-menu-container button.btn-receiving {
@@ -315,6 +323,92 @@ td.col-num {
     right: 0;
     bottom: 0;
     left: 250px;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
     z-index: 10;
 }
+
+/*              DEL MODAL               */
+.del-modal {
+    position: absolute;
+    top: 50px;
+    left: 250px;
+    height: 320px;
+    width: 400px;
+    padding: 30px;
+    /* border: 4px solid rgb(238, 106, 106); */
+    border: none;
+    border-radius: 15px;
+    z-index: 20;
+}
+
+.del-modal .del-item-form {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.del-modal-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    align-self: start;
+    color: rgb(226, 10, 10);
+}
+
+.del-modal-item {
+    margin-top: 25px;
+    align-self: start;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.del-modal-text {
+    text-align: left;
+    align-self: start;
+    margin-top: 30px;
+    font-size: 1.1rem;
+}
+
+.del-modal-buttons {
+    align-self: end;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: auto;
+}
+
+.del-modal-buttons button {
+    font-size: 1.2rem;
+    border: none;
+    outline: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.del-modal-buttons .del-modal-close-btn {
+    background-color: #6783fd;
+}
+
+.del-modal-close-btn:hover {
+    background-color: #4563e6;
+}
+
+.del-modal-buttons .del-modal-submit-btn {
+    background-color: rgb(238, 106, 106);
+}
+
+.del-modal-submit-btn:hover {
+    background-color: rgb(221, 53, 53);
+}
+
+/* .del-modal-close-btn {
+    padding: 6px 12px;
+    border: none;
+    outline: none;
+    
+    border-radius: 5px;
+} */

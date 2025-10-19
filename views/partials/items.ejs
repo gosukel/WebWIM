@@ -115,10 +115,23 @@
                  </div>
             </form>
         </dialog>
+        <dialog class="del-modal" id="del-modal">
+            <div class="del-item-form">
+                <p class="del-modal-title">Delete Item</p>
+                <p class="del-modal-item"></p>
+                <p class="del-modal-text">This will permanently remove the selected item from the database.  This action cannot be undone.</p>
+                <div class="del-modal-buttons">
+                    <button class="del-modal-close-btn">Cancel</button>
+                    <button class="del-modal-submit-btn">Delete</button>
+                </div>
+                
+            </div>
+        </dialog>
     </div>
     <div class="items-menu-container">
         <button class="btn-add-item">Add Item</button>
         <button class="btn-edit-item">Edit Item</button>
+        <button class="btn-del-item">Delete Item</button>
         <button class="btn-item-history">Item History</button>
         <button class="btn-receiving">Receiving</button>
     </div>

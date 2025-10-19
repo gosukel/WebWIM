@@ -139,13 +139,11 @@ search.addEventListener("input", () => {
 });
 
 function getItemDetails(parent, child) {
-    // console.log(child.textContent);
     let locations = child.textContent
         .replace("\n", "")
         .replace("All Locations - ", "")
         .trim()
         .split(" ");
-    // console.log(locations);
     let locationString = "";
     locations.forEach((loc) => {
         locationString += `${loc} `;
@@ -209,10 +207,8 @@ async function addItem(e) {
     let form = modal.querySelector(".item-form");
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-
     let noticeContainer = document.querySelector(".notice-container");
     let noticeText = noticeContainer.querySelector(".notice-text");
-
     // try to submit form data
     try {
         const res = await fetch("/items/new", {
@@ -221,7 +217,6 @@ async function addItem(e) {
             body: JSON.stringify(data),
         });
         const result = await res.json();
-
         // check for error
         if (!res.ok) {
             // error has occurred
@@ -237,10 +232,8 @@ async function addItem(e) {
             noticeContainer.classList.add("show");
             noticeText.textContent = "Item Added Successfully!";
         }
-
         closeModal();
     } catch (err) {
-        // console.error();
         noticeContainer.classList.remove("success");
         noticeContainer.classList.add("error");
         noticeContainer.classList.add("show");
@@ -303,7 +296,6 @@ async function editItem(curItem) {
         fetchItems("");
         closeModal();
     } catch (err) {
-        // console.log(`error - ${err}`);
         noticeContainer.classList.remove("success");
         noticeContainer.classList.add("error");
         noticeContainer.classList.add("show");
@@ -325,7 +317,7 @@ document.querySelector(".btn-add-item").addEventListener("click", () => {
     document.querySelector(".overlay").classList.remove("hidden");
 
     // open modal
-    let modal = document.querySelector("dialog");
+    let modal = document.querySelector(".modal");
 
     // prep modal text
     modal.querySelector("p").textContent = "ADD ITEM TO WAREHOUSE";
@@ -354,12 +346,7 @@ document.querySelector(".btn-edit-item").addEventListener("click", () => {
     let childElement = selectedItem.nextElementSibling.querySelector(
         ".item-child-content"
     );
-    // console.log(
-    //     childElement.textContent
-    //         .replace("\n", "")
-    //         .replace("All Locations - ", "")
-    //         .trim()
-    // );
+
     // prepare edit form with current values
     let curItem = getItemDetails(selectedItem, childElement);
     prepEditForm(curItem);
@@ -368,7 +355,7 @@ document.querySelector(".btn-edit-item").addEventListener("click", () => {
     document.querySelector(".overlay").classList.remove("hidden");
 
     // open modal
-    let modal = document.querySelector("dialog");
+    let modal = document.querySelector(".modal");
 
     // prep modal text
     modal.querySelector("p").textContent = "EDIT ITEM";
@@ -393,7 +380,7 @@ function closeModal() {
     // remove overlay
     document.querySelector(".overlay").classList.add("hidden");
     // close modal
-    let modal = document.querySelector("dialog");
+    let modal = document.querySelector(".modal");
     modal.querySelector("form").setAttribute("action", "");
     modal.querySelector("p").textContent = "";
     modal.querySelectorAll("input, select").forEach((i) => {
@@ -409,3 +396,97 @@ function closeModal() {
     modal.querySelector("#item-id").classList.remove("show");
     modal.close();
 }
+
+//         DEL MODAL
+
+// delete modal handler
+function createDelHandler(e) {
+    return async function () {
+        await deleteItem(e);
+    };
+}
+// actual delete function
+// FIX THIS FUNCTION
+async function deleteItem(id) {
+    if (!id) return;
+    const itemId = { id };
+    let noticeContainer = document.querySelector(".notice-container");
+    let noticeText = noticeContainer.querySelector(".notice-text");
+    try {
+        const res = await fetch("/items/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(itemId),
+        });
+        const result = await res.json();
+        // check for error
+        if (!res.ok) {
+            noticeContainer.classList.remove("success");
+            noticeContainer.classList.add("error");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = result.error || "something went wrong";
+            return;
+        } else {
+            noticeContainer.classList.remove("error");
+            noticeContainer.classList.add("success");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = "Item Deleted Successfully!";
+            fetchItems("");
+        }
+
+        closeDelModal();
+    } catch (error) {
+        console.log(error);
+        noticeContainer.classList.remove("success");
+        noticeContainer.classList.add("error");
+        noticeContainer.classList.add("show");
+        noticeText.textContent = "Network error, please try again.";
+    }
+    return;
+}
+// open del modal
+document.querySelector(".btn-del-item").addEventListener("click", () => {
+    // check for selected item
+    let selectedItem = document.querySelector(".selected");
+    if (!selectedItem) return;
+    let itemName = selectedItem.querySelector(".col-item").textContent;
+    let itemId = selectedItem.dataset.itemid;
+
+    // add overlay
+    document.querySelector(".overlay").classList.remove("hidden");
+
+    document.querySelector(".del-modal-item").textContent = itemName;
+
+    let delModal = document.querySelector(".del-modal");
+    let delBtn = document.querySelector(".del-modal-submit-btn");
+
+    // create handler function
+    const handler = createDelHandler(itemId);
+    delBtn._handler = handler;
+
+    // add handler function to btn
+    delBtn.addEventListener("click", handler);
+
+    delModal.show();
+});
+// close del modal function
+function closeDelModal() {
+    // remove overlay
+    document.querySelector(".overlay").classList.add("hidden");
+    // get modal element
+    let delModal = document.querySelector(".del-modal");
+    // reset item name
+    delModal.querySelector(".del-modal-item").textContent = "";
+    // remove delbtn handler
+    const delBtn = delModal.querySelector(".del-modal-submit-btn");
+    if (delBtn._handler) {
+        delBtn.removeEventListener("click", delBtn._handler);
+        delete delBtn._handler;
+    }
+    // close del modal
+    delModal.close();
+}
+
+document
+    .querySelector(".del-modal-close-btn")
+    .addEventListener("click", closeDelModal);

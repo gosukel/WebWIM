@@ -2,6 +2,7 @@ import { Router } from "express";
 import itemsController from "../controllers/itemsController.js";
 import validateNewItem from "../middleware/newItemValidator.js";
 import validateEditItem from "../middleware/editItemValidator.js";
+import validateDelItem from "../middleware/deleteItemValidator.js";
 import ItemError from "../errors/ItemError.js";
 import asyncWrapper from "../middleware/asyncWrapper.js";
 
@@ -22,6 +23,12 @@ itemsRouter.post(
     "/edit",
     asyncWrapper(validateEditItem),
     asyncWrapper(itemsController.itemsEdit)
+);
+//     delete item
+itemsRouter.post(
+    "/delete",
+    asyncWrapper(validateDelItem),
+    itemsController.itemsDelete
 );
 
 // api
