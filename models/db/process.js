@@ -4,7 +4,7 @@ async function getItems(query = "", brand = "") {
     if (query === "" && brand === "") {
         const items = await prisma.item.findMany({
             select: {
-                item: true,
+                name: true,
                 weight: true,
                 palletQty: true,
                 brand: true,

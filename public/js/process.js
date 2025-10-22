@@ -23,18 +23,6 @@ function debounce(func, delay) {
 
 const debouncedSearch = debounce(fetchItems, 300);
 
-// function filterBrand(brand) {
-//     const filteredItems = allItems.filter((item) => item.brand === brand);
-//     filteredItems.sort((a, b) => {
-//         if (a.item < b.item) {
-//             return -1;
-//         } else {
-//             return 1;
-//         }
-//     });
-//     return filteredItems;
-// }
-
 function updateItemList(items) {
     // delete previous list elements
     const ulParent = document.querySelector(".item-list");
@@ -46,13 +34,13 @@ function updateItemList(items) {
     items.forEach((item) => {
         let newListItem = document.createElement("li");
         newListItem.classList.add("item-list-item");
-        newListItem.dataset.item = item.item;
+        newListItem.dataset.item = item.name;
         newListItem.dataset.weight = item.weight;
         newListItem.dataset.palletqty = item.palletQty;
         addSelectListener(newListItem);
         let newListItemText = document.createElement("p");
         newListItemText.classList.add("item-name");
-        newListItemText.textContent = item.item;
+        newListItemText.textContent = item.name;
         newListItem.appendChild(newListItemText);
         ulParent.appendChild(newListItem);
     });
@@ -68,35 +56,38 @@ function addSelectListener(li) {
 }
 
 // ORDER LIST FUNCTIONS
-function addToOrder(name, item) {
-    if (!orderItems[name]) {
-        orderItems[name] = {
+function addToOrder(item) {
+    if (!orderItems[item.name]) {
+        orderItems[item.name] = {
+            itemName: item.name,
             itemWeight: item.weight * item.qty,
             itemPallet: Number((item.qty / item.palletQty).toFixed(2)),
             itemQty: item.qty,
         };
-        addToOrderList(name, orderItems[name]);
+        addToOrderList(orderItems[item.name]);
     } else {
-        orderItems[name].itemWeight += item.weight * item.qty;
-        orderItems[name].itemQty += item.qty;
-        orderItems[name].itemPallet = Number(
-            (orderItems[name].itemQty / item.palletQty).toFixed(2)
+        orderItems[item.name].itemWeight += item.weight * item.qty;
+        orderItems[item.name].itemQty += item.qty;
+        orderItems[item.name].itemPallet = Number(
+            (orderItems[item.name].itemQty / item.palletQty).toFixed(2)
         );
-        updateOrderList(name, orderItems[name]);
+        updateOrderList(orderItems[item.name]);
     }
 }
 
-function addToOrderList(name, item) {
+function addToOrderList(item) {
+    // console.log(name);
+    console.log(item);
     const tableBody = document.querySelector("tbody");
-    const newRow = createOrderRow(name, item);
+    const newRow = createOrderRow(item);
     tableBody.appendChild(newRow);
     return;
 }
 
-function createOrderRow(name, item) {
+function createOrderRow(item) {
     // create row
     const newRow = document.createElement("tr");
-    newRow.id = `row-item-${name}`;
+    newRow.id = `row-item-${item.itemName}`;
     // create row columns
     // qty
     const qtyCol = document.createElement("td");
@@ -105,7 +96,7 @@ function createOrderRow(name, item) {
     newRow.appendChild(qtyCol);
     // name
     const nameCol = document.createElement("td");
-    nameCol.textContent = name;
+    nameCol.textContent = item.itemName;
     nameCol.classList.add("col-name");
     newRow.appendChild(nameCol);
     // weight
@@ -123,15 +114,15 @@ function createOrderRow(name, item) {
     removeCol.textContent = "x";
     removeCol.classList.add("col-remove");
     removeCol.addEventListener("click", () => {
-        removeFromOrder(name);
+        removeFromOrder(item.itemName);
         newRow.remove();
     });
     newRow.appendChild(removeCol);
     return newRow;
 }
 
-function updateOrderList(name, item) {
-    const curItemRow = document.querySelector(`#row-item-${name}`);
+function updateOrderList(item) {
+    const curItemRow = document.querySelector(`#row-item-${item.itemName}`);
     const curItemRowCols = curItemRow.querySelectorAll("td");
     curItemRowCols.forEach((td) => {
         if (td.className === "col-qty") {
@@ -222,8 +213,8 @@ document.querySelector(".add-btn").addEventListener("click", () => {
         palletQty: Number(itemElement.dataset.palletqty),
         qty: qty,
     };
-
-    addToOrder(item.name, item);
+    // console.log(item);
+    addToOrder(item);
 });
 
 // <button class="clear-btn"> event listener - clears/resets the order window
