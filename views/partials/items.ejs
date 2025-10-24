@@ -30,32 +30,32 @@
             <table class="items-table">
                 <thead>
                     <tr scope="col">
-                        <th data-sort="item" data-direction="asc" class="col-item-head">Item<span class="th-sort-direction"></span></th>
+                        <th data-sort="name" data-direction="asc" class="col-item-head">Item<span class="th-sort-direction"></span></th>
                         <th data-sort="number" data-direction="asc" class="col-num-head">Item #<span class="th-sort-direction"></span></th>
                         <th data-sort="locations" data-direction="asc" class="col-loc-head">Location<span class="th-sort-direction"></span></th>
                         <th data-sort="brand" data-direction="asc" class="col-brand-head">Brand<span class="th-sort-direction"></span></th>
                         <th data-sort="type" data-direction="asc" class="col-type-head">Type<span class="th-sort-direction"></span></th>
                         <th data-sort="weight" data-direction="asc" class="col-weight-head">Weight<span class="th-sort-direction"></span></th>
                         <th data-sort="palletQty" data-direction="asc" class="col-pallet-head">Pallet<span class="th-sort-direction"></span></th>
-                        <th data-sort="onHand" data-direction="asc" class="col-onhand-head">Stock<span class="th-sort-direction"></span></th>
+                        <th data-sort="stock" data-direction="asc" class="col-onhand-head">Stock<span class="th-sort-direction"></span></th>
                     </tr>
                 </thead>
                 <tbody>
                     
                     <% for( let i = 0; i < items.length; i++ ) { %>
                         <tr class="item-parent <%= (i + 1) % 2 === 0 ? 'even' : 'odd' %>" data-itemid="<%= items[i].id %>">
-                            <td class="col-item"><%= items[i].item %></td>
+                            <td class="col-item"><%= items[i].name %></td>
                             <td class="col-num"><%= items[i].number %></td>
-                            <td class="col-loc"><%= items[i].locations[0]?.location?.location || "-" %></td>
+                            <td class="col-loc"><%= items[i].locations[0]?.location?.name || "-" %></td>
                             <td class="col-brand"><%= items[i].brand %></td>
                             <td class="col-type"><%= items[i].type %></td>
                             <td class="col-weight"><%= items[i].weight %>lbs</td>
                             <td class="col-pallet">x<%= items[i].palletQty %></td>
-                            <td class="col-onhand"><%= items[i].onHand %></td>
+                            <td class="col-onhand"><%= items[i].stock %></td>
                         </tr>
                         <tr class="item-child">
                             <td colspan="8"><div class="item-child-content">All Locations -<% items[i].locations.forEach(loc => { %>
-                             <%= ` ${loc.location.location}` %>
+                             <%= ` ${loc.location.name}` %>
                             <% }) %></div></td>
                         </tr>
                     <% } %>
@@ -129,9 +129,9 @@
         </dialog>
     </div>
     <div class="items-menu-container">
-        <button class="btn-add-item">Add Item</button>
-        <button class="btn-edit-item">Edit Item</button>
-        <button class="btn-del-item">Delete Item</button>
+        <button class="btn-item-add">Add Item</button>
+        <button class="btn-item-edit">Edit Item</button>
+        <button class="btn-item-del">Delete Item</button>
         <button class="btn-item-history">Item History</button>
         <button class="btn-receiving">Receiving</button>
     </div>

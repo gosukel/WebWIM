@@ -7,7 +7,7 @@ async function locationQuery(filters = [], sort = "", direction = "") {
                   AND: filters.map((term) => ({
                       OR: [
                           {
-                              location: {
+                              name: {
                                   contains: term,
                                   mode: "insensitive",
                               },
@@ -31,7 +31,7 @@ async function locationQuery(filters = [], sort = "", direction = "") {
                                       item: {
                                           OR: [
                                               {
-                                                  item: {
+                                                  name: {
                                                       contains: term,
                                                       mode: "insensitive",
                                                   },
@@ -61,7 +61,7 @@ async function locationQuery(filters = [], sort = "", direction = "") {
     const orderBy =
         sort != "" && sort != "items" && direction != ""
             ? { [sort]: direction }
-            : { id: "asc" };
+            : { warehouseIndex: "asc" };
 
     const locations = await prisma.location.findMany({
         where,
@@ -80,8 +80,8 @@ async function locationQuery(filters = [], sort = "", direction = "") {
         let sortedLocations;
         const dir = direction === "asc" ? 1 : -1;
         sortedLocations = locations.toSorted((a, b) => {
-            const itemA = a.items[0]?.item?.item ?? "zzz";
-            const itemB = b.items[0]?.item?.item ?? "zzz";
+            const itemA = a.items[0]?.item?.name ?? "zzz";
+            const itemB = b.items[0]?.item?.name ?? "zzz";
             return dir * itemA.localeCompare(itemB);
         });
         return sortedLocations;
@@ -105,12 +105,12 @@ async function locationQueryExact(q) {
     const location = await prisma.location.findFirst({
         select: {
             id: true,
-            location: true,
+            name: true,
         },
         where: {
             OR: [
                 {
-                    location: q,
+                    name: q,
                 },
 
                 {

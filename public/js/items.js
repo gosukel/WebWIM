@@ -36,6 +36,21 @@ function debounce(func, delay) {
 }
 const debouncedFetch = debounce(fetchItems, 300);
 
+function updateItemsTable(items) {
+    const parentTbody = document.querySelector("tbody");
+
+    // clear table
+    while (parentTbody.firstChild) {
+        parentTbody.removeChild(parentTbody.firstChild);
+    }
+
+    // create new row for each item
+    for (let i = 0; i < items.length; i++) {
+        let newRowSet = createTableRowSet(items[i], i);
+        parentTbody.append(newRowSet[0], newRowSet[1]);
+    }
+}
+
 function createTableRowSet(item, idx) {
     // tr item-parent odd/even
     // data-itemid="<%= items[i].id %>
@@ -50,7 +65,7 @@ function createTableRowSet(item, idx) {
     // td col-item
     let colItem = document.createElement("td");
     colItem.classList.add("col-item");
-    colItem.textContent = item.item;
+    colItem.textContent = item.name;
     parentRow.appendChild(colItem);
     // td col-num
     let colNum = document.createElement("td");
@@ -60,7 +75,7 @@ function createTableRowSet(item, idx) {
     // td col-loc
     let colLoc = document.createElement("td");
     colLoc.classList.add("col-loc");
-    colLoc.textContent = item.locations[0]?.location?.location || "-";
+    colLoc.textContent = item.locations[0]?.location?.name || "-";
     parentRow.appendChild(colLoc);
     // td col-brand
     let colBrand = document.createElement("td");
@@ -100,26 +115,11 @@ function createTableRowSet(item, idx) {
     childDiv.classList.add("item-child-content");
     let locationString = "All Locations - ";
     item.locations.forEach((loc) => {
-        locationString += ` ${loc.location.location}`;
+        locationString += ` ${loc.location.name}`;
     });
     childDiv.textContent = locationString;
     locTd.appendChild(childDiv);
     return [parentRow, childRow];
-}
-
-function updateItemsTable(items) {
-    const parentTbody = document.querySelector("tbody");
-
-    // clear table
-    while (parentTbody.firstChild) {
-        parentTbody.removeChild(parentTbody.firstChild);
-    }
-
-    // create new row for each item
-    for (let i = 0; i < items.length; i++) {
-        let newRowSet = createTableRowSet(items[i], i);
-        parentTbody.append(newRowSet[0], newRowSet[1]);
-    }
 }
 
 function resetHeaders(el = "") {
@@ -151,7 +151,7 @@ function getItemDetails(parent, child) {
 
     let curItem = {
         itemId: parent.dataset.itemid,
-        item: parent.querySelector(".col-item").textContent,
+        name: parent.querySelector(".col-item").textContent,
         number: parent.querySelector(".col-num").textContent,
         brand: parent.querySelector(".col-brand").textContent,
         type: parent.querySelector(".col-type").textContent,
@@ -171,7 +171,7 @@ function prepEditForm(item) {
     // set placeholder values
     document.querySelector("#item-id").value = item.itemId;
     document.querySelector("#item-id").classList.add("show");
-    document.querySelector("#item-name").value = item.item;
+    document.querySelector("#item-name").value = item.name;
     document.querySelector("#item-number").value = item.number;
     document.querySelector("#item-brand").value = item.brand;
     document.querySelector("#item-type").value = item.type;
@@ -207,6 +207,7 @@ async function addItem(e) {
     let form = modal.querySelector(".item-form");
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+
     let noticeContainer = document.querySelector(".notice-container");
     let noticeText = noticeContainer.querySelector(".notice-text");
     // try to submit form data
@@ -220,7 +221,6 @@ async function addItem(e) {
         // check for error
         if (!res.ok) {
             // error has occurred
-
             noticeContainer.classList.remove("success");
             noticeContainer.classList.add("error");
             noticeContainer.classList.add("show");
@@ -232,6 +232,8 @@ async function addItem(e) {
             noticeContainer.classList.add("show");
             noticeText.textContent = "Item Added Successfully!";
         }
+        document.querySelector("#items-search").value = data["item-name"];
+        fetchItems(`${data["item-name"]}`);
         closeModal();
     } catch (err) {
         noticeContainer.classList.remove("success");
@@ -242,28 +244,49 @@ async function addItem(e) {
     return;
 }
 
+function getChanges(curItem, data) {
+    let changes = false;
+    // name
+    if (curItem.name != data["item-name"].toUpperCase()) {
+        changes = true;
+    }
+    // number
+    if (curItem.number != data["item-number"]) {
+        changes = true;
+    }
+    // brand
+    if (curItem.brand != data["item-brand"]) {
+        changes = true;
+    }
+    // type
+    if (curItem.type != data["item-type"]) {
+        changes = true;
+    }
+    // weight
+    if (curItem.weight != Number(data["item-weight"])) {
+        changes = true;
+    }
+    // palletQty
+    if (curItem.pallet != Number(data["item-pallet"])) {
+        changes = true;
+    }
+    // locations
+    if (data["item-location"].trim() != curItem.locations.trim()) {
+        changes = true;
+    }
+    return changes;
+}
+
 // EDIT ITEM FUNCTION
 async function editItem(curItem) {
     // get data from form
-
     let form = modal.querySelector(".item-form");
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
     // check for no change
-    let noChange = true;
-    if (
-        data["item-brand"] != curItem.brand ||
-        data["item-location"] != curItem.locations ||
-        data["item-name"] != curItem.item ||
-        data["item-number"] != curItem.number ||
-        data["item-type"] != curItem.type ||
-        Number(data["item-pallet"]) != curItem.pallet ||
-        Number(data["item-weight"]) != curItem.weight
-    ) {
-        noChange = false;
-    }
-    if (noChange) {
+    let changes = getChanges(curItem, data);
+    if (!changes) {
         console.log("no change");
         return;
     }
@@ -279,7 +302,6 @@ async function editItem(curItem) {
             body: JSON.stringify(data),
         });
         const result = await res.json();
-
         if (!res.ok) {
             // error has occurred
             noticeContainer.classList.remove("success");
@@ -293,7 +315,8 @@ async function editItem(curItem) {
             noticeContainer.classList.add("show");
             noticeText.textContent = "Edit Successful!";
         }
-        fetchItems("");
+        document.querySelector("#items-search").value = data["item-name"];
+        fetchItems(`${data["item-name"]}`);
         closeModal();
     } catch (err) {
         noticeContainer.classList.remove("success");
@@ -312,7 +335,7 @@ function createAddHandler() {
 }
 
 // OPEN MODAL TO ADD ITEM
-document.querySelector(".btn-add-item").addEventListener("click", () => {
+document.querySelector(".btn-item-add").addEventListener("click", () => {
     // activate overlay
     document.querySelector(".overlay").classList.remove("hidden");
 
@@ -339,7 +362,7 @@ function createEditHandler(item) {
     };
 }
 // OPEN MODAL TO EDIT ITEM
-document.querySelector(".btn-edit-item").addEventListener("click", () => {
+document.querySelector(".btn-item-edit").addEventListener("click", () => {
     // check for selected item
     let selectedItem = document.querySelector(".selected");
     if (!selectedItem) return;
@@ -400,23 +423,23 @@ function closeModal() {
 //         DEL MODAL
 
 // delete modal handler
-function createDelHandler(e) {
+function createDelHandler(id, name) {
     return async function () {
-        await deleteItem(e);
+        await deleteItem(id, name);
     };
 }
 // actual delete function
 // FIX THIS FUNCTION
-async function deleteItem(id) {
+async function deleteItem(id, name) {
     if (!id) return;
-    const itemId = { id };
+    const item = { id, name };
     let noticeContainer = document.querySelector(".notice-container");
     let noticeText = noticeContainer.querySelector(".notice-text");
     try {
         const res = await fetch("/items/delete", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(itemId),
+            body: JSON.stringify(item),
         });
         const result = await res.json();
         // check for error
@@ -445,7 +468,7 @@ async function deleteItem(id) {
     return;
 }
 // open del modal
-document.querySelector(".btn-del-item").addEventListener("click", () => {
+document.querySelector(".btn-item-del").addEventListener("click", () => {
     // check for selected item
     let selectedItem = document.querySelector(".selected");
     if (!selectedItem) return;
@@ -461,7 +484,7 @@ document.querySelector(".btn-del-item").addEventListener("click", () => {
     let delBtn = document.querySelector(".del-modal-submit-btn");
 
     // create handler function
-    const handler = createDelHandler(itemId);
+    const handler = createDelHandler(itemId, itemName);
     delBtn._handler = handler;
 
     // add handler function to btn

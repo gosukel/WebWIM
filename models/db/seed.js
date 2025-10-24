@@ -2,42 +2,66 @@ import prisma from "./client.js";
 import items from "../items.json" with { type: "json" };
 import locations from "../locations.json" with { type: "json" };
 
-// let firstItem = items[0];
-// console.log(firstItem.location);
-
 async function main() {
     // locations
     console.log("starting seed process...");
     console.log("seeding locations...");
+    const log_id = crypto.randomUUID();
     for (let i = 0; i < locations.length; i++) {
-        let locationResults = await prisma.location.create({
-            data: {
-                location: locations[i].location,
-                zone: locations[i].loc_zone,
-                utn: String(locations[i].loc_utn),
-            },
+        await prisma.$transaction(async (tx) => {
+            let locationResult = await tx.location.create({
+                data: {
+                    name: locations[i].location,
+                    utn: String(locations[i].loc_utn),
+                    zone: locations[i].loc_zone,
+                    warehouseIndex: i,
+                },
+            });
+            let locNote = await tx.note.create({
+                data: {
+                    entityType: "location",
+                    entityId: locationResult.id,
+                    logId: log_id,
+                    userId: 1,
+                    message: `SEED - Location Created - ${locationResult.name}`,
+                },
+            });
         });
     }
     console.log("locations seeding complete.");
+
     // items
     const joinItems = [];
     console.log("seeding items...");
     for (let j = 0; j < items.length; j++) {
-        let itemResults = await prisma.item.create({
-            data: {
-                item: items[j].item,
-                number: String(items[j].item_num),
-                type: items[j].item_type,
-                brand: items[j].item_brand,
-                weight: items[j].weight,
-                onHand: items[j].onhand,
-                palletQty: items[j].pallet_qty,
-            },
+        await prisma.$transaction(async (tx) => {
+            let itemResult = await tx.item.create({
+                data: {
+                    name: items[j].item,
+                    number: String(items[j].item_num),
+                    type: items[j].item_type,
+                    brand: items[j].item_brand,
+                    weight: items[j].weight,
+                    stock: items[j].onhand,
+                    palletQty: items[j].pallet_qty,
+                },
+            });
+            let itemNote = await tx.note.create({
+                data: {
+                    entityType: "item",
+                    entityId: itemResult.id,
+                    logId: log_id,
+                    userId: 1,
+                    message: `SEED - Item Created - ${itemResult.name}`,
+                },
+            });
         });
         if (items[j].location != "") {
             joinItems.push(items[j]);
         }
     }
+
+    // item-location-joining
     console.log("items seeding complete.");
     console.log("seeding join table...");
     for (let k = 0; k < joinItems.length; k++) {
@@ -45,10 +69,11 @@ async function main() {
 
         let itemId = await prisma.item.findUnique({
             where: {
-                item: joinItems[k].item,
+                name: joinItems[k].item,
             },
             select: {
                 id: true,
+                name: true,
             },
         });
 
@@ -62,26 +87,35 @@ async function main() {
         for (let l = 0; l < joinLocations.length; l++) {
             let locId = await prisma.location.findUnique({
                 where: {
-                    location: joinLocations[l],
+                    name: joinLocations[l],
                 },
                 select: {
                     id: true,
+                    name: true,
                 },
             });
-
-            let result = await prisma.itemLocation.create({
-                data: {
-                    itemId: itemId.id,
-                    locationId: locId.id,
-                },
+            await prisma.$transaction(async (tx) => {
+                let result = await tx.itemLocation.create({
+                    data: {
+                        itemId: itemId.id,
+                        locationId: locId.id,
+                    },
+                });
+                let joinNote = await tx.note.create({
+                    data: {
+                        entityType: "location",
+                        entityId: locId.id,
+                        logId: log_id,
+                        userId: 1,
+                        message: `SEED - Item ${itemId.name} added to ${locId.name}`,
+                    },
+                });
             });
         }
     }
     console.log("join table seeding complete");
     console.log("database successfully seeded!");
 }
-
-// main();
 
 async function convertBrands() {
     // convert 3VIR to VIR
@@ -96,3 +130,19 @@ async function convertBrands() {
     console.log(updateItems);
 }
 // convertBrands();
+
+async function addAdminUser() {
+    const newUser = await prisma.user.create({
+        data: {
+            username: "admin",
+            password: "password",
+            email: "admin@test.com",
+            fullName: "Admin",
+            nickname: "ADM",
+            role: "ADMIN",
+        },
+    });
+}
+await addAdminUser();
+
+await main();

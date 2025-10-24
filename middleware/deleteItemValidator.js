@@ -10,16 +10,29 @@ async function checkItemId(value) {
         throw new ItemError("Invalid Item ID");
     }
 
-    const itemIDExists = await itemQueries.itemQueryExactID(idNum);
-    if (!itemIDExists) {
-        throw new ItemError("Item number already exists");
-    }
     return idNum;
+}
+
+async function checkItemName(value) {
+    if (value === "") {
+        throw new ItemError("Item name required");
+    }
+    const itemName = value.toUpperCase();
+
+    const doesExist = await itemQueries.itemQueryExactName(itemName);
+
+    if (!doesExist) {
+        console.log("duplicate name");
+        throw new ItemError("Item name does not exist");
+    }
+    return itemName;
 }
 
 async function validateDelItem(req, res, next) {
     const delId = await checkItemId(req.body["id"]);
+    const delName = await checkItemName(req.body["name"]);
     req.body.delId = delId;
+    req.body.delName = delName;
     next();
 }
 

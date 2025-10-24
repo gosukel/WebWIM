@@ -91,18 +91,24 @@ async function checkItemLocations(value) {
         return locations;
     }
     let locationList = locations.split(" ");
+    let locIds = [];
     let locationsWithIds = [];
-    // console.log(locationList);
     for (const loc of locationList) {
         if (!loc) {
             continue;
         }
-        let locId = await locationQueries.locationQueryExact(loc.toUpperCase());
-        // console.log(locId);
-        if (!locId) {
+        let locInfo = await locationQueries.locationQueryExact(
+            loc.toUpperCase()
+        );
+
+        if (!locInfo) {
             throw new ItemError(`Location '${loc}' does not exist`);
         }
-        locationsWithIds.push(locId);
+        // check for duplicate locations being added
+        if (!locIds.includes(locInfo.id)) {
+            locationsWithIds.push(locInfo);
+            locIds.push(locInfo.id);
+        }
     }
     return locationsWithIds;
 }
@@ -119,11 +125,10 @@ async function checkItemLocations(value) {
 // };
 
 async function validateEditItem(req, res, next) {
-    // console.log(req.body);
     let itemId = Number(req.body["item-id"]);
     const editItem = {
         id: itemId,
-        item: await checkItemName(req.body["item-name"], itemId),
+        name: await checkItemName(req.body["item-name"], itemId),
         number: await checkItemNumber(req.body["item-number"], itemId),
         brand: await checkItemBrand(req.body["item-brand"]),
         type: await checkItemType(req.body["item-type"]),
@@ -131,7 +136,6 @@ async function validateEditItem(req, res, next) {
         palletQty: await checkItemPallet(req.body["item-pallet"]),
         locations: await checkItemLocations(req.body["item-location"]),
     };
-    // console.log(newItem);
     req.editItem = editItem;
     next();
 }

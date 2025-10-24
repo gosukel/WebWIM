@@ -30,7 +30,7 @@ async function itemQuery(filters = [], sort = "", direction = "") {
                   AND: filters.map((term) => ({
                       OR: [
                           {
-                              item: {
+                              name: {
                                   contains: term,
                                   mode: "insensitive",
                               },
@@ -57,7 +57,7 @@ async function itemQuery(filters = [], sort = "", direction = "") {
                               locations: {
                                   some: {
                                       location: {
-                                          location: {
+                                          name: {
                                               contains: term,
                                               mode: "insensitive",
                                           },
@@ -69,15 +69,15 @@ async function itemQuery(filters = [], sort = "", direction = "") {
                   })),
               }
             : {};
-    // build sorter obj
 
+    // build sorter obj
     const orderBy =
         sort != "" && sort != "locations" && direction != ""
             ? {
                   [sort]: direction,
               }
             : {
-                  item: "asc",
+                  name: "asc",
               };
 
     const items = await prisma.item.findMany({
@@ -98,13 +98,12 @@ async function itemQuery(filters = [], sort = "", direction = "") {
         let sortedItems;
         const dir = direction === "asc" ? 1 : -1;
         sortedItems = items.toSorted((a, b) => {
-            const locA = a.locations[0]?.location?.id ?? 10000;
-            const locB = b.locations[0]?.location?.id ?? 10000;
+            const locA = a.locations[0]?.location?.warehouseIndex ?? 10000;
+            const locB = b.locations[0]?.location?.warehouseIndex ?? 10000;
             return dir * (locA - locB);
         });
         return sortedItems;
     }
-
     return items;
 }
 
@@ -112,12 +111,12 @@ async function itemQueryExactName(item, id = null) {
     let where;
     if (id) {
         where = {
-            item: item,
+            name: item,
             id: { not: id },
         };
     } else {
         where = {
-            item: item,
+            name: item,
         };
     }
     const existingItem = await prisma.item.findFirst({
@@ -172,26 +171,107 @@ async function itemQueryExactID(id) {
     return result;
 }
 
+async function itemQueryExact({ type, value, id = null }) {
+    let where;
+    if (id && (type === "name" || type === "number")) {
+        where = {
+            [type]: value,
+            id: { not: id },
+        };
+    } else {
+        where = {
+            [type]: value,
+        };
+    }
+    const exactMatch = await await prisma.item.findFirst({
+        where,
+    });
+    return exactMatch;
+}
+
 async function addItem(item) {
-    const newItem = await prisma.item.create({
-        data: {
-            item: item.name,
-            number: item.number,
-            type: item.type,
-            brand: item.brand,
-            weight: item.weight,
-            palletQty: item.pallet,
-            locations: {
-                create: item.locations.map((loc) => ({
-                    location: { connect: { id: loc.id } },
-                })),
+    console.dir(item);
+    let newItem = await prisma.$transaction(async (tx) => {
+        // add new item to generate id
+        const txNewItem = await tx.item.create({
+            data: {
+                name: item.name,
+                number: item.number,
+                type: item.type,
+                brand: item.brand,
+                weight: item.weight,
+                palletQty: item.pallet,
+                locations: {
+                    create: item.locations.map((loc) => ({
+                        location: { connect: { id: loc.id } },
+                    })),
+                },
             },
-        },
+        });
+        // create notes
+        const itemNotes = [];
+        const log_id = crypto.randomUUID();
+        // create initial note
+        const initialNote = await tx.note.create({
+            data: {
+                entityType: "item",
+                entityId: txNewItem.id,
+                logId: log_id,
+                userId: 1,
+                message: `Item Created - ${item.name}`,
+            },
+        });
+        // create list of notes for item values
+        for (const prop in item) {
+            if (prop === "stock") {
+                continue;
+            }
+            if (prop === "locations") {
+                item[prop].forEach((loc) => {
+                    // note for item
+                    itemNotes.push({
+                        entityType: "item",
+                        entityId: txNewItem.id,
+                        logId: log_id,
+                        userId: 1,
+                        message: `LOCATION added ${loc.name}`,
+                    });
+                    // note for location
+                    itemNotes.push({
+                        entityType: "location",
+                        entityId: loc.id,
+                        logId: log_id,
+                        userId: 1,
+                        message: `ITEM added ${item.name}`,
+                    });
+                });
+                continue;
+            }
+            itemNotes.push({
+                entityType: "item",
+                entityId: txNewItem.id,
+                logId: log_id,
+                userId: 1,
+                message: `Item ${prop.toUpperCase()} - ${item[prop]}`,
+            });
+        }
+        // console.dir(itemNotes);
+        // add list of notes
+        const newNotes = await tx.note.createMany({
+            data: itemNotes,
+        });
+        return txNewItem;
     });
     return newItem;
 }
 
-async function updateItemWithLocations(itemId, update, connect, disconnect) {
+async function updateItemWithLocations(
+    itemId,
+    update,
+    connect,
+    disconnect,
+    changes
+) {
     return await prisma.$transaction(async (tx) => {
         // update any changes on item record
         if (update.status) {
@@ -222,6 +302,13 @@ async function updateItemWithLocations(itemId, update, connect, disconnect) {
                 skipDuplicates: true,
             });
         }
+
+        // add notes
+        if (changes.length > 0) {
+            await tx.note.createMany({
+                data: changes,
+            });
+        }
     });
 }
 
@@ -234,30 +321,38 @@ async function editItem(item) {
         include: {
             locations: {
                 select: {
-                    location: true,
+                    location: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
                 },
             },
         },
     });
-
     // prep obj variables
     let update = {
         status: false,
         data: {},
+        changeList: [],
     };
     let disconnect = {
         status: false,
         ids: [],
+        changeList: [],
     };
     let connect = {
         status: false,
         ids: [],
+        changeList: [],
     };
 
+    const log_id = crypto.randomUUID();
     // check for values that changed, assign to data obj
     for (const prop in curItem) {
         // ignored values
-        if (prop === "onHand" || prop === "itemHistory") {
+        if (prop === "stock") {
             continue;
         }
 
@@ -267,49 +362,148 @@ async function editItem(item) {
             if (item[prop].length === 0 && curItem[prop].length === 0) {
                 continue;
             }
+
             // no old location, new location - CONNECT ALL
             if (curItem[prop].length === 0 && item[prop].length > 0) {
-                connect.ids = item[prop].map((loc) => loc.id);
                 connect.status = true;
+                item[prop].forEach((loc) => {
+                    connect.ids.push(loc.id);
+                    update.changeList.push({
+                        entityType: "item",
+                        entityId: item.id,
+                        logId: log_id,
+                        userId: 1,
+                        message: `LOCATION added ${loc.name}`,
+                    });
+                    connect.changeList.push({
+                        message: `ITEM added ${item.name}`,
+                        entityId: loc.id,
+                        entityType: "location",
+                        logId: log_id,
+                        userId: 1,
+                    });
+                });
                 continue;
             }
+
             // no new location, remove old locations - DISCONNECT ALL
             if (item[prop].length === 0 && curItem[prop].length > 0) {
                 disconnect.status = true;
-                disconnect.ids = curItem[prop].map((loc) => loc.location.id);
+                curItem[prop].forEach((loc) => {
+                    disconnect.ids.push(loc.location.id);
+                    update.changeList.push({
+                        entityType: "item",
+                        entityId: item.id,
+                        logId: log_id,
+                        userId: 1,
+                        message: `LOCATION removed ${loc.location.name}`,
+                    });
+                    disconnect.changeList.push({
+                        message: `ITEM removed ${item.name}`,
+                        entityId: loc.location.id,
+                        entityType: "location",
+                        logId: log_id,
+                        userId: 1,
+                    });
+                });
                 continue;
             }
+
             // check new ids vs old ids
-            let curLocIds = curItem[prop].map((loc) => loc.location.id);
-            let newLocIds = item[prop].map((loc) => loc.id);
-            for (let curId of curLocIds) {
-                if (!newLocIds.includes(curId)) {
+            let curLocObj = {};
+            curItem[prop].forEach((loc) => {
+                curLocObj[loc.location.id] = {
+                    id: loc.location.id,
+                    name: loc.location.name,
+                };
+            });
+            let newLocObj = {};
+            item[prop].forEach((loc) => {
+                newLocObj[loc.id] = {
+                    id: loc.id,
+                    name: loc.name,
+                };
+            });
+            // check for locations being removed (curLocs NOT IN newLocs)
+            for (let curLoc of curItem[prop]) {
+                if (!newLocObj[curLoc.location.id]) {
                     disconnect.status = true;
-                    disconnect.ids.push(curId);
+                    disconnect.ids.push(curLoc.location.id);
+                    update.changeList.push({
+                        entityType: "item",
+                        entityId: item.id,
+                        logId: log_id,
+                        userId: 1,
+                        message: `${prop.toUpperCase()} removed ${curLoc.location.name}`,
+                    });
+                    disconnect.changeList.push({
+                        message: `ITEM removed ${item.name}`,
+                        entityId: curLoc.location.id,
+                        entityType: "location",
+                        logId: log_id,
+                        userId: 1,
+                    });
                 }
             }
-            for (let newId of newLocIds) {
-                if (!curLocIds.includes(newId)) {
+            // check for locations being added (newLocs NOT IN curLocs)
+            for (let newLoc of item[prop]) {
+                if (!curLocObj[newLoc.id]) {
                     connect.status = true;
-                    connect.ids.push(newId);
+                    connect.ids.push(newLoc.id);
+                    update.changeList.push({
+                        entityType: "item",
+                        entityId: item.id,
+                        logId: log_id,
+                        userId: 1,
+                        message: `${prop.toUpperCase()} added ${newLoc.name}`,
+                    });
+                    connect.changeList.push({
+                        message: `ITEM added ${item.name}`,
+                        entityId: newLoc.id,
+                        entityType: "location",
+                        logId: log_id,
+                        userId: 1,
+                    });
                 }
             }
             continue;
         }
+
+        // all other props
         if (curItem[prop] != item[prop]) {
             if (!update.status) {
                 update.status = true;
             }
             update.data[prop] = item[prop];
+            update.changeList.push({
+                entityType: "item",
+                entityId: item.id,
+                logId: log_id,
+                userId: 1,
+                message: `${prop.toUpperCase()} from ${curItem[prop]} to ${item[prop]}`,
+            });
         }
     }
+    // combine all notes to single list
+    let allChanges = [
+        ...update.changeList,
+        ...connect.changeList,
+        ...disconnect.changeList,
+    ];
 
     // run edit query
-    await updateItemWithLocations(item.id, update, connect, disconnect);
+    await updateItemWithLocations(
+        item.id,
+        update,
+        connect,
+        disconnect,
+        allChanges
+    );
     return;
 }
 
-async function deleteItem(id) {
+async function deleteItem(id, name) {
+    const log_id = crypto.randomUUID();
     return await prisma.$transaction(async (tx) => {
         // remove item-location relation
         const deletedRelations = await tx.itemLocation.deleteMany({
@@ -319,6 +513,16 @@ async function deleteItem(id) {
         // delete item itself
         const deletedItem = await tx.item.delete({
             where: { id: id },
+        });
+
+        const delNote = await tx.note.create({
+            data: {
+                entityType: "item",
+                entityId: id,
+                logId: log_id,
+                userId: 1,
+                message: `Item ${name} deleted`,
+            },
         });
     });
 }
@@ -332,6 +536,7 @@ const itemQueries = {
     itemQueryExactBrand,
     itemQueryExactType,
     itemQueryExactID,
+    itemQueryExact,
     addItem,
     editItem,
     deleteItem,

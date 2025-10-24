@@ -183,11 +183,11 @@ td.col-num {
     transition: background-color 0.3s ease-out;
 }
 
-.items-menu-container .btn-del-item {
+.items-menu-container .btn-item-del {
     background-color: rgb(238, 106, 106);
 }
 
-.items-menu-container .btn-del-item:hover {
+.items-menu-container .btn-item-del:hover {
     background-color: rgb(221, 53, 53);
 }
 

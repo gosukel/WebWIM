@@ -6,7 +6,6 @@ async function itemsGet(req, res) {
     const items = await itemQueries.itemQuery();
     const brands = await itemQueries.getAllBrands();
     const types = await itemQueries.getAllTypes();
-    // console.log(items[0].locations);
     return res.render("index", {
         fullName: user,
         main: "items",
@@ -25,7 +24,6 @@ async function itemsQuery(req, res) {
     const filters = search.split(" ").filter(Boolean);
     let items = await itemQueries.itemQuery(filters, sortParam, sortDirection);
     return res.json(items);
-    // return;
 }
 
 async function itemsAdd(req, res) {
@@ -50,16 +48,14 @@ async function itemsEdit(req, res) {
 
 async function itemsDelete(req, res) {
     const delId = req.body.delId;
+    const delName = req.body.delName;
 
     try {
-        await itemQueries.deleteItem(delId);
-        console.log("controller success");
+        await itemQueries.deleteItem(delId, delName);
         return res.status(201).json({ success: "Edit Successful!" });
     } catch {
-        console.log("controller catch");
         return res.status(400).json({ message: "error deleting item" });
     }
-    return;
 }
 
 const itemsController = {
