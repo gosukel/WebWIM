@@ -101,13 +101,22 @@ async function main() {
                         locationId: locId.id,
                     },
                 });
-                let joinNote = await tx.note.create({
+                let locJoinNote = await tx.note.create({
                     data: {
                         entityType: "location",
                         entityId: locId.id,
                         logId: log_id,
                         userId: 1,
-                        message: `SEED - Item ${itemId.name} added to ${locId.name}`,
+                        message: `SEED - ITEM added ${itemId.name}`,
+                    },
+                });
+                let itemJoinNote = await tx.note.create({
+                    data: {
+                        entityType: "item",
+                        entityId: itemId.id,
+                        logId: log_id,
+                        userId: 1,
+                        message: `SEED - LOCATION added ${locId.name}`,
                     },
                 });
             });

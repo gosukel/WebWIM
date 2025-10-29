@@ -706,7 +706,7 @@
         "location": "EQ52",
         "loc_zone": "EQ",
         "loc_utn": 162132,
-        "item": "",
+        "item": "DUC30HP230V1R32AH",
         "alt_item_one": "",
         "alt_item_two": "",
         "item_stock": 0,
@@ -799,11 +799,11 @@
         "loc_utn": 162139,
         "item": "MULTIU24HP230V1DO",
         "alt_item_one": "FXU24HP230V1R32AO",
-        "alt_item_two": "",
+        "alt_item_two": "MUL48HP230V1R32AO",
         "item_stock": 0,
         "alt_item_one_stock": 0,
         "alt_item_two_stock": 0,
-        "loc_history": ""
+        "loc_history": "MUL48HP230V1R32AO"
     },
     {
         "loc_id": 63,
@@ -980,7 +980,7 @@
         "loc_zone": "EQ",
         "loc_utn": 162153,
         "item": "MULTIU18HP230V1DO",
-        "alt_item_one": "",
+        "alt_item_one": "DUC36HP230V1R32AH",
         "alt_item_two": "",
         "item_stock": 0,
         "alt_item_one_stock": 0,
@@ -1033,11 +1033,11 @@
         "loc_utn": 162157,
         "item": "VIRU30HP230V1AHW",
         "alt_item_one": "DUC12HP230V1R32AH",
-        "alt_item_two": "",
+        "alt_item_two": "CAS09HP230V1R32AH",
         "item_stock": 0,
         "alt_item_one_stock": 0,
         "alt_item_two_stock": 0,
-        "loc_history": ""
+        "loc_history": "CAS09HP230V1R32AH"
     },
     {
         "loc_id": 81,
@@ -1266,7 +1266,7 @@
         "loc_zone": "EQ",
         "loc_utn": 162175,
         "item": "LIVV09HP115V1AO",
-        "alt_item_one": "",
+        "alt_item_one": "FXE36HP230V1R32AH",
         "alt_item_two": "",
         "item_stock": 0,
         "alt_item_one_stock": 0,
@@ -1603,7 +1603,7 @@
         "location": "WALL3-2",
         "loc_zone": "WALL",
         "loc_utn": "",
-        "item": "",
+        "item": "GREETD01",
         "alt_item_one": "",
         "alt_item_two": "",
         "item_stock": 0,
