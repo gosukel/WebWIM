@@ -190,7 +190,6 @@ async function itemQueryExact({ type, value, id = null }) {
 }
 
 async function addItem(item) {
-    console.dir(item);
     let newItem = await prisma.$transaction(async (tx) => {
         // add new item to generate id
         const txNewItem = await tx.item.create({
@@ -255,7 +254,6 @@ async function addItem(item) {
                 message: `Item ${prop.toUpperCase()} - ${item[prop]}`,
             });
         }
-        // console.dir(itemNotes);
         // add list of notes
         const newNotes = await tx.note.createMany({
             data: itemNotes,
@@ -376,9 +374,9 @@ async function editItem(item) {
                         message: `LOCATION added ${loc.name}`,
                     });
                     connect.changeList.push({
-                        message: `ITEM added ${item.name}`,
-                        entityId: loc.id,
                         entityType: "location",
+                        entityId: loc.id,
+                        message: `ITEM added ${item.name}`,
                         logId: log_id,
                         userId: 1,
                     });
@@ -399,9 +397,9 @@ async function editItem(item) {
                         message: `LOCATION removed ${loc.location.name}`,
                     });
                     disconnect.changeList.push({
-                        message: `ITEM removed ${item.name}`,
-                        entityId: loc.location.id,
                         entityType: "location",
+                        entityId: loc.location.id,
+                        message: `ITEM removed ${item.name}`,
                         logId: log_id,
                         userId: 1,
                     });
@@ -458,9 +456,9 @@ async function editItem(item) {
                         message: `${prop.toUpperCase()} added ${newLoc.name}`,
                     });
                     connect.changeList.push({
-                        message: `ITEM added ${item.name}`,
-                        entityId: newLoc.id,
                         entityType: "location",
+                        entityId: newLoc.id,
+                        message: `ITEM added ${item.name}`,
                         logId: log_id,
                         userId: 1,
                     });

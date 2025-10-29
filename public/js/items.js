@@ -37,7 +37,7 @@ function debounce(func, delay) {
 const debouncedFetch = debounce(fetchItems, 300);
 
 function updateItemsTable(items) {
-    const parentTbody = document.querySelector("tbody");
+    const parentTbody = document.querySelector(".items-table tbody");
 
     // clear table
     while (parentTbody.firstChild) {
@@ -123,7 +123,7 @@ function createTableRowSet(item, idx) {
 }
 
 function resetHeaders(el = "") {
-    document.querySelectorAll("th").forEach((e) => {
+    document.querySelectorAll(".items-table th").forEach((e) => {
         if (el != e) {
             e.classList.remove("sorted");
             e.dataset.direction = "asc";
@@ -286,10 +286,7 @@ async function editItem(curItem) {
 
     // check for no change
     let changes = getChanges(curItem, data);
-    if (!changes) {
-        console.log("no change");
-        return;
-    }
+    if (!changes) return;
 
     let noticeContainer = document.querySelector(".notice-container");
     let noticeText = noticeContainer.querySelector(".notice-text");
@@ -429,7 +426,6 @@ function createDelHandler(id, name) {
     };
 }
 // actual delete function
-// FIX THIS FUNCTION
 async function deleteItem(id, name) {
     if (!id) return;
     const item = { id, name };
@@ -509,7 +505,140 @@ function closeDelModal() {
     // close del modal
     delModal.close();
 }
-
+// add listener to del modal close button
 document
     .querySelector(".del-modal-close-btn")
     .addEventListener("click", closeDelModal);
+
+//                      ITEM HISTORY MODAL FUNCTIONS
+// get notes for item
+async function fetchNotes(eId, eName, eType = "item", noteType = "changeLog") {
+    const res = await fetch(
+        `/items/notes?eId=${encodeURIComponent(eId)}&eName=${encodeURIComponent(eName)}&eType=${encodeURIComponent(eType)}&noteType=${encodeURIComponent(noteType)}`
+    );
+    const notes = await res.json();
+    return notes;
+}
+// create row for note modal table
+function createHistoryRow(note, idx) {
+    // create row
+    let newRow = document.createElement("tr");
+    let oddEven = (idx + 1) % 2 === 0 ? "even" : "odd";
+    newRow.classList.add(".note-row");
+    newRow.classList.add(oddEven);
+    // td col-date
+    let colDate = document.createElement("td");
+    colDate.classList.add("col-date");
+    colDate.textContent = note.date;
+    newRow.appendChild(colDate);
+    // td col-user
+    let colUser = document.createElement("td");
+    colUser.classList.add("col-user");
+    colUser.textContent = note.user.nickname;
+    newRow.appendChild(colUser);
+    // td col-message
+    let colMessage = document.createElement("td");
+    colMessage.classList.add("col-message");
+    colMessage.textContent = note.message;
+    newRow.appendChild(colMessage);
+    // return row
+    return newRow;
+}
+// clear/reset item history table
+function resetHistoryTable() {
+    const tableBody = document.querySelector(".history-table tbody");
+    while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+    }
+}
+// fill item history table with notes
+function fillHistoryTable(notes) {
+    const tableBody = document.querySelector(".history-table tbody");
+    for (let i = 0; i < notes.length; i++) {
+        let newHistoryRow = createHistoryRow(notes[i], i);
+        tableBody.append(newHistoryRow);
+    }
+}
+
+function createHistoryHandler(item) {
+    return async function (e) {
+        const notes = await fetchNotes(
+            item.itemId,
+            item.itemName,
+            item.eType,
+            item.noteType
+        );
+        resetHistoryTable();
+        fillHistoryTable(notes);
+    };
+}
+
+// open item history modal
+document
+    .querySelector(".btn-item-history")
+    .addEventListener("click", async () => {
+        // check for selected item
+        let selectedItem = document.querySelector(".selected");
+        if (!selectedItem) return;
+        let itemName = selectedItem.querySelector(".col-item").textContent;
+        let itemId = selectedItem.dataset.itemid;
+        let historyModal = document.querySelector("#history-modal");
+        // add overlay
+        document.querySelector(".overlay").classList.remove("hidden");
+        // show item name
+        historyModal.querySelector(".history-modal-title-div").textContent =
+            itemName;
+
+        // show modal
+        const notes = await fetchNotes(itemId, itemName, "item", "changeLog");
+        resetHistoryTable();
+        fillHistoryTable(notes);
+
+        // create objs and handlers for buttons
+        let changeLog = {
+            itemId,
+            itemName,
+            eType: "item",
+            noteType: "changeLog",
+        };
+        let locationLog = {
+            itemId,
+            itemName,
+            eType: "item",
+            noteType: "itemLocations",
+        };
+        const changeLogHandler = createHistoryHandler(changeLog);
+        const locationLogHandler = createHistoryHandler(locationLog);
+        // add handlers to buttons
+        let changeLogBtn = historyModal.querySelector(".item-log-btn");
+        changeLogBtn._handler = changeLogHandler;
+        changeLogBtn.addEventListener("click", changeLogHandler);
+
+        let locationLogBtn = historyModal.querySelector(".location-log-btn");
+        locationLogBtn._handler = locationLogHandler;
+        locationLogBtn.addEventListener("click", locationLogHandler);
+        // open modal
+        historyModal.show();
+    });
+
+document.querySelector(".history-close-btn").addEventListener("click", () => {
+    // remove overlay
+    document.querySelector(".overlay").classList.add("hidden");
+    // get modal elemtn
+    let historyModal = document.querySelector("#history-modal");
+    // reset title and table
+    historyModal.querySelector(".history-modal-title-div").textContent = "";
+    resetHistoryTable();
+    // remove button handlers
+    let changeLogBtn = historyModal.querySelector(".item-log-btn");
+    let locationLogBtn = historyModal.querySelector(".location-log-btn");
+    if (changeLogBtn._handler) {
+        changeLogBtn.removeEventListener("click", changeLogBtn._handler);
+        delete changeLogBtn._handler;
+    }
+    if (locationLogBtn._handler) {
+        locationLogBtn.removeEventListener("click", locationLogBtn._handler);
+        delete locationLogBtn._handler;
+    }
+    historyModal.close();
+});

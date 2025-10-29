@@ -33,7 +33,7 @@ itemsRouter.post(
 
 // api
 itemsRouter.get("/query", itemsController.itemsQuery);
-
+itemsRouter.get("/notes", itemsController.itemNotesQuery);
 itemsRouter.use((err, req, res, next) => {
     if (err instanceof ItemError) {
         return res.status(err.statusCode).json({ error: err.message });

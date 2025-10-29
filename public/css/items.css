@@ -405,10 +405,117 @@ td.col-num {
     background-color: rgb(221, 53, 53);
 }
 
-/* .del-modal-close-btn {
-    padding: 6px 12px;
+/*              HISTORY MODAL               */
+dialog.history-modal {
+    position: absolute;
+    top: 80px;
+    left: 140px;
+    width: 600px;
+    height: 400px;
+    padding: 20px;
+    border: 4px solid #6783fd;
+    z-index: 20;
+}
+
+div.history-modal-div {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.history-modal-title-div {
+    font-size: 1.8rem;
+}
+
+div.history-top-btn-div {
+    margin-top: 10px;
+    width: 280px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.history-top-btn-div button {
+    font-size: 1rem;
+    cursor: pointer;
     border: none;
-    outline: none;
-    
-    border-radius: 5px;
-} */
+    color: #fff;
+    background-color: #6783fd;
+    width: 49%;
+    height: 35px;
+    transition: background-color 0.2s ease-out;
+}
+
+.history-top-btn-div button:hover {
+    background-color: #4563e6;
+}
+
+.history-table-container {
+    width: 100%;
+    height: 200px;
+    margin-top: 15px;
+    border: 2px solid #9797977c;
+    overflow: auto;
+}
+
+table.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table thead th {
+    background-color: #6783fd;
+    color: #fff;
+    padding: 4px 3px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+th.col-hist-date-head {
+    width: 120px;
+}
+
+th.col-hist-user-head {
+    width: 70px;
+    border-left: 1px solid #ffffff83;
+    border-right: 1px solid #ffffff83;
+}
+/*      th .col-hist-message-head */
+
+.history-table tbody {
+    overflow: auto;
+}
+
+.history-table tr.even {
+    background-color: #6782fd2c;
+}
+
+.history-table td {
+    padding: 3px;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.history-table td.col-message {
+    text-align: left;
+    padding-left: 8px;
+}
+
+button.history-close-btn {
+    height: 35px;
+    width: 126px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    background-color: rgb(238, 106, 106);
+    transition: background-color 0.2s ease-out;
+    margin-top: 15px;
+    align-self: start;
+}
+
+button.history-close-btn:hover {
+    background-color: rgb(221, 53, 53);
+}
