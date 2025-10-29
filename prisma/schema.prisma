@@ -8,28 +8,89 @@ datasource db {
 }
 
 model Item {
-  id          Int            @id @default(autoincrement())
-  item        String         @unique
-  number      String         @unique
-  type        String
-  brand       String
-  weight      Int
-  onHand      Int            @default(0) @map("on_hand")
-  palletQty   Int            @map("pallet_qty")
-  locations   ItemLocation[]
-  itemHistory String?        @map("item_history")
+  id         Int             @id @default(autoincrement())
+  name       String          @unique
+  number     String          @unique
+  type       String
+  brand      String
+  weight     Int
+  stock      Int             @default(0)
+  palletQty  Int             @map("pallet_qty")
+  locations  ItemLocation[]
+  orders     ItemOrder[]
+  containers ItemContainer[]
 
   @@map("items")
 }
 
 model Location {
-  id       Int            @id @default(autoincrement())
-  location String         @unique
-  zone     String
-  utn      String?
-  items    ItemLocation[]
+  id             Int            @id @default(autoincrement())
+  name           String         @unique
+  utn            String?
+  zone           String
+  warehouseId    String         @default("024")
+  warehouseIndex Int
+  items          ItemLocation[]
 
   @@map("locations")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  password String
+  email    String  @unique
+  fullName String  @unique @map("full_name")
+  nickname String  @unique
+  branch   String  @default("024")
+  role     Role    @default(USER)
+  orders   Order[]
+  notes    Note[]  @relation("UserNotes")
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Container {
+  id           Int             @id @default(autoincrement())
+  number       String          @unique
+  poNumbers    String[]
+  expectedDate DateTime?
+  receivedDate DateTime        @default(now())
+  items        ItemContainer[]
+
+  @@map("containers")
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  orderNumber String      @unique @map("order_number")
+  pieces      Int
+  weight      Int
+  palletCount Float       @map("pallet_count")
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+  createdAt   DateTime    @default(now())
+  items       ItemOrder[]
+
+  @@map("orders")
+}
+
+model Note {
+  id         Int      @id @default(autoincrement())
+  message    String
+  entityType String // "item", "location", "order", "container", "user"
+  entityId   Int
+  date       DateTime @default(now())
+  logId      String   @map("log_id")
+  userId     Int
+  user       User     @relation("UserNotes", fields: [userId], references: [id])
+
+  @@map("notes")
 }
 
 model ItemLocation {
@@ -43,20 +104,32 @@ model ItemLocation {
   location Location @relation(fields: [locationId], references: [id])
 
   @@unique([itemId, locationId])
+  @@map("items_locations")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  fullName String @unique @map("full_name")
-  email    String @unique
-  username String @unique
-  password String
-  role     Role   @default(USER)
+model ItemContainer {
+  id          Int @id @default(autoincrement())
+  containerId Int
+  itemId      Int
+  quantity    Int @default(1)
 
-  @@map("users")
+  container Container @relation(fields: [containerId], references: [id])
+  item      Item      @relation(fields: [itemId], references: [id])
+
+  @@unique([containerId, itemId])
+  @@map("items_containers")
 }
 
-enum Role {
-  USER
-  ADMIN
+model ItemOrder {
+  id       Int @id @default(autoincrement())
+  itemId   Int @map("item_id")
+  orderId  Int @map("order_id")
+  quantity Int
+
+  // relation fields
+  item  Item  @relation(fields: [itemId], references: [id])
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@unique([itemId, orderId])
+  @@map("items_orders")
 }
