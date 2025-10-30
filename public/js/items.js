@@ -204,7 +204,8 @@ document.querySelectorAll("th").forEach((el) => {
 // ADD ITEM FUNCTION
 async function addItem(e) {
     // get data from form
-    let form = modal.querySelector(".item-form");
+    let form = document.querySelector(".item-form");
+    console.log(form);
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
@@ -280,7 +281,7 @@ function getChanges(curItem, data) {
 // EDIT ITEM FUNCTION
 async function editItem(curItem) {
     // get data from form
-    let form = modal.querySelector(".item-form");
+    let form = document.querySelector(".item-form");
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
