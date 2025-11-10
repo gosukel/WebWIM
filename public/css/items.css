@@ -519,3 +519,9 @@ button.history-close-btn {
 button.history-close-btn:hover {
     background-color: rgb(221, 53, 53);
 }
+
+@media (max-width: 1350px) {
+    .overlay {
+        left: 0;
+    }
+}

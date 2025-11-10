@@ -1,0 +1,24 @@
+    - LOCATIONS -
+IMPLEMENT EDIT LOCATION
+    write db queries for location edit
+        FIX THE INDEX SHIFTING
+
+ITEM EDIT VALIDATOR
+    change item query functions to itemQueryExact - make sure it doesn't break everything
+
+ADD CYCLE COUNT BUTTON TO Locations View
+
+IMPLEMENT CYCLE COUNT FUNCTION
+
+ADD Note TABLE TO DATABASE, AND REFACTOR ADD/EDIT/DELETES TO ADD A NOTE RECORD
+
+IMPLEMENT Item History FUNCTION TO SHOW NOTES FOR AN Item
+
+IMPLEMENT Location History FUNCTION TO SHOW NOTES FOR A Location
+
+ADD SETTINGS MENU UI
+    CREATE USER
+    CHANGE LOG
+    RESET WAREHOUSE
+    BACKUP WAREHOUSE
+

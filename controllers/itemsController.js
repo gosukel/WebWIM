@@ -27,7 +27,7 @@ async function itemsQuery(req, res) {
 }
 
 async function itemsAdd(req, res) {
-    const newItem = req.body.newItem;
+    const newItem = req.newItem;
     try {
         const itemAdded = await itemQueries.addItem(newItem);
         return res.status(201).json({ success: "Item Added Successfully!" });
@@ -47,11 +47,10 @@ async function itemsEdit(req, res) {
 }
 
 async function itemsDelete(req, res) {
-    const delId = req.body.delId;
-    const delName = req.body.delName;
+    const { delId, delName } = req.delItem;
     try {
         await itemQueries.deleteItem(delId, delName);
-        return res.status(201).json({ success: "Edit Successful!" });
+        return res.status(201).json({ success: "Item Deleted Successfully!" });
     } catch {
         return res.status(400).json({ message: "error deleting item" });
     }

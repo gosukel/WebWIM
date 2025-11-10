@@ -1,30 +1,28 @@
-import itemQueries from "../models/db/items.js";
-import locationQueries from "../models/db/locations.js";
-import ItemError from "../errors/ItemError.js";
+import itemQueries from "../../models/db/items.js";
+import ItemError from "../../errors/ItemError.js";
 
 async function checkItemName(value, id) {
     if (value === "") {
-        throw new ItemError("Item name required");
+        throw new ItemError("Item NAME required");
     }
     const itemName = value.toUpperCase();
 
     const doesExist = await itemQueries.itemQueryExactName(itemName, id);
 
     if (doesExist) {
-        console.log("duplicate name");
-        throw new ItemError("Item name already exists");
+        throw new ItemError("Item NAME already exists");
     }
     return itemName;
 }
 
 async function checkItemNumber(value, id) {
     if (value === "") {
-        throw new ItemError("item number required");
+        throw new ItemError("item NUMBER required");
     }
     let itemNumberString = value;
 
     if (!Number(itemNumberString)) {
-        throw new ItemError("Item number not valid number");
+        throw new ItemError("Item NUMBER not valid number");
     }
 
     const itemNumberExists = await itemQueries.itemQueryExactNumber(
@@ -32,42 +30,42 @@ async function checkItemNumber(value, id) {
         id
     );
     if (itemNumberExists) {
-        throw new ItemError("Item number already exists");
+        throw new ItemError("Item NUMBER already exists");
     }
     return itemNumberString;
 }
 
 async function checkItemBrand(value) {
     if (value === "") {
-        throw new ItemError("Item brand required");
+        throw new ItemError("Item BRAND required");
     }
     const itemBrand = value.toUpperCase();
     const itemBrandExists = await itemQueries.itemQueryExactBrand(itemBrand);
     if (!itemBrandExists) {
-        throw new Error("Item brand does not exist");
+        throw new Error("Item BRAND does not exist");
     }
     return itemBrand;
 }
 
 async function checkItemType(value) {
     if (value === "") {
-        throw new ItemError("Item type required");
+        throw new ItemError("Item TYPE required");
     }
     const itemType = value.toUpperCase();
     const itemTypeExists = await itemQueries.itemQueryExactType(itemType);
     if (!itemTypeExists) {
-        throw new ItemError("Item type does not exist");
+        throw new ItemError("Item TYPE does not exist");
     }
     return itemType;
 }
 
 async function checkItemWeight(value) {
     if (value === "") {
-        throw new ItemError("Item weight required");
+        throw new ItemError("Item WEIGHT required");
     }
     let itemWeight = Number(value);
     if (!itemWeight || itemWeight <= 0) {
-        throw new ItemError("Invalid value for item weight");
+        throw new ItemError("Invalid value for Item WEIGHT");
     }
 
     return itemWeight;
@@ -75,11 +73,11 @@ async function checkItemWeight(value) {
 
 async function checkItemPallet(value) {
     if (value === "") {
-        throw new ItemError("Full Pallet Quantity required");
+        throw new ItemError("FULL PALLET Quantity required");
     }
     let itemPallet = Number(value);
     if (!itemPallet || itemPallet <= 0) {
-        throw new ItemError("Invalid value for full pallet quantity");
+        throw new ItemError("Invalid value for FULL PALLET quantity");
     }
 
     return itemPallet;
@@ -97,12 +95,12 @@ async function checkItemLocations(value) {
         if (!loc) {
             continue;
         }
-        let locInfo = await locationQueries.locationQueryExact(
+        let locInfo = await itemQueries.itemLocationQueryExact(
             loc.toUpperCase()
         );
 
         if (!locInfo) {
-            throw new ItemError(`Location '${loc}' does not exist`);
+            throw new ItemError(`LOCATION '${loc}' does not exist`);
         }
         // check for duplicate locations being added
         if (!locIds.includes(locInfo.id)) {
@@ -112,17 +110,6 @@ async function checkItemLocations(value) {
     }
     return locationsWithIds;
 }
-
-// let item = {
-//     itemId: req.body["item-id"],
-//     item: req.body["item-name"],
-//     number: req.body["item-number"],
-//     brand: req.body["item-brand"],
-//     type: req.body["item-type"],
-//     weight: req.body["item-weight"],
-//     pallet: req.body["item-pallet"],
-//     locations: req.body["item-location"],
-// };
 
 async function validateEditItem(req, res, next) {
     let itemId = Number(req.body["item-id"]);

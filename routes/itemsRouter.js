@@ -1,8 +1,6 @@
 import { Router } from "express";
 import itemsController from "../controllers/itemsController.js";
-import validateNewItem from "../middleware/newItemValidator.js";
-import validateEditItem from "../middleware/editItemValidator.js";
-import validateDelItem from "../middleware/deleteItemValidator.js";
+import itemValidator from "../middleware/items/itemValidator.js";
 import ItemError from "../errors/ItemError.js";
 import asyncWrapper from "../middleware/asyncWrapper.js";
 
@@ -15,25 +13,27 @@ itemsRouter.get("/", itemsController.itemsGet);
 //     new item
 itemsRouter.post(
     "/new",
-    asyncWrapper(validateNewItem),
+    asyncWrapper(itemValidator.add),
     asyncWrapper(itemsController.itemsAdd)
 );
 //     edit item
 itemsRouter.post(
     "/edit",
-    asyncWrapper(validateEditItem),
+    asyncWrapper(itemValidator.edit),
     asyncWrapper(itemsController.itemsEdit)
 );
 //     delete item
 itemsRouter.post(
     "/delete",
-    asyncWrapper(validateDelItem),
+    asyncWrapper(itemValidator.delete),
     itemsController.itemsDelete
 );
 
 // api
 itemsRouter.get("/query", itemsController.itemsQuery);
 itemsRouter.get("/notes", itemsController.itemNotesQuery);
+
+// error handler
 itemsRouter.use((err, req, res, next) => {
     if (err instanceof ItemError) {
         return res.status(err.statusCode).json({ error: err.message });

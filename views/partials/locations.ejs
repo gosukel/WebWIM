@@ -30,7 +30,7 @@
                 <thead>
                     <tr scope="col">
                         <th
-                            data-sort="id"
+                            data-sort="warehouseIndex"
                             data-direction="asc"
                             class="col-loc-head"
                         >
@@ -61,15 +61,15 @@
                 </thead>
                 <tbody>
                     <% for( let i = 0; i < locations.length; i++ ) { %>
-                        <tr class="loc-parent <%= (i + 1) % 2 === 0 ? 'even' : 'odd' %>" data-locid="<%= locations[i].id %>">
-                            <td class="col-loc"><%= locations[i].location %></td>
+                        <tr class="loc-parent <%= (i + 1) % 2 === 0 ? 'even' : 'odd' %>" data-locid="<%= locations[i].id %>" data-waridx="<%= locations[i].warehouseIndex %>">
+                            <td class="col-loc"><%= locations[i].name %></td>
                             <td class="col-utn"><%= locations[i].utn %></td>
                             <td class="col-zone"><%= locations[i].zone %></td>
-                            <td class="col-item"><%= locations[i].items[0]?.item?.item || "-" %></td>
+                            <td class="col-item"><%= locations[i].items[0]?.item?.name || "-" %></td>
                         </tr>
                         <tr class="loc-child">
-                            <td colspan="4"><div class="loc-child-content">All Items <% locations[i].items.forEach(item => { %>
-                                <%= `- ${item.item.item}` %>
+                            <td colspan="4"><div class="loc-child-content">All Items<% locations[i].items.forEach(item => { %>
+                                <%= ` - ${item.item.name}` %>
                             <% }) %></div></td>
                         </tr>
                     <% } %>
@@ -80,11 +80,11 @@
             <form action="" method="post" class="loc-form">
                 <div class="form-title-container">
                     <p class="loc-form-header"></p>
-                    <input type="text" name="loc-id" id="loc-id" class="loc-id" readonly value="100">
+                    <input type="text" name="loc-id" id="loc-id" class="loc-id" readonly >
                 </div>
                 <!-- location / zone / utn / items -->
                 <div class="form-input-container">
-                    <label for="loc-name">Location: </label>
+                    <label for="loc-name">Name: </label>
                     <input type="text" name="loc-name" id="loc-name" class="loc-name">
                 </div>
                 <div class="form-input-container">
@@ -104,15 +104,16 @@
                     <label for="loc-prev">Comes After: </label>
                     <select name="loc-prev" id="loc-prev" class="loc-prev">
                         <option value="">-Select a Location-</option>
+                        <option value="-1"></option>
                         <% locations.forEach(location => { %>
-                            <option value="<%= location.id %>"><%= location.location %></option>
+                            <option value="<%= location.warehouseIndex %>"><%= location.name %></option>
                         <% }) %>
 
                     </select>
                 </div>
                 <div class="form-input-container loc-items-container">
                     <label for="loc-items">Items: </label>
-                    <textarea name="loc-items" id="loc-items" class="loc-items" rows="6"></textarea>
+                    <textarea name="loc-items" id="loc-items" class="loc-items" rows="4"></textarea>
                 </div>
                 <div class="form-buttons">
                     <button type="button" class="modal-close-btn">X</button>
@@ -120,10 +121,22 @@
                 </div>
             </form>
         </dialog>
+        <dialog class="del-modal" id="del-modal">
+            <div class="del-loc-form">
+                <p class="del-modal-title">Delete Location</p>
+                <p class="del-modal-location"></p>
+                <p class="del-modal-text">This will permanently remove the selected location from the database.  This action cannot be undone.</p>
+                <div class="del-modal-buttons">
+                    <button class="del-modal-close-btn">Cancel</button>
+                    <button class="del-modal-submit-btn">Delete</button>
+                </div>
+            </div>
+        </dialog>
     </div>
     <div class="loc-menu-container">
         <button class="btn-loc-add">Add Location</button>
         <button class="btn-loc-edit">Edit Location</button>
+        <button class="btn-loc-del">Delete Location</button>
         <button class="btn-loc-history">Location History</button>
     </div>
 </div>

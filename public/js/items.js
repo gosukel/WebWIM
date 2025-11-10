@@ -205,7 +205,6 @@ document.querySelectorAll("th").forEach((el) => {
 async function addItem(e) {
     // get data from form
     let form = document.querySelector(".item-form");
-    console.log(form);
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
@@ -272,9 +271,19 @@ function getChanges(curItem, data) {
         changes = true;
     }
     // locations
-    if (data["item-location"].trim() != curItem.locations.trim()) {
-        changes = true;
-    }
+    let curLocations = curItem.locations.trim().split(" ");
+    let newLocations = data["item-location"].trim().split(" ");
+    newLocations.forEach((newLoc) => {
+        if (!curLocations.includes(newLoc)) {
+            changes = true;
+        }
+    });
+    curLocations.forEach((curLoc) => {
+        if (!newLocations.includes(curLoc)) {
+            changes = true;
+        }
+    });
+
     return changes;
 }
 
@@ -287,6 +296,7 @@ async function editItem(curItem) {
 
     // check for no change
     let changes = getChanges(curItem, data);
+
     if (!changes) return;
 
     let noticeContainer = document.querySelector(".notice-container");

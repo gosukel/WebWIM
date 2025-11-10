@@ -407,6 +407,7 @@ async function editItem(item) {
                 continue;
             }
 
+            // SOME CHANGES NEEDED
             // check new ids vs old ids
             let curLocObj = {};
             curItem[prop].forEach((loc) => {
@@ -432,7 +433,7 @@ async function editItem(item) {
                         entityId: item.id,
                         logId: log_id,
                         userId: 1,
-                        message: `${prop.toUpperCase()} removed ${curLoc.location.name}`,
+                        message: `LOCATION removed ${curLoc.location.name}`,
                     });
                     disconnect.changeList.push({
                         message: `ITEM removed ${item.name}`,
@@ -453,7 +454,7 @@ async function editItem(item) {
                         entityId: item.id,
                         logId: log_id,
                         userId: 1,
-                        message: `${prop.toUpperCase()} added ${newLoc.name}`,
+                        message: `LOCATION added ${newLoc.name}`,
                     });
                     connect.changeList.push({
                         entityType: "location",
@@ -508,7 +509,7 @@ async function deleteItem(id, name) {
             where: { itemId: id },
         });
 
-        // delete item itself
+        // delete item
         const deletedItem = await tx.item.delete({
             where: { id: id },
         });
@@ -519,10 +520,31 @@ async function deleteItem(id, name) {
                 entityId: id,
                 logId: log_id,
                 userId: 1,
-                message: `Item ${name} deleted`,
+                message: `Item Deleted - ${name}`,
             },
         });
     });
+}
+
+async function itemLocationQueryExact(q) {
+    const location = await prisma.location.findFirst({
+        select: {
+            id: true,
+            name: true,
+        },
+        where: {
+            OR: [
+                {
+                    name: q,
+                },
+
+                {
+                    utn: q,
+                },
+            ],
+        },
+    });
+    return location;
 }
 
 const itemQueries = {
@@ -535,6 +557,7 @@ const itemQueries = {
     itemQueryExactType,
     itemQueryExactID,
     itemQueryExact,
+    itemLocationQueryExact,
     addItem,
     editItem,
     deleteItem,

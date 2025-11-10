@@ -1,5 +1,5 @@
-import itemQueries from "../models/db/items.js";
-import ItemError from "../errors/ItemError.js";
+import itemQueries from "../../models/db/items.js";
+import ItemError from "../../errors/ItemError.js";
 
 async function checkItemId(value) {
     if (value === "") {
@@ -22,17 +22,17 @@ async function checkItemName(value) {
     const doesExist = await itemQueries.itemQueryExactName(itemName);
 
     if (!doesExist) {
-        console.log("duplicate name");
-        throw new ItemError("Item name does not exist");
+        throw new ItemError(`Item ${itemName} does not exist`);
     }
     return itemName;
 }
 
 async function validateDelItem(req, res, next) {
-    const delId = await checkItemId(req.body["id"]);
-    const delName = await checkItemName(req.body["name"]);
-    req.body.delId = delId;
-    req.body.delName = delName;
+    const delItem = {
+        delId: await checkItemId(req.body["id"]),
+        delName: await checkItemName(req.body["name"]),
+    };
+    req.delItem = delItem;
     next();
 }
 

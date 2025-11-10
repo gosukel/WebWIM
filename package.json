@@ -5,7 +5,8 @@
     "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "node --watch app.js"
+        "dev": "node --watch app.js",
+        "seed": "node models/db/seed.js"
     },
     "type": "module",
     "repository": {
@@ -19,7 +20,7 @@
     },
     "homepage": "https://github.com/gosukel/WebWIM#readme",
     "dependencies": {
-        "@prisma/client": "^6.16.2",
+        "@prisma/client": "^6.19.0",
         "dotenv": "^17.2.2",
         "ejs": "^3.1.10",
         "express": "^5.1.0",
@@ -29,6 +30,6 @@
         "prettier-plugin-ejs": "^1.0.3"
     },
     "devDependencies": {
-        "prisma": "^6.16.2"
+        "prisma": "^6.19.0"
     }
 }

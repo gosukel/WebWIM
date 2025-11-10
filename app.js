@@ -45,6 +45,3 @@ app.use("/locations", locationsRouter);
 app.listen(process.env.PORT, () => {
     console.log(`Listening on port: ${process.env.PORT}`);
 });
-
-// ADD JS FILE TO PUBLIC FILE, LINK TO IT IN PROCESS.EJS
-// USE IT FOR DOM MANIPULATION TO ADD EVENT LISTENERS, CREATE ELEMENTS, ETC...

@@ -167,11 +167,19 @@ td.col-item {
     cursor: pointer;
     background-color: #6783fd;
     margin-bottom: 20px;
-    transition: background-color 0.1s ease-out;
+    transition: background-color 0.3s ease-out;
 }
 
 .loc-menu-container button:hover {
     background-color: #4563e6;
+}
+
+.loc-menu-container .btn-loc-del {
+    background-color: rgb(238, 106, 106);
+}
+
+.loc-menu-container .btn-loc-del:hover {
+    background-color: rgb(221, 53, 53);
 }
 
 /*                  MODAL                  */
@@ -204,13 +212,14 @@ td.col-item {
 
 .form-title-container p.loc-form-header {
     font-size: 1.5rem;
+    margin-left: 50px;
 }
 
 .form-title-container input {
     width: 20%;
     height: 30px;
     position: absolute;
-    right: 0;
+    left: 25px;
     outline: none;
     border: 1px solid #666666c2;
     text-align: center;
@@ -218,11 +227,16 @@ td.col-item {
 }
 
 .form-input-container {
-    width: 80%;
+    width: 85%;
     margin-bottom: 30px;
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
+}
+
+.form-input-container label {
+    margin-right: 10px;
+    text-align: right;
 }
 
 .form-input-container input {
@@ -250,12 +264,10 @@ td.col-item {
     width: 20%;
 }
 
-.loc-prev-container,
 .loc-items-container {
     display: none;
 }
 
-.loc-prev-container.show,
 .loc-items-container.show {
     display: flex;
 }
@@ -327,4 +339,87 @@ td.col-item {
     left: 250px;
     background: rgba(0, 0, 0, 0.2);
     z-index: 10;
+}
+
+/*              DEL MODAL               */
+.del-modal {
+    position: absolute;
+    top: 50px;
+    left: 250px;
+    height: 320px;
+    width: 400px;
+    padding: 30px;
+    border: none;
+    border-radius: 15px;
+    z-index: 20;
+}
+
+.del-modal .del-loc-form {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.del-modal-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    align-self: start;
+    color: rgb(226, 10, 10);
+}
+
+.del-modal-location {
+    margin-top: 25px;
+    align-self: start;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.del-modal-text {
+    text-align: left;
+    align-self: start;
+    margin-top: 30px;
+    font-size: 1.1rem;
+}
+
+.del-modal-buttons {
+    align-self: end;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: auto;
+}
+
+.del-modal-buttons button {
+    font-size: 1.2rem;
+    border: none;
+    outline: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.del-modal-buttons .del-modal-close-btn {
+    background-color: #6783fd;
+}
+
+.del-modal-close-btn:hover {
+    background-color: #4563e6;
+}
+
+.del-modal-buttons .del-modal-submit-btn {
+    background-color: rgb(238, 106, 106);
+}
+
+.del-modal-submit-btn:hover {
+    background-color: rgb(221, 53, 53);
+}
+
+@media (max-width: 1350px) {
+    .overlay {
+        left: 0;
+    }
 }

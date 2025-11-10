@@ -7,7 +7,6 @@ async function fetchLocations(q, sort = "", direction = "") {
     );
     const locations = await result.json();
     updateLocTable(locations);
-    // console.log(`locations - ${locations}`);
 }
 
 // debounce function creator
@@ -45,6 +44,7 @@ function createTableRowSet(loc, idx) {
     parentRow.classList.add("loc-parent");
     parentRow.classList.add(oddEven);
     parentRow.dataset.locid = loc.id;
+    parentRow.dataset.waridx = loc.warehouseIndex;
     parentRow.addEventListener("click", () => {
         locationParentListener(parentRow);
     });
@@ -52,7 +52,7 @@ function createTableRowSet(loc, idx) {
     // td col-loc
     let colLoc = document.createElement("td");
     colLoc.classList.add("col-loc");
-    colLoc.textContent = loc.location;
+    colLoc.textContent = loc.name;
     parentRow.appendChild(colLoc);
 
     // td col-utn
@@ -70,7 +70,7 @@ function createTableRowSet(loc, idx) {
     // td col-item
     let colItem = document.createElement("td");
     colItem.classList.add("col-item");
-    colItem.textContent = loc.items[0]?.item?.item || "-";
+    colItem.textContent = loc.items[0]?.item?.name || "-";
     parentRow.appendChild(colItem);
 
     //              CHILD ROW <tr>
@@ -84,9 +84,9 @@ function createTableRowSet(loc, idx) {
     // div loc-child-content
     let childDiv = document.createElement("div");
     childDiv.classList.add("loc-child-content");
-    let itemString = "All Items ";
+    let itemString = "All Items";
     loc.items.forEach((item) => {
-        itemString += `- ${item.item.item}`;
+        itemString += ` - ${item.item.name}`;
     });
     childDiv.textContent = itemString;
     itemTd.appendChild(childDiv);
@@ -158,7 +158,55 @@ document.querySelectorAll("th").forEach((e) => {
 });
 
 //                      modal buttons
-// add location
+//                      ADD LOCATION
+async function addLocation(e) {
+    const form = document.querySelector(".loc-form");
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    let noticeContainer = document.querySelector(".notice-container");
+    let noticeText = noticeContainer.querySelector(".notice-text");
+
+    //try to submit form data
+    try {
+        const res = await fetch("/locations/new", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        const result = await res.json();
+        // check for error
+        if (!res.ok) {
+            // error has occurred
+            noticeContainer.classList.remove("success");
+            noticeContainer.classList.add("error");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = result.error || "something went wrong";
+        } else {
+            noticeContainer.classList.remove("error");
+            noticeContainer.classList.add("success");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = "Location Added Successfully!";
+        }
+        document.querySelector("input#loc-search").value = data["loc-name"];
+        fetchLocations(data["loc-name"]);
+        closeModal();
+    } catch (err) {
+        noticeContainer.classList.remove("success");
+        noticeContainer.classList.add("error");
+        noticeContainer.classList.add("show");
+        noticeText.textContent = "Network error, please try again.";
+    }
+    return;
+}
+
+function createAddHandler() {
+    return async function (e) {
+        e.preventDefault();
+        await addLocation(e);
+    };
+}
+// add button event listener
 document.querySelector(".btn-loc-add").addEventListener("click", () => {
     // activate overlay
     document.querySelector(".overlay").classList.remove("hidden");
@@ -170,30 +218,177 @@ document.querySelector(".btn-loc-add").addEventListener("click", () => {
     modal.querySelector("p").textContent = "ADD NEW LOCATION";
     let submitBtn = modal.querySelector(".modal-submit-btn");
 
+    // create handler function for submit btn
+    const handler = createAddHandler();
+    submitBtn._handler = handler;
+
+    // add listener to submit button
+    submitBtn.addEventListener("click", handler);
+
     // show loc-prev-container
     document.querySelector(".loc-prev-container").classList.add("show");
 
     modal.show();
 });
 
-// edit location
+//                       EDIT LOCATION
+// getLocDetails function
+function getLocDetails(parent, child) {
+    let items = child.textContent
+        .replaceAll("\n", "")
+        .replace("All Items", "")
+        .replace("-", " ")
+        .replaceAll(" ", "")
+        .trim()
+        .split("-");
+
+    let curWarIdx = Number(parent.dataset.waridx);
+    let prevIndex = curWarIdx - 1;
+
+    let curLocation = {
+        locId: parent.dataset.locid,
+        name: parent.querySelector(".col-loc").textContent,
+        utn: parent.querySelector(".col-utn").textContent,
+        zone: parent.querySelector(".col-zone").textContent,
+        warehouseIndex: curWarIdx,
+        prevLocation: prevIndex,
+        items: items,
+    };
+    return curLocation;
+}
+
+function prepEditForm(container, loc) {
+    container.querySelector("#loc-id").value = loc.locId;
+    container.querySelector("#loc-id").classList.add("show");
+    container.querySelector("#loc-name").value = loc.name;
+    container.querySelector("#loc-zone").value = loc.zone;
+    container.querySelector("#loc-utn").value = loc.utn;
+    container.querySelector("#loc-prev").value = loc.prevLocation;
+    if (loc.items[0]) {
+        loc.items.forEach((item) => {
+            container.querySelector("#loc-items").value += `${item}\n`;
+        });
+    }
+    return;
+}
+
+function getChanges(curLocation, data) {
+    let changes = false;
+    // name
+    if (curLocation.name != data["loc-name"].toUpperCase()) {
+        changes = true;
+    }
+    // zone
+    if (curLocation.zone != data["loc-zone"].toUpperCase()) {
+        changes = true;
+    }
+    // utn
+    if (curLocation.utn != data["loc-utn"].toUpperCase()) {
+        changes = true;
+    }
+    // prevLocation
+    if (curLocation.prevLocation != data["loc-prev"].toUpperCase()) {
+        changes = true;
+    }
+    // items
+    let newItems = data["loc-items"].replaceAll("\n", " ").trim().split(" ");
+    newItems.forEach((newItem) => {
+        if (newItem && !curLocation.items.includes(newItem)) {
+            changes = true;
+        }
+    });
+    curLocation.items.forEach((curItem) => {
+        if (curItem && !newItems.includes(curItem)) {
+            changes = true;
+        }
+    });
+
+    return changes;
+}
+
+async function editLocation(curLocation) {
+    // get data from form
+    let form = document.querySelector(".loc-form");
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    let changes = getChanges(curLocation, data);
+    if (!changes) return;
+
+    let noticeContainer = document.querySelector(".notice-container");
+    let noticeText = noticeContainer.querySelector(".notice-text");
+
+    // try to submit form data
+    try {
+        const res = await fetch("/locations/edit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        const result = await res.json();
+        if (!res.ok) {
+            // error has occurres
+            noticeContainer.classList.remove("success");
+            noticeContainer.classList.add("error");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = result.error || "something went wrong";
+            return;
+        } else {
+            noticeContainer.classList.remove("error");
+            noticeContainer.classList.add("success");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = "Edit Successful!";
+        }
+        fetchLocations(`${data["loc-name"]}`);
+    } catch (err) {
+        noticeContainer.classList.remove("success");
+        noticeContainer.classList.add("error");
+        noticeContainer.classList.add("show");
+        noticeText.textContent = "Network error, please try again.";
+    }
+}
+
+function createEditHandler(location) {
+    return async function (e) {
+        e.preventDefault();
+        await editLocation(location);
+    };
+}
+
+// edit button event listener
 document.querySelector(".btn-loc-edit").addEventListener("click", () => {
+    // check for selected location
+    let selectedLoc = document.querySelector("tr.selected");
+    if (!selectedLoc) return;
+    let childElement =
+        selectedLoc.nextElementSibling.querySelector(".loc-child-content");
+
     // activate overlay
     document.querySelector(".overlay").classList.remove("hidden");
 
     // open modal
     let modal = document.querySelector("dialog");
 
+    // prepare edit form with current values
+    let curLoc = getLocDetails(selectedLoc, childElement);
+    prepEditForm(modal, curLoc);
+
     // prep modal text
     modal.querySelector("p").textContent = "EDIT LOCATION";
     let submitBtn = modal.querySelector(".modal-submit-btn");
 
-    // temp show loc id for styling
+    // show loc id
     document.querySelector("#loc-id").classList.add("show");
 
     // show loc-items-container
     document.querySelector(".loc-items-container").classList.add("show");
 
+    // create handler function for button
+    const handler = createEditHandler(curLoc);
+    submitBtn._handler = handler;
+
+    // add handler function to submit button
+    submitBtn.addEventListener("click", handler);
     modal.show();
 });
 
@@ -220,7 +415,103 @@ function closeModal() {
         });
 
     // remove submit handler here
+    const submitBtn = modal.querySelector(".modal-submit-btn");
+    if (submitBtn._handler) {
+        submitBtn.removeEventListener("click", submitBtn._handler);
+        delete submitBtn._handler;
+    }
 
     // close modal
     modal.close();
 }
+
+//              DEL MODAL
+// delete modal handler
+function createDelHandler(id, name) {
+    return async function () {
+        await deleteLocation(id, name);
+    };
+}
+// delete location function
+async function deleteLocation(id, name) {
+    if (!id) return;
+    const location = { id, name };
+
+    let noticeContainer = document.querySelector(".notice-container");
+    let noticeText = noticeContainer.querySelector(".notice-text");
+    try {
+        const res = await fetch("/locations/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(location),
+        });
+        const result = await res.json();
+        // check for error
+        if (!res.ok) {
+            noticeContainer.classList.remove("success");
+            noticeContainer.classList.add("error");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = result.error || "something went wrong";
+            return;
+        } else {
+            noticeContainer.classList.remove("error");
+            noticeContainer.classList.add("success");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = "Location Deleted Successfully!";
+            fetchLocations("");
+        }
+        closeDelModal();
+    } catch (error) {
+        console.log(error);
+        noticeContainer.classList.remove("success");
+        noticeContainer.classList.add("error");
+        noticeContainer.classList.add("show");
+        noticeText.textContent = "Network error, please try again.";
+    }
+    return;
+}
+// open delete modal
+document.querySelector(".btn-loc-del").addEventListener("click", () => {
+    // check for selected location
+    let selectedLocation = document.querySelector(".selected");
+    if (!selectedLocation) return;
+    let locationName = selectedLocation.querySelector(".col-loc").textContent;
+    let locationId = selectedLocation.dataset.locid;
+
+    // add overlay
+    document.querySelector(".overlay").classList.remove("hidden");
+    document.querySelector(".del-modal-location").textContent = locationName;
+
+    let delModal = document.querySelector(".del-modal");
+    let delBtn = document.querySelector(".del-modal-submit-btn");
+
+    // create handler function
+    const handler = createDelHandler(locationId, locationName);
+    delBtn._handler = handler;
+
+    // add handler function to btn
+    delBtn.addEventListener("click", handler);
+
+    delModal.show();
+});
+// close delete modal function
+function closeDelModal() {
+    // remove overlay
+    document.querySelector(".overlay").classList.add("hidden");
+    // get modal element
+    let delModal = document.querySelector(".del-modal");
+    // reset location name
+    delModal.querySelector(".del-modal-location").textContent = "";
+    // remove delBtn handler
+    const delBtn = delModal.querySelector(".del-modal-submit-btn");
+    if (delBtn._handler) {
+        delBtn.removeEventListener("click", delBtn._handler);
+        delete delBtn._handler;
+    }
+    // close del modal
+    delModal.close();
+}
+// add listener to del modal close button
+document
+    .querySelector(".del-modal-close-btn")
+    .addEventListener("click", closeDelModal);
