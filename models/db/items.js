@@ -107,70 +107,6 @@ async function itemQuery(filters = [], sort = "", direction = "") {
     return items;
 }
 
-async function itemQueryExactName(item, id = null) {
-    let where;
-    if (id) {
-        where = {
-            name: item,
-            id: { not: id },
-        };
-    } else {
-        where = {
-            name: item,
-        };
-    }
-    const existingItem = await prisma.item.findFirst({
-        where,
-    });
-
-    return existingItem;
-}
-
-async function itemQueryExactNumber(num, id = null) {
-    let where;
-    if (id) {
-        where = {
-            number: num,
-            id: { not: id },
-        };
-    } else {
-        where = {
-            number: num,
-        };
-    }
-    const existingItem = await prisma.item.findFirst({
-        where,
-    });
-    return existingItem;
-}
-
-async function itemQueryExactBrand(brand) {
-    const result = await prisma.item.findFirst({
-        where: {
-            brand: brand,
-        },
-    });
-    return result;
-}
-
-async function itemQueryExactType(type) {
-    const result = await prisma.item.findFirst({
-        where: {
-            type: type,
-        },
-    });
-    return result;
-}
-
-async function itemQueryExactID(id) {
-    const result = await prisma.item.findFirst({
-        where: {
-            id: id,
-        },
-    });
-    return result;
-}
-
 async function itemQueryExact({ type, value, id = null }) {
     let where;
     if (id && (type === "name" || type === "number")) {
@@ -551,11 +487,6 @@ const itemQueries = {
     getAllBrands,
     getAllTypes,
     itemQuery,
-    itemQueryExactName,
-    itemQueryExactNumber,
-    itemQueryExactBrand,
-    itemQueryExactType,
-    itemQueryExactID,
     itemQueryExact,
     itemLocationQueryExact,
     addItem,

@@ -7,7 +7,11 @@ async function checkItemName(value, id) {
     }
     const itemName = value.toUpperCase();
 
-    const doesExist = await itemQueries.itemQueryExactName(itemName, id);
+    const doesExist = await itemQueries.itemQueryExact({
+        type: "name",
+        value: itemName,
+        id: id,
+    });
 
     if (doesExist) {
         throw new ItemError("Item NAME already exists");
@@ -25,10 +29,11 @@ async function checkItemNumber(value, id) {
         throw new ItemError("Item NUMBER not valid number");
     }
 
-    const itemNumberExists = await itemQueries.itemQueryExactNumber(
-        itemNumberString,
-        id
-    );
+    const itemNumberExists = await itemQueries.itemQueryExact({
+        type: "number",
+        value: itemNumberString,
+        id: id,
+    });
     if (itemNumberExists) {
         throw new ItemError("Item NUMBER already exists");
     }
@@ -40,7 +45,10 @@ async function checkItemBrand(value) {
         throw new ItemError("Item BRAND required");
     }
     const itemBrand = value.toUpperCase();
-    const itemBrandExists = await itemQueries.itemQueryExactBrand(itemBrand);
+    const itemBrandExists = await itemQueries.itemQueryExact({
+        type: "brand",
+        value: itemBrand,
+    });
     if (!itemBrandExists) {
         throw new Error("Item BRAND does not exist");
     }
@@ -52,7 +60,10 @@ async function checkItemType(value) {
         throw new ItemError("Item TYPE required");
     }
     const itemType = value.toUpperCase();
-    const itemTypeExists = await itemQueries.itemQueryExactType(itemType);
+    const itemTypeExists = await itemQueries.itemQueryExact({
+        type: "type",
+        value: itemType,
+    });
     if (!itemTypeExists) {
         throw new ItemError("Item TYPE does not exist");
     }

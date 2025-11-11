@@ -19,7 +19,10 @@ async function checkItemName(value) {
     }
     const itemName = value.toUpperCase();
 
-    const doesExist = await itemQueries.itemQueryExactName(itemName);
+    const doesExist = await itemQueries.itemQueryExact({
+        type: "name",
+        value: itemName,
+    });
 
     if (!doesExist) {
         throw new ItemError(`Item ${itemName} does not exist`);

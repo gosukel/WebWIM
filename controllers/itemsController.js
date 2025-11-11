@@ -39,7 +39,7 @@ async function itemsAdd(req, res) {
 async function itemsEdit(req, res) {
     const editItem = req.editItem;
     try {
-        await itemQueries.editItem(editItem);
+        // await itemQueries.editItem(editItem);
         return res.status(201).json({ success: "Edit Successful!" });
     } catch {
         return res.status(400).json({ message: "error adding item" });
