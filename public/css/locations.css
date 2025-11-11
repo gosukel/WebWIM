@@ -182,6 +182,11 @@ td.col-item {
     background-color: rgb(221, 53, 53);
 }
 
+.loc-menu-container .btn-loc-cyclecount {
+    margin-bottom: 0;
+    margin-top: auto;
+}
+
 /*                  MODAL                  */
 .modal {
     position: absolute;
