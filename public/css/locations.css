@@ -422,4 +422,29 @@ td.col-item {
     .overlay {
         left: 0;
     }
+
+    .loc-container {
+        flex-direction: column;
+        width: 912px;
+        height: 550px;
+    }
+
+    .loc-table-container {
+        height: 400px;
+    }
+
+    .loc-menu-container {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .loc-menu-container button {
+        width: 17%;
+        margin-bottom: 0;
+    }
+
+    .loc-menu-container .btn-loc-del {
+        order: 10;
+    }
 }

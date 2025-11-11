@@ -524,4 +524,33 @@ button.history-close-btn:hover {
     .overlay {
         left: 0;
     }
+
+    .items-container {
+        flex-direction: column;
+        width: 912px;
+        height: 550px;
+    }
+
+    .items-table-container {
+        height: 400px;
+    }
+
+    .items-menu-container {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .items-menu-container button {
+        width: 17%;
+        margin-bottom: 0;
+    }
+
+    .items-menu-container button.btn-receiving {
+        margin: 0;
+    }
+
+    .items-menu-container .btn-item-del {
+        order: 10;
+    }
 }
