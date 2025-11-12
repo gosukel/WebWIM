@@ -1,4 +1,5 @@
 import locationQueries from "../models/db/locations.js";
+import noteQueries from "../models/db/notes.js";
 
 const user = "Richard Routh";
 
@@ -61,12 +62,29 @@ async function locationsEdit(req, res) {
     }
 }
 
+async function locationNotesQuery(req, res) {
+    const eId = Number(req.query.eId);
+    const { eName, eType, noteType } = req.query;
+    console.log(eId);
+    console.log(eName);
+    console.log(eType);
+    console.log(noteType);
+    try {
+        // return;
+        const notes = await noteQueries.noteQuery(eId, eName, eType, noteType);
+        return res.json(notes);
+    } catch {
+        return res.status(400).json({ message: "error getting notes" });
+    }
+}
+
 const locationsController = {
     locationsGet,
     locationsQuery,
     locationsAdd,
     locationsDelete,
     locationsEdit,
+    locationNotesQuery,
 };
 
 export default locationsController;

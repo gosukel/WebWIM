@@ -32,6 +32,7 @@ locationsRouter.post(
 
 // api
 locationsRouter.get("/query", locationsController.locationsQuery);
+locationsRouter.get("/notes", locationsController.locationNotesQuery);
 
 // error handler
 locationsRouter.use((err, req, res, next) => {

@@ -121,6 +121,7 @@
                 </div>
             </form>
         </dialog>
+        <!--                    DELETE MODAL            -->
         <dialog class="del-modal" id="del-modal">
             <div class="del-loc-form">
                 <p class="del-modal-title">Delete Location</p>
@@ -130,6 +131,31 @@
                     <button class="del-modal-close-btn">Cancel</button>
                     <button class="del-modal-submit-btn">Delete</button>
                 </div>
+            </div>
+        </dialog>
+        <!--                    HISTORY MODAL            -->
+        <dialog class="history-modal" id="history-modal">
+            <div class="history-modal-div">
+                <div class="history-modal-title-div"></div>
+                <div class="history-top-btn-div">
+                    <button class="loc-log-btn">Change Log</button>
+                    <button class="item-log-btn">Items</button>
+                </div>
+                <div class="history-table-container">
+                    <table class="history-table">
+                        <thead>
+                            <!-- date - user - message -->
+                            <tr scope="col">
+                                <th class="col-hist-date-head">Date</th>
+                                <th class="col-hist-user-head">User</th>
+                                <th class="col-hist-message-head">Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="history-close-btn">Close</button>
             </div>
         </dialog>
     </div>

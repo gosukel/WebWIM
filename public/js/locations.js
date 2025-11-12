@@ -340,6 +340,7 @@ async function editLocation(curLocation) {
             noticeText.textContent = "Edit Successful!";
         }
         fetchLocations(`${data["loc-name"]}`);
+        closeModal();
     } catch (err) {
         noticeContainer.classList.remove("success");
         noticeContainer.classList.add("error");
@@ -392,7 +393,7 @@ document.querySelector(".btn-loc-edit").addEventListener("click", () => {
     modal.show();
 });
 
-// temp close modal button
+// close modal button
 document
     .querySelector(".modal-close-btn")
     .addEventListener("click", closeModal);
@@ -515,3 +516,160 @@ function closeDelModal() {
 document
     .querySelector(".del-modal-close-btn")
     .addEventListener("click", closeDelModal);
+
+//                      LOCATION HISTORY MODAL FUNCTIONS
+// get notes for location
+async function fetchNotes(
+    eId,
+    eName,
+    eType = "location",
+    noteType = "locChangeLog"
+) {
+    // return;
+    const res = await fetch(
+        `/locations/notes/?eId=${encodeURIComponent(eId)}&eName=${encodeURIComponent(eName)}&eType=${encodeURIComponent(eType)}&noteType=${encodeURIComponent(noteType)}`
+    );
+    const notes = await res.json();
+    return notes;
+}
+
+// table row generator
+function createHistoryRow(note, idx) {
+    // create row
+    let newRow = document.createElement("tr");
+    let oddEven = (idx + 1) % 2 === 0 ? "even" : "odd";
+    newRow.classList.add(".note-row");
+    newRow.classList.add(oddEven);
+    // td col-date
+    let colDate = document.createElement("td");
+    colDate.classList.add("col-date");
+    colDate.textContent = note.date;
+    newRow.appendChild(colDate);
+    // td col-user
+    let colUser = document.createElement("td");
+    colUser.classList.add("col-user");
+    colUser.textContent = note.user.nickname;
+    newRow.appendChild(colUser);
+    // td col-message
+    let colMessage = document.createElement("td");
+    colMessage.classList.add("col-message");
+    colMessage.textContent = note.message;
+    newRow.appendChild(colMessage);
+    // return row
+    return newRow;
+}
+
+// clear/reset history table
+function resetHistoryTable() {
+    const tableBody = document.querySelector(".history-table tbody");
+    while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+    }
+}
+
+// fill history table with notes
+function fillHistoryTable(notes) {
+    // return;
+    const tableBody = document.querySelector(".history-table tbody");
+    for (let i = 0; i < notes.length; i++) {
+        let newHistoryRow = createHistoryRow(notes[i], i);
+        tableBody.append(newHistoryRow);
+    }
+}
+
+// handler function for history buttons
+function createHistoryHandler(location) {
+    return async function (e) {
+        const notes = await fetchNotes(
+            location.locId,
+            location.locName,
+            location.eType,
+            location.noteType
+        );
+        resetHistoryTable();
+        fillHistoryTable(notes);
+    };
+}
+
+// open history modal
+document
+    .querySelector(".btn-loc-history")
+    .addEventListener("click", async () => {
+        // check for selected location
+        let selectedLocation = document.querySelector(".selected");
+        if (!selectedLocation) return;
+        let locName = selectedLocation.querySelector(".col-loc").textContent;
+        let locId = selectedLocation.dataset.locid;
+        let historyModal = document.querySelector("#history-modal");
+
+        // add overlay
+        document.querySelector(".overlay").classList.remove("hidden");
+
+        // show location name
+        historyModal.querySelector(".history-modal-title-div").textContent =
+            locName;
+
+        // fill history table
+        const notes = await fetchNotes(
+            locId,
+            locName,
+            "location",
+            "locChangeLog"
+        );
+        resetHistoryTable();
+        fillHistoryTable(notes);
+
+        // create objs and handlers for buttons
+        let changeLog = {
+            locId,
+            locName,
+            eType: "location",
+            noteType: "locChangeLog",
+        };
+        let itemLog = {
+            locId,
+            locName,
+            eType: "location",
+            noteType: "locationItems",
+        };
+        const changeLogHandler = createHistoryHandler(changeLog);
+        const itemLogHandler = createHistoryHandler(itemLog);
+
+        // add handlers to buttons
+        let changeLogBtn = historyModal.querySelector(".loc-log-btn");
+        changeLogBtn._handler = changeLogHandler;
+        changeLogBtn.addEventListener("click", changeLogHandler);
+        let itemLogBtn = historyModal.querySelector(".item-log-btn");
+        itemLogBtn._handler = itemLogHandler;
+        itemLogBtn.addEventListener("click", itemLogHandler);
+
+        // open modal
+        historyModal.show();
+    });
+
+// close history modal
+document.querySelector(".history-close-btn").addEventListener("click", () => {
+    // remove overlay
+    document.querySelector(".overlay").classList.add("hidden");
+
+    // get modal element
+    let historyModal = document.querySelector("#history-modal");
+
+    // reset title and table
+    historyModal.querySelector(".history-modal-title-div").textContent = "";
+    resetHistoryTable();
+
+    // remove button handlers
+    let changeLogBtn = historyModal.querySelector(".loc-log-btn");
+    if (changeLogBtn._handler) {
+        changeLogBtn.removeEventListener("click", changeLogBtn._handler);
+        delete changeLogBtn._handler;
+    }
+    let itemLogBtn = historyModal.querySelector(".item-log-btn");
+    if (itemLogBtn._handler) {
+        itemLogBtn.removeEventListener("click", itemLogBtn._handler);
+        delete itemLogBtn._handler;
+    }
+
+    historyModal.close();
+});
