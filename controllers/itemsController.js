@@ -58,16 +58,9 @@ async function itemsDelete(req, res) {
 
 async function itemNotesQuery(req, res) {
     const eId = Number(req.query.eId);
-    const eName = req.query.eName;
-    const eType = req.query.eType;
-    const noteType = req.query.noteType;
+    const { eName, eType, noteType } = req.query;
     try {
-        const notes = await noteQueries.itemNoteQuery(
-            eId,
-            eName,
-            eType,
-            noteType
-        );
+        const notes = await noteQueries.noteQuery(eId, eName, eType, noteType);
         return res.json(notes);
     } catch {
         return res.status(400).json({ message: "error getting notes" });

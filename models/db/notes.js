@@ -1,6 +1,6 @@
 import prisma from "./client.js";
 
-async function itemNoteQuery(eId, eName, eType, noteType = "") {
+async function noteQuery(eId, eName, eType, noteType = "") {
     let where = {};
     let select = {
         date: true,
@@ -45,6 +45,30 @@ async function itemNoteQuery(eId, eName, eType, noteType = "") {
             ],
         };
     }
+    if (noteType === "locChangeLog") {
+        where = {
+            AND: [{ entityType: eType }, { entityId: eId }],
+        };
+    }
+    if (noteType === "locationItems") {
+        where = {
+            OR: [
+                {
+                    AND: [
+                        { entityType: eType },
+                        { entityId: eId },
+                        {
+                            message: {
+                                contains: "item",
+                                mode: "insensitive",
+                            },
+                        },
+                    ],
+                },
+            ],
+        };
+    }
+    console.dir(where);
     let notes = await prisma.note.findMany({
         where,
         select,
@@ -62,7 +86,7 @@ async function itemNoteQuery(eId, eName, eType, noteType = "") {
 }
 
 const noteQueries = {
-    itemNoteQuery,
+    noteQuery,
 };
 
 export default noteQueries;
