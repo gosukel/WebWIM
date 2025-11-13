@@ -1,6 +1,6 @@
 .calc-container {
     border: 2px solid #fff;
-    height: 760px;
+    height: 90%;
     width: 500px;
     display: flex;
     flex-direction: column;
@@ -37,6 +37,11 @@
 .btn-refresh,
 #btn-add-pallet {
     border-right: 2px solid #4563e6;
+}
+
+.btn-refresh svg {
+    height: 26px;
+    width: 26px;
 }
 
 .btn-container button:hover,
