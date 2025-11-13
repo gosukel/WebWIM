@@ -65,10 +65,7 @@ async function locationsEdit(req, res) {
 async function locationNotesQuery(req, res) {
     const eId = Number(req.query.eId);
     const { eName, eType, noteType } = req.query;
-    console.log(eId);
-    console.log(eName);
-    console.log(eType);
-    console.log(noteType);
+
     try {
         // return;
         const notes = await noteQueries.noteQuery(eId, eName, eType, noteType);

@@ -68,7 +68,6 @@ async function noteQuery(eId, eName, eType, noteType = "") {
             ],
         };
     }
-    console.dir(where);
     let notes = await prisma.note.findMany({
         where,
         select,
