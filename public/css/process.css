@@ -154,7 +154,7 @@ input.add-qty {
 }
 
 .order-input-container input {
-    width: 79%;
+    width: 45%;
     outline: none;
     border: 2px solid #9797977c;
     padding: 8px;
@@ -162,6 +162,22 @@ input.add-qty {
     font-size: 1.2rem;
     text-align: left;
     margin-left: 15px;
+}
+
+.order-input-container .log-btn {
+    margin-left: auto;
+    height: 43px;
+    border: none;
+    width: 30%;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.1s ease-out;
+    background-color: #6783fd;
+}
+
+.order-input-container .log-btn:hover {
+    background-color: #4563e6;
 }
 
 .order-details {
@@ -327,4 +343,10 @@ td.col-name {
     left: 250px;
     background: rgba(0, 0, 0, 0.2);
     z-index: 10;
+}
+
+@media (max-width: 1350px) {
+    .overlay {
+        left: 0;
+    }
 }

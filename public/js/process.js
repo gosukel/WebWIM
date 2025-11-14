@@ -77,7 +77,7 @@ function addToOrder(item) {
 
 function addToOrderList(item) {
     // console.log(name);
-    console.log(item);
+    // console.log(item);
     const tableBody = document.querySelector("tbody");
     const newRow = createOrderRow(item);
     tableBody.appendChild(newRow);
@@ -213,7 +213,6 @@ document.querySelector(".add-btn").addEventListener("click", () => {
         palletQty: Number(itemElement.dataset.palletqty),
         qty: qty,
     };
-    // console.log(item);
     addToOrder(item);
 });
 
@@ -251,10 +250,62 @@ document.querySelector(".process-btn").addEventListener("click", () => {
 });
 
 // <button class="modal-save-btn"> event listener - closes modal and (WIP) saves order details
-document.querySelector(".modal-save-btn").addEventListener("click", () => {
-    document.querySelector(".modal").close();
-    document.querySelector(".overlay").classList.add("hidden");
-});
+document
+    .querySelector(".modal-save-btn")
+    .addEventListener("click", async () => {
+        // check for order number
+        let orderNumber = document.querySelector("#order-num").value;
+        let noticeContainer = document.querySelector(".notice-container");
+        let noticeText = noticeContainer.querySelector(".notice-text");
+        let orderDetails = getOrderTotal();
+
+        // if no order number, show error and stop
+        if (!orderNumber) {
+            noticeContainer.classList.remove("success");
+            noticeContainer.classList.add("error");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = "'Order #' required to save order";
+            return;
+        }
+
+        let newOrder = {
+            orderNumber: orderNumber,
+            orderItems: orderItems,
+            orderDetails: orderDetails,
+        };
+
+        try {
+            const res = await fetch("/process/new", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newOrder),
+            });
+            result = await res.json();
+            if (!res.ok) {
+                // error has occurred
+                noticeContainer.classList.remove("success");
+                noticeContainer.classList.add("error");
+                noticeContainer.classList.add("show");
+                noticeText.textContent = result.error || "something went wrong";
+            } else {
+                // request successful
+                noticeContainer.classList.remove("error");
+                noticeContainer.classList.add("success");
+                noticeContainer.classList.add("show");
+                noticeText.textContent =
+                    result.success || "Order Saved Successfully!";
+            }
+        } catch (error) {
+            noticeContainer.classList.remove("success");
+            noticeContainer.classList.add("error");
+            noticeContainer.classList.add("show");
+            noticeText.textContent = "Network Error, please try again";
+            return;
+        }
+
+        document.querySelector(".modal").close();
+        document.querySelector(".overlay").classList.add("hidden");
+    });
 
 // <button class="modal-close-btn"> event listener - closes modal
 document.querySelector(".modal-close-btn").addEventListener("click", () => {

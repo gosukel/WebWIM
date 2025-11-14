@@ -67,7 +67,6 @@ async function locationNotesQuery(req, res) {
     const { eName, eType, noteType } = req.query;
 
     try {
-        // return;
         const notes = await noteQueries.noteQuery(eId, eName, eType, noteType);
         return res.json(notes);
     } catch {

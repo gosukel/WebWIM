@@ -1,5 +1,4 @@
 import locationQueries from "../../models/db/locations.js";
-import itemQueries from "../../models/db/items.js";
 import LocationError from "../../errors/LocationError.js";
 
 function nameZoneCheck(name, zone) {

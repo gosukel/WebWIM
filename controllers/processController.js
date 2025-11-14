@@ -1,4 +1,5 @@
 import itemQueries from "../models/db/items.js";
+import processQueries from "../models/db/process.js";
 const user = "Richard Routh";
 
 async function processGet(req, res) {
@@ -39,8 +40,21 @@ async function itemsQuery(req, res) {
     return;
 }
 
+async function processAdd(req, res) {
+    let orderObject = req.orderObject;
+    try {
+        await processQueries.addOrder(orderObject);
+        return res.status(201).json({
+            success: `Order ${orderObject.orderNumber} Saved Successfully!`,
+        });
+    } catch {
+        return res.status(400).json({ message: "error saving order" });
+    }
+}
+
 const processController = {
     processGet,
+    processAdd,
     itemsQuery,
 };
 
