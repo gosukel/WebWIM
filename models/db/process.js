@@ -14,11 +14,33 @@ async function getItems(query = "", brand = "") {
     }
 }
 
-async function orderQuery(q = "") {
+async function orderQuery(filters = []) {
+    // build filter obj
     const where =
-        q != ""
+        filters.length > 0
             ? {
-                  orderNumber: q,
+                  AND: filters.map((term) => ({
+                      OR: [
+                          {
+                              orderNumber: {
+                                  contains: term,
+                                  mode: "insensitive",
+                              },
+                          },
+                          {
+                              items: {
+                                  some: {
+                                      item: {
+                                          name: {
+                                              contains: term,
+                                              mode: "insensitive",
+                                          },
+                                      },
+                                  },
+                              },
+                          },
+                      ],
+                  })),
               }
             : {};
     const orders = await prisma.order.findMany({
@@ -26,8 +48,56 @@ async function orderQuery(q = "") {
         orderBy: {
             createdAt: "asc",
         },
+        include: {
+            items: {
+                select: {
+                    item: true,
+                    quantity: true,
+                },
+            },
+            user: {
+                select: {
+                    nickname: true,
+                },
+            },
+        },
     });
     return orders;
+}
+
+async function orderQueryExact(order) {
+    const orderMatch = await prisma.order.findFirst({
+        where: {
+            orderNumber: order,
+        },
+        include: {
+            items: {
+                select: {
+                    item: true,
+                    quantity: true,
+                },
+            },
+            user: {
+                select: {
+                    nickname: true,
+                },
+            },
+        },
+    });
+    let formattedOrder;
+    if (orderMatch) {
+        formattedOrder = {
+            ...orderMatch,
+            createdAt: orderMatch.createdAt.toLocaleDateString("en-US", {
+                year: "2-digit",
+                month: "2-digit",
+                day: "2-digit",
+            }),
+        };
+    } else {
+        formattedOrder = orderMatch;
+    }
+    return formattedOrder;
 }
 
 async function addOrder(order) {
@@ -80,6 +150,7 @@ async function addOrder(order) {
 const processQueries = {
     getItems,
     orderQuery,
+    orderQueryExact,
     addOrder,
 };
 

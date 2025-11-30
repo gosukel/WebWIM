@@ -36,14 +36,13 @@
             <button class="add-btn">Add To Order</button>
             <input type="number" class="add-qty" value="1">
         </div>
-
         <dialog class="modal" id="modal">
             <div class="modal-content-wrapper">
                 <h2 class="modal-title"></h2>
                 <div class="modal-details-wrapper">
-                    <p class="modal-pallet">Est. Pallets: 2 &#10088;1.56&#10089;</p>
-                    <p class="modal-piece">Pieces: 15</p>
-                    <p class="modal-weight">Est. Weight: 955lbs</p>
+                    <p class="modal-pallet"></p>
+                    <p class="modal-piece"></p>
+                    <p class="modal-weight"></p>
 
                 </div>
                 <div class="modal-btns">
@@ -80,4 +79,80 @@
             <button class="process-btn">Process</button>
         </div>
     </div>
+    <!--                    ORDER LOG MODAL            -->
+    <dialog class="order-log-modal" id="order-log-modal">
+        <div class="order-log-content-wrapper">
+
+            <div class="order-log-left">
+                <div class="order-search-container">
+                    <input type="text" name="order-search" id="order-search">
+                    <span class="log-search-icon-span"
+                    ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="log-search-icon"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                        />
+                    </svg>
+                    </span>
+                </div>
+                <div class="order-display">
+                    <ul class="order-list">
+                    </ul>
+                </div>
+                <button class="order-copy">Copy</button>            
+            </div>
+            <div class="order-log-right">
+                <div class="order-header-details">
+                    <div class="order-user-container">
+                        <p class="order-user-title">USER: </p>
+                        <p class="order-user"></p>
+                    </div>
+                    <div class="order-num-container">
+                        <p class="order-num-title"></p>
+                    </div>
+                    <div class="order-date-container">
+                        <p class="order-date-title">DATE: </p>
+                        <p class="order-date"></p>
+                    </div>
+                </div>
+                    <!-- order information table table here -->
+                <div class="order-history-details">
+                    <table class="order-history-details-table">
+                        <thead>
+                            <tr scope="col">
+                                <th class="history-col-item-header">Item</th>
+                                <th class="history-col-qty-header">Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="order-footer-details">
+                    <div class="order-plt-container">
+                        <p class="pallet-title">Pallets: </p>
+                        <p class="pallet-count"></p>
+                    </div>
+                    <div class="order-piece-container">
+                        <p class="piece-title">Pieces: </p>
+                        <p class="piece-count"></p>
+                    </div>
+                    <div class="order-weight-container">
+                        <p class="weight-title">Weight: </p>
+                        <p class="order-weight"></p>
+                    </div>
+                </div>
+                <button class="close-log-modal-btn">Close</button>
+                
+            </div>
+        </div>
+    </dialog>
 </div>

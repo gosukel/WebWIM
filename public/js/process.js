@@ -1,12 +1,11 @@
 // ITEM VARIABLES
 // const allItems = window.items;
 const orderItems = {};
+let selectedOrder;
 
 // SEARCH/FILTER FUNCTIONS
 async function fetchItems(q) {
-    const result = await fetch(
-        `/process/query?search=${encodeURIComponent(q)}`
-    );
+    const result = await fetch(`/items/query?search=${encodeURIComponent(q)}`);
     const items = await result.json();
     updateItemList(items);
 }
@@ -76,8 +75,6 @@ function addToOrder(item) {
 }
 
 function addToOrderList(item) {
-    // console.log(name);
-    // console.log(item);
     const tableBody = document.querySelector("tbody");
     const newRow = createOrderRow(item);
     tableBody.appendChild(newRow);
@@ -216,8 +213,7 @@ document.querySelector(".add-btn").addEventListener("click", () => {
     addToOrder(item);
 });
 
-// <button class="clear-btn"> event listener - clears/resets the order window
-document.querySelector(".clear-btn").addEventListener("click", () => {
+function resetOrder() {
     const tableBody = document.querySelector("tbody");
     while (tableBody.firstChild) {
         tableBody.removeChild(tableBody.firstChild);
@@ -226,12 +222,14 @@ document.querySelector(".clear-btn").addEventListener("click", () => {
         delete orderItems[prop];
     }
     document.querySelector("#order-num").value = "";
+}
+
+// <button class="clear-btn"> event listener - clears/resets the order window
+document.querySelector(".clear-btn").addEventListener("click", () => {
+    resetOrder();
 });
 
-// <button class="process-btn"> event listener - opens modal and (WIP) calculates order
-document.querySelector(".process-btn").addEventListener("click", () => {
-    let orderTotal = getOrderTotal();
-    if (orderTotal.totalPieces === 0) return;
+function processOrderDetails(orderTotal) {
     let orderNumber = document.querySelector("#order-num").value;
     document.querySelector(".overlay").classList.remove("hidden");
     let modalDiv = document.querySelector(".modal");
@@ -239,14 +237,21 @@ document.querySelector(".process-btn").addEventListener("click", () => {
         `Order #: ${orderNumber}`;
     modalDiv.querySelectorAll("p").forEach((p) => {
         if (p.className === "modal-pallet") {
-            p.textContent = `Est. Pallets: ${orderTotal.totalPallets} (${orderTotal.totalPalletsDec})`;
+            p.textContent = `Pallets: ${orderTotal.totalPallets} (${orderTotal.totalPalletsDec})`;
         } else if (p.className === "modal-piece") {
             p.textContent = `Pieces: ${orderTotal.totalPieces}`;
         } else if (p.className === "modal-weight") {
-            p.textContent = `Est. Weight: ${orderTotal.totalWeight}lbs`;
+            p.textContent = `Weight: ${orderTotal.totalWeight}lbs`;
         }
     });
     modalDiv.show();
+}
+
+// <button class="process-btn"> event listener - opens modal and (WIP) calculates order
+document.querySelector(".process-btn").addEventListener("click", () => {
+    let orderTotal = getOrderTotal();
+    if (orderTotal.totalPieces === 0) return;
+    processOrderDetails(orderTotal);
 });
 
 // <button class="modal-save-btn"> event listener - closes modal and (WIP) saves order details
@@ -273,7 +278,6 @@ document
             orderItems: orderItems,
             orderDetails: orderDetails,
         };
-
         try {
             const res = await fetch("/process/new", {
                 method: "POST",
@@ -311,4 +315,185 @@ document
 document.querySelector(".modal-close-btn").addEventListener("click", () => {
     document.querySelector(".modal").close();
     document.querySelector(".overlay").classList.add("hidden");
+});
+
+//                  ORDER LOG MODAL
+async function fetchOrders(q = "", type = "") {
+    const res = await fetch(
+        `/process/query?search=${encodeURIComponent(q)}&type=${encodeURIComponent(type)}`
+    );
+    const orders = await res.json();
+    if (type === "general") {
+        updateOrderHistoryList(orders);
+        return;
+    }
+    return orders;
+}
+
+function debounceOrder(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+const debouncedOrderFetch = debounceOrder(fetchOrders, 300);
+
+const search = document.querySelector("input#order-search");
+search.addEventListener("input", async () => {
+    debouncedOrderFetch(search.value, "general");
+});
+
+function createOrderHistoryRow(item) {
+    const newRow = document.createElement("tr");
+
+    const itemTd = document.createElement("td");
+    itemTd.classList.add("history-col-item");
+    itemTd.textContent = item.item.name;
+    newRow.appendChild(itemTd);
+
+    const qtyTd = document.createElement("td");
+    qtyTd.classList.add("history-col-qty");
+    qtyTd.textContent = item.quantity;
+    newRow.appendChild(qtyTd);
+
+    return newRow;
+}
+
+function fillOrderHistoryTable(items) {
+    const historyTableBody = document.querySelector(
+        ".order-history-details-table tbody"
+    );
+
+    // clear table
+    while (historyTableBody.firstChild) {
+        historyTableBody.removeChild(historyTableBody.firstChild);
+    }
+
+    // add rows for each item
+    for (let i = 0; i < items.length; i++) {
+        let newTableRow = createOrderHistoryRow(items[i]);
+        historyTableBody.append(newTableRow);
+    }
+}
+
+function addListItemListener(li) {
+    li.addEventListener("click", async () => {
+        document.querySelectorAll(".order-list-item.selected").forEach((el) => {
+            el.classList.remove("selected");
+        });
+        li.classList.add("selected");
+
+        // get order information
+        let orderDetails = await fetchOrders(li.dataset.ordernumber, "exact");
+        selectedOrder = orderDetails;
+        // set header details
+        document.querySelector("p.order-user").textContent =
+            orderDetails.user.nickname;
+        document.querySelector("p.order-date").textContent =
+            orderDetails.createdAt;
+        document.querySelector("p.order-num-title").textContent =
+            orderDetails.orderNumber;
+
+        // set table details
+        fillOrderHistoryTable(orderDetails.items);
+
+        // set footer details
+        let palletsInt = Math.ceil(orderDetails.palletCount);
+        document.querySelector(
+            ".order-plt-container .pallet-count"
+        ).textContent = `${palletsInt}(${orderDetails.palletCount})`;
+        document.querySelector(
+            ".order-piece-container .piece-count"
+        ).textContent = orderDetails.pieces;
+        document.querySelector(
+            ".order-weight-container .order-weight"
+        ).textContent = `${orderDetails.weight} lbs`;
+    });
+}
+
+function createListItem(order) {
+    const listItem = document.createElement("li");
+    listItem.classList.add("order-list-item");
+    listItem.textContent = order.orderNumber;
+    listItem.dataset.ordernumber = order.orderNumber;
+    addListItemListener(listItem);
+    return listItem;
+}
+
+function updateOrderHistoryList(orders) {
+    const parentUl = document.querySelector(".order-list");
+
+    // clear list
+    while (parentUl.firstChild) {
+        parentUl.removeChild(parentUl.firstChild);
+    }
+
+    // create new li for each order
+    for (let i = 0; i < orders.length; i++) {
+        let newListItem = createListItem(orders[i]);
+        parentUl.append(newListItem);
+    }
+}
+
+// <button class="log-btn"> event listener - opens order log modal
+document.querySelector(".log-btn").addEventListener("click", async () => {
+    const modal = document.querySelector("#order-log-modal");
+    const orders = await fetchOrders();
+    updateOrderHistoryList(orders);
+    modal.show();
+});
+
+// <button class="order-copy"> event listener - creates copy of selected order
+document.querySelector("button.order-copy").addEventListener("click", () => {
+    if (!selectedOrder) return;
+
+    resetOrder();
+    document.querySelector("input#order-num").value = selectedOrder.orderNumber;
+    for (let item of selectedOrder.items) {
+        let addItem = {
+            name: item.item.name,
+            weight: item.item.weight,
+            palletQty: item.item.palletQty,
+            qty: item.quantity,
+        };
+        addToOrder(addItem);
+    }
+    closeHistoryModal();
+});
+
+// clost history modal function
+function closeHistoryModal() {
+    const modal = document.querySelector("#order-log-modal");
+
+    //       reset modal
+    // search input
+    modal.querySelector("#order-search").value = "";
+    //  header
+    document.querySelector("p.order-user").textContent = "";
+    document.querySelector("p.order-num-title").textContent = "";
+    document.querySelector("p.order-date").textContent = "";
+    //  table
+    const historyTableBody = document.querySelector(
+        ".order-history-details-table tbody"
+    );
+    while (historyTableBody.firstChild) {
+        historyTableBody.removeChild(historyTableBody.firstChild);
+    }
+    //  footer
+    document.querySelector("p.pallet-count").textContent = "";
+    document.querySelector("p.piece-count").textContent = "";
+    document.querySelector("p.order-weight").textContent = "";
+    //      reset selectedorder
+    selectedOrder = null;
+
+    modal.close();
+}
+
+// <button class="close-log-modal-btn"> event listener - closes order log modal
+document.querySelector(".close-log-modal-btn").addEventListener("click", () => {
+    closeHistoryModal();
 });

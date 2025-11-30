@@ -9,8 +9,8 @@ async function checkOrderNumber(value) {
         throw new ProcessError("Order Number required");
     }
     let orderNum = value.toUpperCase();
-    const orderExists = await processQueries.orderQuery(orderNum);
-    if (orderExists.length) {
+    const orderExists = await processQueries.orderQueryExact(orderNum);
+    if (orderExists) {
         throw new ProcessError(
             `Order Number '${value.toUpperCase()}' already exists`
         );

@@ -119,7 +119,7 @@ async function itemQueryExact({ type, value, id = null }) {
             [type]: value,
         };
     }
-    const exactMatch = await await prisma.item.findFirst({
+    const exactMatch = await prisma.item.findFirst({
         where,
     });
     return exactMatch;

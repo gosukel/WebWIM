@@ -18,7 +18,7 @@ processRouter.post(
 );
 
 // api
-processRouter.get("/query", processController.itemsQuery);
+processRouter.get("/query", processController.orderQuery);
 
 // error handler
 processRouter.use((err, req, res, next) => {

@@ -30,14 +30,16 @@ async function processGet(req, res) {
     });
 }
 
-async function itemsQuery(req, res) {
+async function orderQuery(req, res) {
     const search = req.query.search || "";
-    const sortParam = req.query.sortParams || "";
-    const sortDirection = req.query.sortDirection || "";
     const filters = search.split(" ").filter(Boolean);
-    let items = await itemQueries.itemQuery(filters, sortParam, sortDirection);
-    res.json(items);
-    return;
+    let orders;
+    if (req.query.type === "exact") {
+        orders = await processQueries.orderQueryExact(filters[0]);
+    } else {
+        orders = await processQueries.orderQuery(filters);
+    }
+    return res.json(orders);
 }
 
 async function processAdd(req, res) {
@@ -55,7 +57,7 @@ async function processAdd(req, res) {
 const processController = {
     processGet,
     processAdd,
-    itemsQuery,
+    orderQuery,
 };
 
 export default processController;
