@@ -6,7 +6,10 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "node --watch app.js",
-        "seed": "node models/db/seed.js"
+        "seed": "node models/db/seed.js",
+        "start": "node app.js",
+        "prisma:generate": "npx prisma generate",
+        "prisma:migrate:deploy": "npx prisma migrate deploy"
     },
     "type": "module",
     "repository": {
