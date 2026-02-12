@@ -88,6 +88,7 @@ function calculate() {
         } else {
             densityClass = "dense-min";
         }
+        densityDiv.classList.remove("dense-max", "dense-med", "dense-min");
         densityDiv.classList.add("active", densityClass);
         skids[i].querySelector(".skid-details").classList.add("slide");
         console.log(weight, length, width, height);
