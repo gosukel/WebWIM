@@ -21,14 +21,17 @@
         <% } %>
     </head>
     <body>
-        <div class="sidebar-div"><%- include('partials/sidebar') %></div>
+        <% if (locals.user) { %>
+            <div class="sidebar-div"><%- include('partials/sidebar') %></div>
+        <% } %>
+
         <div class="main-div">
             
             <%- include('partials/notice') %>
             
             <%- include(`partials/${main}`) %>
         </div>
-        <% if (main !== "home") { %>
+        <% if (main !== "home" && main !== "login") { %>
             <script src="<%= `js/${main}.js` %>"></script>
         <% } %>
 

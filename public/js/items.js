@@ -1,6 +1,6 @@
 function itemParentListener(parent) {
     let childElement = parent.nextElementSibling.querySelector(
-        ".item-child-content"
+        ".item-child-content",
     );
 
     if (childElement.classList.contains("show")) {
@@ -20,7 +20,7 @@ function itemParentListener(parent) {
 
 async function fetchItems(q, sort = "", direction = "") {
     const res = await fetch(
-        `/items/query?search=${encodeURIComponent(q)}&sortParams=${encodeURIComponent(sort)}&sortDirection=${encodeURIComponent(direction)}`
+        `/items/query?search=${encodeURIComponent(q)}&sortParams=${encodeURIComponent(sort)}&sortDirection=${encodeURIComponent(direction)}`,
     );
     const items = await res.json();
     updateItemsTable(items);
@@ -56,8 +56,7 @@ function createTableRowSet(item, idx) {
     // data-itemid="<%= items[i].id %>
     let parentRow = document.createElement("tr");
     let oddEven = (idx + 1) % 2 === 0 ? "even" : "odd";
-    parentRow.classList.add("item-parent");
-    parentRow.classList.add(oddEven);
+    parentRow.classList.add("item-parent", oddEven);
     parentRow.dataset.itemid = item.id;
     parentRow.addEventListener("click", () => {
         itemParentListener(parentRow);
@@ -156,10 +155,10 @@ function getItemDetails(parent, child) {
         brand: parent.querySelector(".col-brand").textContent,
         type: parent.querySelector(".col-type").textContent,
         weight: parseInt(
-            parent.querySelector(".col-weight").textContent.replace("lbs", "")
+            parent.querySelector(".col-weight").textContent.replace("lbs", ""),
         ),
         pallet: parseInt(
-            parent.querySelector(".col-pallet").textContent.replace("x", "")
+            parent.querySelector(".col-pallet").textContent.replace("x", ""),
         ),
         locations: locationString,
     };
@@ -218,18 +217,17 @@ async function addItem(e) {
             body: JSON.stringify(data),
         });
         const result = await res.json();
+
         // check for error
         if (!res.ok) {
             // error has occurred
             noticeContainer.classList.remove("success");
-            noticeContainer.classList.add("error");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("error", "show");
             noticeText.textContent = result.error || "something went wrong";
             return;
         } else {
             noticeContainer.classList.remove("error");
-            noticeContainer.classList.add("success");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("success", "show");
             noticeText.textContent = "Item Added Successfully!";
         }
         document.querySelector("#items-search").value = data["item-name"];
@@ -237,8 +235,7 @@ async function addItem(e) {
         closeModal();
     } catch (err) {
         noticeContainer.classList.remove("success");
-        noticeContainer.classList.add("error");
-        noticeContainer.classList.add("show");
+        noticeContainer.classList.add("error", "show");
         noticeText.textContent = "Network error, please try again.";
     }
     return;
@@ -313,14 +310,12 @@ async function editItem(curItem) {
         if (!res.ok) {
             // error has occurred
             noticeContainer.classList.remove("success");
-            noticeContainer.classList.add("error");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("error", "show");
             noticeText.textContent = result.error || "something went wrong";
             return;
         } else {
             noticeContainer.classList.remove("error");
-            noticeContainer.classList.add("success");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("success", "show");
             noticeText.textContent = "Edit Successful!";
         }
         document.querySelector("#items-search").value = data["item-name"];
@@ -328,8 +323,7 @@ async function editItem(curItem) {
         closeModal();
     } catch (err) {
         noticeContainer.classList.remove("success");
-        noticeContainer.classList.add("error");
-        noticeContainer.classList.add("show");
+        noticeContainer.classList.add("error", "show");
         noticeText.textContent = "Network error, please try again.";
     }
     return;
@@ -375,7 +369,7 @@ document.querySelector(".btn-item-edit").addEventListener("click", () => {
     let selectedItem = document.querySelector(".selected");
     if (!selectedItem) return;
     let childElement = selectedItem.nextElementSibling.querySelector(
-        ".item-child-content"
+        ".item-child-content",
     );
 
     // prepare edit form with current values
@@ -452,14 +446,12 @@ async function deleteItem(id, name) {
         // check for error
         if (!res.ok) {
             noticeContainer.classList.remove("success");
-            noticeContainer.classList.add("error");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("error", "show");
             noticeText.textContent = result.error || "something went wrong";
             return;
         } else {
             noticeContainer.classList.remove("error");
-            noticeContainer.classList.add("success");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("success", "show");
             noticeText.textContent = "Item Deleted Successfully!";
             fetchItems("");
         }
@@ -468,8 +460,7 @@ async function deleteItem(id, name) {
     } catch (error) {
         console.log(error);
         noticeContainer.classList.remove("success");
-        noticeContainer.classList.add("error");
-        noticeContainer.classList.add("show");
+        noticeContainer.classList.add("error", "show");
         noticeText.textContent = "Network error, please try again.";
     }
     return;
@@ -525,7 +516,7 @@ document
 // get notes for item
 async function fetchNotes(eId, eName, eType = "item", noteType = "changeLog") {
     const res = await fetch(
-        `/items/notes?eId=${encodeURIComponent(eId)}&eName=${encodeURIComponent(eName)}&eType=${encodeURIComponent(eType)}&noteType=${encodeURIComponent(noteType)}`
+        `/items/notes?eId=${encodeURIComponent(eId)}&eName=${encodeURIComponent(eName)}&eType=${encodeURIComponent(eType)}&noteType=${encodeURIComponent(noteType)}`,
     );
     const notes = await res.json();
     return notes;
@@ -535,8 +526,7 @@ function createHistoryRow(note, idx) {
     // create row
     let newRow = document.createElement("tr");
     let oddEven = (idx + 1) % 2 === 0 ? "even" : "odd";
-    newRow.classList.add(".note-row");
-    newRow.classList.add(oddEven);
+    newRow.classList.add(".note-row", oddEven);
     // td col-date
     let colDate = document.createElement("td");
     colDate.classList.add("col-date");
@@ -577,7 +567,7 @@ function createHistoryHandler(item) {
             item.itemId,
             item.itemName,
             item.eType,
-            item.noteType
+            item.noteType,
         );
         resetHistoryTable();
         fillHistoryTable(notes);
@@ -601,7 +591,12 @@ document
             itemName;
 
         // show modal
-        const notes = await fetchNotes(itemId, itemName, "item", "changeLog");
+        const notes = await fetchNotes(
+            itemId,
+            itemName,
+            "item",
+            "itemChangeLog",
+        );
         resetHistoryTable();
         fillHistoryTable(notes);
 
@@ -610,7 +605,7 @@ document
             itemId,
             itemName,
             eType: "item",
-            noteType: "changeLog",
+            noteType: "itemChangeLog",
         };
         let locationLog = {
             itemId,

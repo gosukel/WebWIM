@@ -3,7 +3,7 @@
 // fetch function
 async function fetchLocations(q, sort = "", direction = "") {
     const result = await fetch(
-        `/locations/query?search=${encodeURIComponent(q)}&sortParams=${encodeURIComponent(sort)}&sortDirection=${encodeURIComponent(direction)}`
+        `/locations/query?search=${encodeURIComponent(q)}&sortParams=${encodeURIComponent(sort)}&sortDirection=${encodeURIComponent(direction)}`,
     );
     const locations = await result.json();
     updateLocTable(locations);
@@ -41,8 +41,7 @@ function createTableRowSet(loc, idx) {
     //              PARENT ROW <tr>
     let parentRow = document.createElement("tr");
     let oddEven = (idx + 1) % 2 === 0 ? "even" : "odd";
-    parentRow.classList.add("loc-parent");
-    parentRow.classList.add(oddEven);
+    parentRow.classList.add("loc-parent", oddEven);
     parentRow.dataset.locid = loc.id;
     parentRow.dataset.waridx = loc.warehouseIndex;
     parentRow.addEventListener("click", () => {
@@ -99,8 +98,9 @@ const debouncedFetch = debounce(fetchLocations, 300);
 
 // reset header function
 function resetHeaders(el = "") {
-    document.querySelectorAll("th").forEach((e) => {
+    document.querySelectorAll(".loc-table th").forEach((e) => {
         if (el != e) {
+            console.log(e);
             e.classList.remove("sorted");
             e.dataset.direction = "asc";
             e.querySelector("span").textContent = " ";
@@ -179,13 +179,11 @@ async function addLocation(e) {
         if (!res.ok) {
             // error has occurred
             noticeContainer.classList.remove("success");
-            noticeContainer.classList.add("error");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("error", "show");
             noticeText.textContent = result.error || "something went wrong";
         } else {
             noticeContainer.classList.remove("error");
-            noticeContainer.classList.add("success");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("success", "show");
             noticeText.textContent = "Location Added Successfully!";
         }
         document.querySelector("input#loc-search").value = data["loc-name"];
@@ -193,8 +191,7 @@ async function addLocation(e) {
         closeModal();
     } catch (err) {
         noticeContainer.classList.remove("success");
-        noticeContainer.classList.add("error");
-        noticeContainer.classList.add("show");
+        noticeContainer.classList.add("error", "show");
         noticeText.textContent = "Network error, please try again.";
     }
     return;
@@ -329,22 +326,19 @@ async function editLocation(curLocation) {
         if (!res.ok) {
             // error has occurres
             noticeContainer.classList.remove("success");
-            noticeContainer.classList.add("error");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("error", "show");
             noticeText.textContent = result.error || "something went wrong";
             return;
         } else {
             noticeContainer.classList.remove("error");
-            noticeContainer.classList.add("success");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("success", "show");
             noticeText.textContent = "Edit Successful!";
         }
         fetchLocations(`${data["loc-name"]}`);
         closeModal();
     } catch (err) {
         noticeContainer.classList.remove("success");
-        noticeContainer.classList.add("error");
-        noticeContainer.classList.add("show");
+        noticeContainer.classList.add("error", "show");
         noticeText.textContent = "Network error, please try again.";
     }
 }
@@ -450,14 +444,12 @@ async function deleteLocation(id, name) {
         // check for error
         if (!res.ok) {
             noticeContainer.classList.remove("success");
-            noticeContainer.classList.add("error");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("error", "show");
             noticeText.textContent = result.error || "something went wrong";
             return;
         } else {
             noticeContainer.classList.remove("error");
-            noticeContainer.classList.add("success");
-            noticeContainer.classList.add("show");
+            noticeContainer.classList.add("success", "show");
             noticeText.textContent = "Location Deleted Successfully!";
             fetchLocations("");
         }
@@ -465,8 +457,7 @@ async function deleteLocation(id, name) {
     } catch (error) {
         console.log(error);
         noticeContainer.classList.remove("success");
-        noticeContainer.classList.add("error");
-        noticeContainer.classList.add("show");
+        noticeContainer.classList.add("error", "show");
         noticeText.textContent = "Network error, please try again.";
     }
     return;
@@ -523,11 +514,11 @@ async function fetchNotes(
     eId,
     eName,
     eType = "location",
-    noteType = "locChangeLog"
+    noteType = "locChangeLog",
 ) {
     // return;
     const res = await fetch(
-        `/locations/notes/?eId=${encodeURIComponent(eId)}&eName=${encodeURIComponent(eName)}&eType=${encodeURIComponent(eType)}&noteType=${encodeURIComponent(noteType)}`
+        `/locations/notes/?eId=${encodeURIComponent(eId)}&eName=${encodeURIComponent(eName)}&eType=${encodeURIComponent(eType)}&noteType=${encodeURIComponent(noteType)}`,
     );
     const notes = await res.json();
     return notes;
@@ -538,8 +529,7 @@ function createHistoryRow(note, idx) {
     // create row
     let newRow = document.createElement("tr");
     let oddEven = (idx + 1) % 2 === 0 ? "even" : "odd";
-    newRow.classList.add(".note-row");
-    newRow.classList.add(oddEven);
+    newRow.classList.add(".note-row", oddEven);
     // td col-date
     let colDate = document.createElement("td");
     colDate.classList.add("col-date");
@@ -584,7 +574,7 @@ function createHistoryHandler(location) {
             location.locId,
             location.locName,
             location.eType,
-            location.noteType
+            location.noteType,
         );
         resetHistoryTable();
         fillHistoryTable(notes);
@@ -614,7 +604,7 @@ document
             locId,
             locName,
             "location",
-            "locChangeLog"
+            "locChangeLog",
         );
         resetHistoryTable();
         fillHistoryTable(notes);

@@ -1,15 +1,9 @@
-const user = "Richard Routh";
-
 async function indexGet(req, res) {
-    if (!user) {
-        res.redirect("/login");
-    } else {
-        res.render("index", {
-            fullName: user,
-            main: "home",
-            styles: ["home"],
-        });
-    }
+    res.render("index", {
+        fullName: req.user.fullName,
+        main: "home",
+        styles: ["home"],
+    });
 }
 
 const indexController = {

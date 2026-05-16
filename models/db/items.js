@@ -151,6 +151,7 @@ async function addItem(item) {
             data: {
                 entityType: "item",
                 entityId: txNewItem.id,
+                entityName: txNewItem.name,
                 logId: log_id,
                 userId: 1,
                 message: `Item Created - ${item.name}`,
@@ -167,6 +168,7 @@ async function addItem(item) {
                     itemNotes.push({
                         entityType: "item",
                         entityId: txNewItem.id,
+                        entityName: txNewItem.name,
                         logId: log_id,
                         userId: 1,
                         message: `LOCATION added ${loc.name}`,
@@ -175,6 +177,7 @@ async function addItem(item) {
                     itemNotes.push({
                         entityType: "location",
                         entityId: loc.id,
+                        entityName: loc.name,
                         logId: log_id,
                         userId: 1,
                         message: `ITEM added ${item.name}`,
@@ -185,6 +188,7 @@ async function addItem(item) {
             itemNotes.push({
                 entityType: "item",
                 entityId: txNewItem.id,
+                entityName: txNewItem.name,
                 logId: log_id,
                 userId: 1,
                 message: `Item ${prop.toUpperCase()} - ${item[prop]}`,
@@ -204,7 +208,7 @@ async function updateItemWithLocations(
     update,
     connect,
     disconnect,
-    changes
+    changes,
 ) {
     return await prisma.$transaction(async (tx) => {
         // update any changes on item record
@@ -305,6 +309,7 @@ async function editItem(item) {
                     update.changeList.push({
                         entityType: "item",
                         entityId: item.id,
+                        entityName: item.name,
                         logId: log_id,
                         userId: 1,
                         message: `LOCATION added ${loc.name}`,
@@ -312,6 +317,7 @@ async function editItem(item) {
                     connect.changeList.push({
                         entityType: "location",
                         entityId: loc.id,
+                        entityName: loc.name,
                         message: `ITEM added ${item.name}`,
                         logId: log_id,
                         userId: 1,
@@ -328,6 +334,7 @@ async function editItem(item) {
                     update.changeList.push({
                         entityType: "item",
                         entityId: item.id,
+                        entityName: item.name,
                         logId: log_id,
                         userId: 1,
                         message: `LOCATION removed ${loc.location.name}`,
@@ -335,6 +342,7 @@ async function editItem(item) {
                     disconnect.changeList.push({
                         entityType: "location",
                         entityId: loc.location.id,
+                        entityName: loc.location.name,
                         message: `ITEM removed ${item.name}`,
                         logId: log_id,
                         userId: 1,
@@ -367,6 +375,7 @@ async function editItem(item) {
                     update.changeList.push({
                         entityType: "item",
                         entityId: item.id,
+                        entityName: item.name,
                         logId: log_id,
                         userId: 1,
                         message: `LOCATION removed ${curLoc.location.name}`,
@@ -374,6 +383,7 @@ async function editItem(item) {
                     disconnect.changeList.push({
                         message: `ITEM removed ${item.name}`,
                         entityId: curLoc.location.id,
+                        entityName: curLoc.location.name,
                         entityType: "location",
                         logId: log_id,
                         userId: 1,
@@ -388,6 +398,7 @@ async function editItem(item) {
                     update.changeList.push({
                         entityType: "item",
                         entityId: item.id,
+                        entityName: item.name,
                         logId: log_id,
                         userId: 1,
                         message: `LOCATION added ${newLoc.name}`,
@@ -395,6 +406,7 @@ async function editItem(item) {
                     connect.changeList.push({
                         entityType: "location",
                         entityId: newLoc.id,
+                        entityName: newLoc.name,
                         message: `ITEM added ${item.name}`,
                         logId: log_id,
                         userId: 1,
@@ -413,6 +425,7 @@ async function editItem(item) {
             update.changeList.push({
                 entityType: "item",
                 entityId: item.id,
+                entityName: item.name,
                 logId: log_id,
                 userId: 1,
                 message: `${prop.toUpperCase()} from ${curItem[prop]} to ${item[prop]}`,
@@ -432,7 +445,7 @@ async function editItem(item) {
         update,
         connect,
         disconnect,
-        allChanges
+        allChanges,
     );
     return;
 }
@@ -454,6 +467,7 @@ async function deleteItem(id, name) {
             data: {
                 entityType: "item",
                 entityId: id,
+                entityName: name,
                 logId: log_id,
                 userId: 1,
                 message: `Item Deleted - ${name}`,

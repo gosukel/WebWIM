@@ -1,10 +1,10 @@
 import locationQueries from "../../models/db/locations.js";
-import LocationError from "../../errors/LocationError.js";
+import WarehouseError from "../../errors/WarehouseError.js";
 
 // loc name
 async function checkLocationName(value, id) {
     if (value === "") {
-        throw new LocationError("Location NAME required");
+        throw new WarehouseError("Location Error", "Location NAME required");
     }
     const locName = value.toUpperCase();
     const nameExists = await locationQueries.locationQueryExact({
@@ -14,18 +14,24 @@ async function checkLocationName(value, id) {
     });
 
     if (nameExists) {
-        throw new LocationError("Location NAME already exists");
+        throw new WarehouseError(
+            "Location Error",
+            "Location NAME already exists"
+        );
     }
     return locName;
 }
 // loc utn
 async function checkLocationUtn(value, id) {
     if (value === "") {
-        throw new LocationError("Location UTN required");
+        throw new WarehouseError("Location Error", "Location UTN required");
     }
     let utnString = value;
     if (!Number(utnString)) {
-        throw new LocationError("Location UTN not valid number");
+        throw new WarehouseError(
+            "Location Error",
+            "Location UTN not a valid number"
+        );
     }
 
     const utnExists = await locationQueries.locationQueryExact({
@@ -35,14 +41,17 @@ async function checkLocationUtn(value, id) {
     });
 
     if (utnExists) {
-        throw new LocationError("Location UTN already exists");
+        throw new WarehouseError(
+            "Location Error",
+            "Location UTN already exists"
+        );
     }
     return utnString;
 }
 // loc zone
 async function checkLocationZone(value) {
     if (value === "") {
-        throw new LocationError("Location ZONE required");
+        throw new WarehouseError("Location Error", "Location ZONE required");
     }
     const locZone = value.toUpperCase();
     const zoneExists = await locationQueries.locationQueryExact({
@@ -50,14 +59,20 @@ async function checkLocationZone(value) {
         value: locZone,
     });
     if (!zoneExists) {
-        throw new LocationError("Location ZONE must already exist");
+        throw new WarehouseError(
+            "Location Error",
+            "Location ZONE must already exist"
+        );
     }
     return locZone;
 }
 // loc prev
 async function getWarehouseIndex(value, id) {
     if (value === "") {
-        throw new LocationError("Location COMES AFTER required");
+        throw new WarehouseError(
+            "Location Error",
+            "Location COMES AFTER required"
+        );
     }
     let currentLocation = await locationQueries.locationQueryExact({
         type: "id",
@@ -69,7 +84,10 @@ async function getWarehouseIndex(value, id) {
         Number.isNaN(prevIndex) ||
         prevIndex < -1
     ) {
-        throw new LocationError("Invalid value for COMES AFTER");
+        throw new WarehouseError(
+            "Location Error",
+            "Invalid value for COMES AFTER"
+        );
     }
     if (prevIndex > currentLocation.warehouseIndex) {
         return prevIndex;
@@ -89,7 +107,8 @@ async function checkLocationItems(values, id) {
             item.toUpperCase()
         );
         if (!itemInfo) {
-            throw new LocationError(
+            throw new WarehouseError(
+                "Item Error",
                 `Item ${item.toUpperCase()} does not exist`
             );
         }

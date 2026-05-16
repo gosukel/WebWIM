@@ -96,6 +96,21 @@ function calculate() {
     return;
 }
 
+// reset screen
+function resetScreen() {
+    const skidContainer = document.querySelector(".skid-container");
+
+    for (const child of [...skidContainer.children]) {
+        if (child.id !== "label-container") {
+            child.remove();
+        }
+    }
+    addPallet();
+}
+
+function buildLabelContainer() {}
+
 // add event listeners
 document.querySelector("#btn-add-pallet").addEventListener("click", addPallet);
 document.querySelector("#btn-calc").addEventListener("click", calculate);
+document.querySelector("#btn-refresh").addEventListener("click", resetScreen);

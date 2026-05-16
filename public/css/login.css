@@ -1,16 +1,3 @@
-body {
-    width: 100vw;
-    height: 100vh;
-    background-color: rgb(220, 226, 230);
-}
-
-main {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .login-card {
     display: flex;
     flex-direction: column;
@@ -18,7 +5,7 @@ main {
     width: 300px;
     text-align: center;
     background-color: #fff;
-    padding: 30px 20px;
+    padding: 20px 20px;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -31,6 +18,16 @@ main {
 svg {
     color: rgb(58, 67, 73);
     margin: 10px 0;
+}
+
+p.login-msg {
+    color: rgb(238, 106, 106);
+    padding-bottom: 3px;
+    opacity: 0;
+}
+
+p.login-msg.show {
+    opacity: 100%;
 }
 
 input {

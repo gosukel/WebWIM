@@ -2,6 +2,7 @@ import { Router } from "express";
 import processController from "../controllers/processController.js";
 import processValidator from "../middleware/process/processValidator.js";
 import ProcessError from "../errors/ProcessError.js";
+import WarehouseError from "../errors/WarehouseError.js";
 import asyncWrapper from "../middleware/asyncWrapper.js";
 
 const processRouter = Router();
@@ -22,8 +23,7 @@ processRouter.get("/query", processController.orderQuery);
 
 // error handler
 processRouter.use((err, req, res, next) => {
-    if (err instanceof ProcessError) {
-        console.log("error handler triggered");
+    if (err instanceof WarehouseError) {
         return res.status(err.statusCode).json({ error: err.message });
     }
 });

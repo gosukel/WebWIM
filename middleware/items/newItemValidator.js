@@ -1,9 +1,9 @@
 import itemQueries from "../../models/db/items.js";
-import ItemError from "../../errors/ItemError.js";
+import WarehouseError from "../../errors/WarehouseError.js";
 
 async function checkItemName(value) {
     if (value === "") {
-        throw new ItemError("Item NAME required");
+        throw new WarehouseError("Item Error", "Item NAME required");
     }
     const itemName = value.toUpperCase();
     const doesExist = await itemQueries.itemQueryExact({
@@ -11,19 +11,19 @@ async function checkItemName(value) {
         value: itemName,
     });
     if (doesExist) {
-        throw new ItemError("Item NAME already exists");
+        throw new WarehouseError("Item Error", "Item NAME already exists");
     }
     return itemName;
 }
 
 async function checkItemNumber(value) {
     if (value === "") {
-        throw new ItemError("item NUMBER required");
+        throw new WarehouseError("Item Error", "Item NUMBER required");
     }
     let itemNumberString = value;
 
     if (!Number(itemNumberString)) {
-        throw new ItemError("Item NUMBER not valid number");
+        throw new WarehouseError("Item Error", "Item NUMBER not valid number");
     }
 
     const itemNumberExists = await itemQueries.itemQueryExact({
@@ -31,14 +31,14 @@ async function checkItemNumber(value) {
         value: itemNumberString,
     });
     if (itemNumberExists) {
-        throw new ItemError("Item NUMBER already exists");
+        throw new WarehouseError("Item Error", "Item NUMBER already exists");
     }
     return itemNumberString;
 }
 
 async function checkItemBrand(value) {
     if (value === "") {
-        throw new ItemError("Item BRAND required");
+        throw new WarehouseError("Item Error", "Item BRAND required");
     }
     const itemBrand = value.toUpperCase();
     const itemBrandExists = await itemQueries.itemQueryExact({
@@ -46,14 +46,14 @@ async function checkItemBrand(value) {
         value: itemBrand,
     });
     if (!itemBrandExists) {
-        throw new ItemError("Item BRAND does not exist");
+        throw new WarehouseError("Item Error", "Item BRAND does not exist");
     }
     return itemBrand;
 }
 
 async function checkItemType(value) {
     if (value === "") {
-        throw new ItemError("Item TYPE required");
+        throw new WarehouseError("Item Error", "Item TYPE required");
     }
     const itemType = value.toUpperCase();
     const itemTypeExists = await itemQueries.itemQueryExact({
@@ -61,18 +61,18 @@ async function checkItemType(value) {
         value: itemType,
     });
     if (!itemTypeExists) {
-        throw new ItemError("Item TYPE does not exist");
+        throw new WarehouseError("Item Error", "Item TYPE does not exist");
     }
     return itemType;
 }
 
 async function checkItemWeight(value) {
     if (value === "") {
-        throw new ItemError("Item WEIGHT required");
+        throw new WarehouseError("Item Error", "Item WEIGHT required");
     }
     let itemWeight = Number(value);
     if (!itemWeight || itemWeight <= 0) {
-        throw new ItemError("Invalid value for item WEIGHT");
+        throw new WarehouseError("Item Error", "Invalid value for Item WEIGHT");
     }
 
     return itemWeight;
@@ -80,11 +80,14 @@ async function checkItemWeight(value) {
 
 async function checkItemPallet(value) {
     if (value === "") {
-        throw new ItemError("FULL PALLET Quantity required");
+        throw new WarehouseError("Item Error", "Item FULL PALLET required");
     }
     let itemPallet = Number(value);
     if (!itemPallet || itemPallet <= 0) {
-        throw new ItemError("Invalid value for FULL PALLET quantity");
+        throw new WarehouseError(
+            "Item Error",
+            "Invalid value for FULL PALLET quantity"
+        );
     }
 
     return itemPallet;
@@ -93,7 +96,7 @@ async function checkItemPallet(value) {
 async function checkItemLocations(value) {
     let locations = value.trim();
     if (locations === "") {
-        throw new ItemError("Item LOCATION required");
+        throw new WarehouseError("Item Error", `Item LOCATION required`);
     }
     let locationList = locations.split(" ");
     let locationsWithIds = [];
@@ -101,7 +104,8 @@ async function checkItemLocations(value) {
     for (const loc of locationList) {
         let locId = await itemQueries.itemLocationQueryExact(loc.toUpperCase());
         if (!locId) {
-            throw new ItemError(
+            throw new WarehouseError(
+                "Location Error",
                 `LOCATION '${loc}' does not exist.  If adding multiple locations, leave a space between each location: "loc1 loc2"`
             );
         }

@@ -1,13 +1,10 @@
 import locationQueries from "../models/db/locations.js";
 import noteQueries from "../models/db/notes.js";
 
-const user = "Richard Routh";
-
 async function locationsGet(req, res) {
     const locations = await locationQueries.locationQuery();
     const zones = await locationQueries.getAllZones();
     return res.render("index", {
-        fullName: user,
         main: "locations",
         styles: ["locations"],
         locations,
@@ -23,7 +20,7 @@ async function locationsQuery(req, res) {
     let locations = await locationQueries.locationQuery(
         filters,
         sortParam,
-        sortDirection
+        sortDirection,
     );
     return res.json(locations);
 }
@@ -65,9 +62,10 @@ async function locationsEdit(req, res) {
 async function locationNotesQuery(req, res) {
     const eId = Number(req.query.eId);
     const { eName, eType, noteType } = req.query;
+    const exact = { eId, eName, eType };
 
     try {
-        const notes = await noteQueries.noteQuery(eId, eName, eType, noteType);
+        const notes = await noteQueries.noteQuery(exact, noteType);
         return res.json(notes);
     } catch {
         return res.status(400).json({ message: "error getting notes" });

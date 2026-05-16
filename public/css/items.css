@@ -248,7 +248,7 @@ td.col-num {
 }
 
 .form-input-container {
-    width: 80%;
+    width: 88%;
     margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
@@ -296,17 +296,21 @@ td.col-num {
     color: #fff;
     font-size: 1.2rem;
     cursor: pointer;
+    transition: background-color 0.1s ease-out;
 }
 
 .modal-close-btn {
-    background-color: rgb(228, 74, 74);
+    background-color: rgb(238, 106, 106);
     width: 26%;
+}
+
+.modal-close-btn:hover {
+    background-color: rgb(221, 53, 53);
 }
 
 .modal-submit-btn {
     width: 70%;
     background-color: #6783fd;
-    transition: background-color 0.1s ease-out;
 }
 
 .modal-submit-btn:hover {
@@ -523,6 +527,7 @@ button.history-close-btn:hover {
 @media (max-width: 1350px) {
     .overlay {
         left: 0;
+        top: 60px;
     }
 
     .items-container {

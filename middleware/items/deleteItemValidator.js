@@ -1,13 +1,13 @@
 import itemQueries from "../../models/db/items.js";
-import ItemError from "../../errors/ItemError.js";
+import WarehouseError from "../../errors/WarehouseError.js";
 
 async function checkItemId(value) {
     if (value === "") {
-        throw new ItemError("No Item ID");
+        throw new WarehouseError("ItemError", "No Item ID");
     }
     let idNum = Number(value);
     if (!idNum) {
-        throw new ItemError("Invalid Item ID");
+        throw new WarehouseError("ItemError", "Invalid Item ID");
     }
 
     return idNum;
@@ -15,7 +15,7 @@ async function checkItemId(value) {
 
 async function checkItemName(value) {
     if (value === "") {
-        throw new ItemError("Item name required");
+        throw new WarehouseError("ItemError", "Item name required");
     }
     const itemName = value.toUpperCase();
 
@@ -25,7 +25,10 @@ async function checkItemName(value) {
     });
 
     if (!doesExist) {
-        throw new ItemError(`Item ${itemName} does not exist`);
+        throw new WarehouseError(
+            "ItemError",
+            `Item ${itemName} does not exist`
+        );
     }
     return itemName;
 }

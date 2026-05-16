@@ -1,17 +1,18 @@
 // import db queries
 import processQueries from "../../models/db/process.js";
 import itemQueries from "../../models/db/items.js";
-import ProcessError from "../../errors/ProcessError.js";
+import WarehouseError from "../../errors/WarehouseError.js";
 
 // order number check
 async function checkOrderNumber(value) {
     if (!value) {
-        throw new ProcessError("Order Number required");
+        throw new WarehouseError("Process Error", "Order Number required");
     }
     let orderNum = value.toUpperCase();
     const orderExists = await processQueries.orderQueryExact(orderNum);
     if (orderExists) {
-        throw new ProcessError(
+        throw new WarehouseError(
+            "Process Error",
             `Order Number '${value.toUpperCase()}' already exists`
         );
     }
@@ -21,19 +22,22 @@ async function checkOrderNumber(value) {
 // item name and quantity check
 async function checkOrderItems(value) {
     if (!value) {
-        throw new ProcessError("Valid Items required");
+        throw new WarehouseError("Process Error", "Valid Items required");
     }
     let orderItems = [];
     for (let item in value) {
         if (value[item].itemQty <= 0) {
-            throw new ProcessError(`Invalid QTY for ${item}`);
+            throw new WarehouseError(
+                "Process Error",
+                `Invalid QTY for ${item}`
+            );
         }
         let dbItem = await itemQueries.itemQueryExact({
             type: "name",
             value: item,
         });
         if (!dbItem) {
-            throw new ProcessError(`Invalid Item: ${item}`);
+            throw new WarehouseError("Item Error", `Invalid Item: ${item}`);
         }
         orderItems.push({
             name: dbItem.name,
@@ -46,11 +50,14 @@ async function checkOrderItems(value) {
 
 function checkOrderDetails(values) {
     if (!values) {
-        throw new ProcessError("Invalid Order Details");
+        throw new WarehouseError("Process Error", "Invalid Order Details");
     }
     for (let detail in values) {
         if (Number(detail) <= 0) {
-            throw new ProcessError(`Invalid Order Detail value: ${detail}`);
+            throw new WarehouseError(
+                "Process Error",
+                `Invalid Order Detail value: ${detail}`
+            );
         }
     }
     return values;

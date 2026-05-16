@@ -68,7 +68,7 @@ function addToOrder(item) {
         orderItems[item.name].itemWeight += item.weight * item.qty;
         orderItems[item.name].itemQty += item.qty;
         orderItems[item.name].itemPallet = Number(
-            (orderItems[item.name].itemQty / item.palletQty).toFixed(2)
+            (orderItems[item.name].itemQty / item.palletQty).toFixed(2),
         );
         updateOrderList(orderItems[item.name]);
     }
@@ -290,6 +290,7 @@ document
                 noticeContainer.classList.remove("success");
                 noticeContainer.classList.add("error");
                 noticeContainer.classList.add("show");
+                // console.dir(res, { depth: null });
                 noticeText.textContent = result.error || "something went wrong";
             } else {
                 // request successful
@@ -320,7 +321,7 @@ document.querySelector(".modal-close-btn").addEventListener("click", () => {
 //                  ORDER LOG MODAL
 async function fetchOrders(q = "", type = "") {
     const res = await fetch(
-        `/process/query?search=${encodeURIComponent(q)}&type=${encodeURIComponent(type)}`
+        `/process/query?search=${encodeURIComponent(q)}&type=${encodeURIComponent(type)}`,
     );
     const orders = await res.json();
     if (type === "general") {
@@ -365,7 +366,7 @@ function createOrderHistoryRow(item) {
 
 function fillOrderHistoryTable(items) {
     const historyTableBody = document.querySelector(
-        ".order-history-details-table tbody"
+        ".order-history-details-table tbody",
     );
 
     // clear table
@@ -404,13 +405,13 @@ function addListItemListener(li) {
         // set footer details
         let palletsInt = Math.ceil(orderDetails.palletCount);
         document.querySelector(
-            ".order-plt-container .pallet-count"
+            ".order-plt-container .pallet-count",
         ).textContent = `${palletsInt}(${orderDetails.palletCount})`;
         document.querySelector(
-            ".order-piece-container .piece-count"
+            ".order-piece-container .piece-count",
         ).textContent = orderDetails.pieces;
         document.querySelector(
-            ".order-weight-container .order-weight"
+            ".order-weight-container .order-weight",
         ).textContent = `${orderDetails.weight} lbs`;
     });
 }
@@ -478,7 +479,7 @@ function closeHistoryModal() {
     document.querySelector("p.order-date").textContent = "";
     //  table
     const historyTableBody = document.querySelector(
-        ".order-history-details-table tbody"
+        ".order-history-details-table tbody",
     );
     while (historyTableBody.firstChild) {
         historyTableBody.removeChild(historyTableBody.firstChild);

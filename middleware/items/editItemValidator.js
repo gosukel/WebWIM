@@ -1,9 +1,9 @@
 import itemQueries from "../../models/db/items.js";
-import ItemError from "../../errors/ItemError.js";
+import WarehouseError from "../../errors/WarehouseError.js";
 
 async function checkItemName(value, id) {
     if (value === "") {
-        throw new ItemError("Item NAME required");
+        throw new WarehouseError("Item Error", "Item NAME required");
     }
     const itemName = value.toUpperCase();
 
@@ -14,19 +14,19 @@ async function checkItemName(value, id) {
     });
 
     if (doesExist) {
-        throw new ItemError("Item NAME already exists");
+        throw new WarehouseError("Item Error", "Item NAME already exists");
     }
     return itemName;
 }
 
 async function checkItemNumber(value, id) {
     if (value === "") {
-        throw new ItemError("item NUMBER required");
+        throw new WarehouseError("Item Error", "Item NUMBER required");
     }
     let itemNumberString = value;
 
     if (!Number(itemNumberString)) {
-        throw new ItemError("Item NUMBER not valid number");
+        throw new WarehouseError("Item Error", "Item NUMBER not valid number");
     }
 
     const itemNumberExists = await itemQueries.itemQueryExact({
@@ -35,14 +35,14 @@ async function checkItemNumber(value, id) {
         id: id,
     });
     if (itemNumberExists) {
-        throw new ItemError("Item NUMBER already exists");
+        throw new WarehouseError("Item Error", "Item NUMBER already exists");
     }
     return itemNumberString;
 }
 
 async function checkItemBrand(value) {
     if (value === "") {
-        throw new ItemError("Item BRAND required");
+        throw new WarehouseError("Item Error", "Item BRAND required");
     }
     const itemBrand = value.toUpperCase();
     const itemBrandExists = await itemQueries.itemQueryExact({
@@ -50,14 +50,14 @@ async function checkItemBrand(value) {
         value: itemBrand,
     });
     if (!itemBrandExists) {
-        throw new Error("Item BRAND does not exist");
+        throw new WarehouseError("Item Error", "Item BRAND does not exist");
     }
     return itemBrand;
 }
 
 async function checkItemType(value) {
     if (value === "") {
-        throw new ItemError("Item TYPE required");
+        throw new WarehouseError("Item Error", "Item TYPE required");
     }
     const itemType = value.toUpperCase();
     const itemTypeExists = await itemQueries.itemQueryExact({
@@ -65,18 +65,18 @@ async function checkItemType(value) {
         value: itemType,
     });
     if (!itemTypeExists) {
-        throw new ItemError("Item TYPE does not exist");
+        throw new WarehouseError("Item Error", "Item TYPE does not exist");
     }
     return itemType;
 }
 
 async function checkItemWeight(value) {
     if (value === "") {
-        throw new ItemError("Item WEIGHT required");
+        throw new WarehouseError("Item Error", "Item WEIGHT required");
     }
     let itemWeight = Number(value);
     if (!itemWeight || itemWeight <= 0) {
-        throw new ItemError("Invalid value for Item WEIGHT");
+        throw new WarehouseError("Item Error", "Invalid value for Item WEIGHT");
     }
 
     return itemWeight;
@@ -84,11 +84,14 @@ async function checkItemWeight(value) {
 
 async function checkItemPallet(value) {
     if (value === "") {
-        throw new ItemError("FULL PALLET Quantity required");
+        throw new WarehouseError("Item Error", "Item FULL PALLET required");
     }
     let itemPallet = Number(value);
     if (!itemPallet || itemPallet <= 0) {
-        throw new ItemError("Invalid value for FULL PALLET quantity");
+        throw new WarehouseError(
+            "Item Error",
+            "Invalid value for FULL PALLET quantity"
+        );
     }
 
     return itemPallet;
@@ -111,7 +114,10 @@ async function checkItemLocations(value) {
         );
 
         if (!locInfo) {
-            throw new ItemError(`LOCATION '${loc}' does not exist`);
+            throw new WarehouseError(
+                "Location Error",
+                `LOCATION ${loc} does not exist`
+            );
         }
         // check for duplicate locations being added
         if (!locIds.includes(locInfo.id)) {

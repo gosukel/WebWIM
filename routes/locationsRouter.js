@@ -1,7 +1,8 @@
 import { Router } from "express";
 import locationsController from "../controllers/locationsController.js";
 import locationValidator from "../middleware/locations/locationValidator.js";
-import LocationError from "../errors/LocationError.js";
+import WarehouseError from "../errors/WarehouseError.js";
+import { isAdmin } from "../middleware/authMiddleware.js";
 import asyncWrapper from "../middleware/asyncWrapper.js";
 
 const locationsRouter = Router();
@@ -13,12 +14,14 @@ locationsRouter.get("/", locationsController.locationsGet);
 //     new location
 locationsRouter.post(
     "/new",
+    isAdmin,
     asyncWrapper(locationValidator.add),
     asyncWrapper(locationsController.locationsAdd)
 );
 //     edit item
 locationsRouter.post(
     "/edit",
+    isAdmin,
     asyncWrapper(locationValidator.edit),
     asyncWrapper(locationsController.locationsEdit)
 );
@@ -26,6 +29,7 @@ locationsRouter.post(
 //     delete location
 locationsRouter.post(
     "/delete",
+    isAdmin,
     asyncWrapper(locationValidator.delete),
     locationsController.locationsDelete
 );
@@ -36,7 +40,7 @@ locationsRouter.get("/notes", locationsController.locationNotesQuery);
 
 // error handler
 locationsRouter.use((err, req, res, next) => {
-    if (err instanceof LocationError) {
+    if (err instanceof WarehouseError) {
         return res.status(err.statusCode).json({ error: err.message });
     }
 });

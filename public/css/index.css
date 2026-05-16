@@ -72,8 +72,20 @@ a {
     font-weight: bold;
 }
 
-.sidebar-items > :last-child {
+.sidebar-item.calculate {
+    margin-bottom: auto;
+}
+
+/* .sidebar-items > .sidebar-item.last {
     margin-top: auto;
+} */
+
+.sidebar-item.logout svg {
+    color: rgb(221, 53, 53);
+}
+
+.sidebar-item.logout:hover {
+    color: rgb(221, 53, 53);
 }
 
 .main-div {
@@ -162,7 +174,11 @@ a {
         align-items: center;
     }
 
-    .sidebar-items > :last-child {
+    .sidebar-item.calculate {
+        margin-bottom: 0;
+    }
+
+    .sidebar-items > .sidebar-item.last {
         margin-top: 0;
     }
 

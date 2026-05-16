@@ -1,14 +1,11 @@
 import itemQueries from "../models/db/items.js";
 import noteQueries from "../models/db/notes.js";
 
-const user = "Richard Routh";
-
 async function itemsGet(req, res) {
     const items = await itemQueries.itemQuery();
     const brands = await itemQueries.getAllBrands();
     const types = await itemQueries.getAllTypes();
     return res.render("index", {
-        fullName: user,
         main: "items",
         styles: ["items"],
         items: items,
@@ -39,7 +36,7 @@ async function itemsAdd(req, res) {
 async function itemsEdit(req, res) {
     const editItem = req.editItem;
     try {
-        // await itemQueries.editItem(editItem);
+        await itemQueries.editItem(editItem);
         return res.status(201).json({ success: "Edit Successful!" });
     } catch {
         return res.status(400).json({ message: "error adding item" });
@@ -59,8 +56,9 @@ async function itemsDelete(req, res) {
 async function itemNotesQuery(req, res) {
     const eId = Number(req.query.eId);
     const { eName, eType, noteType } = req.query;
+    const exact = { eId, eName, eType };
     try {
-        const notes = await noteQueries.noteQuery(eId, eName, eType, noteType);
+        const notes = await noteQueries.noteQuery(exact, noteType);
         return res.json(notes);
     } catch {
         return res.status(400).json({ message: "error getting notes" });

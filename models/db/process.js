@@ -100,7 +100,7 @@ async function orderQueryExact(order) {
     return formattedOrder;
 }
 
-async function addOrder(order) {
+async function addOrder(order, curUser) {
     let newOrder = await prisma.$transaction(async (tx) => {
         let plt = Number(order.orderDetails.totalPalletsDec);
         // add new order to generate order id
@@ -110,7 +110,7 @@ async function addOrder(order) {
                 pieces: order.orderDetails.totalPieces,
                 weight: order.orderDetails.totalWeight,
                 palletCount: plt,
-                userId: 1,
+                userId: curUser.id,
                 items: {
                     create: order.orderItems.map((item) => ({
                         item: { connect: { id: item.id } },
@@ -125,7 +125,8 @@ async function addOrder(order) {
             {
                 entityType: "order",
                 entityId: txNewOrder.id,
-                userId: 1,
+                entityName: txNewOrder.orderNumber,
+                userId: curUser.id,
                 logId: log_id,
                 message: `Order Created - ${txNewOrder.orderNumber}`,
             },
@@ -134,9 +135,18 @@ async function addOrder(order) {
             notes.push({
                 entityType: "item",
                 entityId: item.id,
-                userId: 1,
+                entityName: item.name,
+                userId: curUser.id,
                 logId: log_id,
                 message: `x${item.qty} added to Order# ${order.orderNumber}`,
+            });
+            notes.push({
+                entityType: "order",
+                entityId: txNewOrder.id,
+                entityName: txNewOrder.orderNumber,
+                userId: curUser.id,
+                logId: log_id,
+                message: `x${item.qty} ${item.name} added to order`,
             });
         }
         const newNotes = await tx.note.createMany({

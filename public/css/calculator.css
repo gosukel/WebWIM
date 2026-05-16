@@ -11,7 +11,7 @@
     display: flex;
 }
 
-.btn-refresh {
+/* .btn-refresh {
     width: 11%;
     height: 100%;
     display: flex;
@@ -20,15 +20,29 @@
     background-color: #fff;
     color: #4563e6;
     transition: all 0.2 ease-out;
-}
+} */
 
-.btn-container button {
+.btn-add-pallet,
+.btn-calc {
     font-size: 1.5rem;
     height: 50px;
     width: 45%;
     text-align: center;
     border: none;
     cursor: pointer;
+    background-color: #fff;
+    color: #4563e6;
+    transition: all 0.2 ease-out;
+}
+
+.btn-refresh {
+    width: 11%;
+    height: 100%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #fff;
     color: #4563e6;
     transition: all 0.2 ease-out;

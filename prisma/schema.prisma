@@ -28,26 +28,32 @@ model Location {
   name           String         @unique
   utn            String?
   zone           String
-  warehouseId    String         @default("024")
-  warehouseIndex Int
+  warehouseId    String         @default("024") @map("warehouse_id")
+  warehouseIndex Int            @map("warehouse_index")
   items          ItemLocation[]
 
   @@map("locations")
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  username String  @unique
+  id       Int        @id @default(autoincrement())
+  username String     @unique
   password String
-  email    String  @unique
-  fullName String  @unique @map("full_name")
-  nickname String  @unique
-  branch   String  @default("024")
-  role     Role    @default(USER)
+  email    String     @unique
+  fullName String     @unique @map("full_name")
+  nickname String     @unique
+  branch   String     @default("024")
+  role     Role       @default(USER)
   orders   Order[]
-  notes    Note[]  @relation("UserNotes")
+  notes    Note[]     @relation("UserNotes")
+  status   UserStatus @default(ACTIVE)
 
   @@map("users")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
 }
 
 enum Role {
@@ -59,8 +65,8 @@ model Container {
   id           Int             @id @default(autoincrement())
   number       String          @unique
   poNumbers    String[]
-  expectedDate DateTime?
-  receivedDate DateTime        @default(now())
+  expectedDate DateTime?       @map("expected_date")
+  receivedDate DateTime        @default(now()) @map("received_date")
   items        ItemContainer[]
 
   @@map("containers")
@@ -72,9 +78,9 @@ model Order {
   pieces      Int
   weight      Int
   palletCount Float       @map("pallet_count")
-  userId      Int
+  userId      Int         @map("user_id")
   user        User        @relation(fields: [userId], references: [id])
-  createdAt   DateTime    @default(now())
+  createdAt   DateTime    @default(now()) @map("created_at")
   items       ItemOrder[]
 
   @@map("orders")
@@ -83,11 +89,12 @@ model Order {
 model Note {
   id         Int      @id @default(autoincrement())
   message    String
-  entityType String // "item", "location", "order", "container", "user"
-  entityId   Int
+  entityType String   @map("entity_type") // "item", "location", "order", "container", "user"
+  entityId   Int      @map("entity_id")
+  entityName String   @map("entity_name")
   date       DateTime @default(now())
   logId      String   @map("log_id")
-  userId     Int
+  userId     Int      @map("user_id")
   user       User     @relation("UserNotes", fields: [userId], references: [id])
 
   @@map("notes")
@@ -109,8 +116,8 @@ model ItemLocation {
 
 model ItemContainer {
   id          Int @id @default(autoincrement())
-  containerId Int
-  itemId      Int
+  containerId Int @map("container_id")
+  itemId      Int @map("item_id")
   quantity    Int @default(1)
 
   container Container @relation(fields: [containerId], references: [id])

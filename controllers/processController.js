@@ -1,6 +1,5 @@
 import itemQueries from "../models/db/items.js";
 import processQueries from "../models/db/process.js";
-const user = "Richard Routh";
 
 async function processGet(req, res) {
     const items = await itemQueries.itemQuery();
@@ -22,7 +21,6 @@ async function processGet(req, res) {
         "OTHER",
     ];
     res.render("index", {
-        fullName: user,
         main: "process",
         styles: ["process"],
         items: items,
@@ -44,8 +42,9 @@ async function orderQuery(req, res) {
 
 async function processAdd(req, res) {
     let orderObject = req.orderObject;
+    console.dir(orderObject, { depth: null });
     try {
-        await processQueries.addOrder(orderObject);
+        await processQueries.addOrder(orderObject, req.user);
         return res.status(201).json({
             success: `Order ${orderObject.orderNumber} Saved Successfully!`,
         });

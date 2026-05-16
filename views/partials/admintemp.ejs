@@ -1,0 +1,130 @@
+<div class="admin-container">
+    <div class="overlay hidden"></div>
+    <div class="admin-btn-container">
+        <div class="admin-btn user-btn selected">Users</div>
+        <div class="admin-btn log-btn">Change Log</div>
+        <div class="admin-btn data-btn">Warehouse Data</div>
+    </div>
+    <div class="admin-main-container">
+        <!-- USERS SECTION -->
+        <div class="admin-users-container">
+
+            <!--                USER MODAL               -->
+            <dialog class="user-modal" id="user-modal">
+                <form action="" method="post" class="user-form">
+                    <div class="form-title-container">
+                        <p class="user-form-header">ADD/EDIT USER</p>
+                    </div>
+                    <div class="form-input-container">
+                        <label for="user-nickname"></label>
+                    </div>
+                </form>
+            </dialog>                    
+            <div class="users-search-container">
+                <input type="text" name="users-input" id="users-input" class="users-input" />
+                <span class="users-search-icon"
+                    ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="item-search-icon"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                        />
+                    </svg>
+                </span>
+            </div>
+            <div class="users-table-container">
+                
+                <table class="users-table">
+                    <thead>
+                        <tr scope="col">
+                            <th class="user-id-head">ID</th>
+                            <th class="user-nickname-head">Nickname</th>
+                            <th class="user-username-head">Username</th>
+                            <th class="user-fullname-head">Full Name</th>
+                            <th class="user-email-head">Email</th>
+                            <th class="user-role-head">Role</th>
+                            <th class="user-branch-head">Branch</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for( let i = 0; i < users.length; i++ ) { %>
+                            <tr class="user-row <%= (i + 1) % 2 ===0 ? 'even' : 'odd' %>">
+                                <td class="user-id"><%= users[i].id %></td>
+                                <td class="user-nickname"><%= users[i].nickname %></td>
+                                <td class="user-username"><%= users[i].username %></td>
+                                <td class="user-fullname"><%= users[i].fullName %></td>
+                                <td class="user-email"><%= users[i].email %></td>
+                                <td class="user-role"><%= users[i].role %></td>
+                                <td class="user-branch"><%= users[i].branch %></td>
+                                
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="users-button-container">
+                <button class="user-add-btn">Add User</button>
+                <button class="user-edit-btn">Edit User</button>
+                <button class="user-delete-btn">Delete User</button>
+            </div>
+        </div>
+
+        <!-- CHANGELOG SECTION -->
+        <div class="admin-changelog-container noview">
+            <div class="change-log-search-container">
+            <input type="text" name="change-log-input" id="change-log-input" class="change-log-input" />
+            <span class="change-log-search-icon"
+                ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="item-search-icon"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                    />
+                </svg>
+            </span>
+        </div>
+        <div class="change-log-table-container">
+            
+            <table class="change-log-table">
+                <thead>
+                    <tr scope="col">
+                        <th class="log-date-head">Date</th>
+                        <th class="log-user-head">User</th>
+                        <th class="log-name-head">Entity Name</th>
+                        <th class="log-message-head">Message</th>
+                        <th class="log-id-head">Log ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for( let i = 0; i < notes.length; i++ ) { %>
+                        <tr class="log-row <%= (i + 1) % 2 ===0 ? 'even' : 'odd' %>">
+                            <td class="log-date"><%= notes[i].date %></td>
+                            <td class="log-user"><%= notes[i].user.nickname %></td>
+                            <td class="log-name"><%= notes[i].entityName %></td>
+                            <td class="log-message"><%= notes[i].message %></td>
+                            <td class="log-id"><%= notes[i].logId %><span class="clipboard-icon" data-logid="<%= notes[i].logId %>"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+</svg>
+</span></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</div>
