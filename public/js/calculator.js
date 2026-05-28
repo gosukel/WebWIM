@@ -23,7 +23,7 @@ function addPallet() {
     weightInput.setAttribute("placeholder", "0");
     weightInput.classList.add("input-weight");
     const weightSpan = document.createElement("span");
-    weightSpan.innerText = "lbs";
+    weightSpan.textContent = " lbs";
     weightDiv.append(weightInput, weightSpan); // add input and span to weight div
     // length div
     const lengthDiv = document.createElement("div");
@@ -34,7 +34,7 @@ function addPallet() {
     lengthInput.setAttribute("placeholder", "0");
     lengthInput.classList.add("input-length");
     const lengthSpan = document.createElement("span");
-    lengthSpan.innerText = "in.";
+    lengthSpan.textContent = " in.";
     lengthDiv.append(lengthInput, lengthSpan); // add input and span to length div
     // width div
     const widthDiv = document.createElement("div");
@@ -45,7 +45,7 @@ function addPallet() {
     widthInput.setAttribute("placeholder", "0");
     widthInput.classList.add("input-width");
     const widthSpan = document.createElement("span");
-    widthSpan.innerText = "in.";
+    widthSpan.textContent = " in.";
     widthDiv.append(widthInput, widthSpan); // add input and span to width div
     // height div
     const heightDiv = document.createElement("div");
@@ -56,7 +56,7 @@ function addPallet() {
     heightInput.setAttribute("placeholder", "0");
     heightInput.classList.add("input-height");
     const heightSpan = document.createElement("span");
-    heightSpan.innerText = "in.";
+    heightSpan.textContent = " in.";
     heightDiv.append(heightInput, heightSpan); // add input and span to height div
     return;
 }
@@ -96,6 +96,21 @@ function calculate() {
     return;
 }
 
+// reset screen
+function resetScreen() {
+    const skidContainer = document.querySelector(".skid-container");
+
+    for (const child of [...skidContainer.children]) {
+        if (child.id !== "label-container") {
+            child.remove();
+        }
+    }
+    addPallet();
+}
+
+function buildLabelContainer() {}
+
 // add event listeners
 document.querySelector("#btn-add-pallet").addEventListener("click", addPallet);
 document.querySelector("#btn-calc").addEventListener("click", calculate);
+document.querySelector("#btn-refresh").addEventListener("click", resetScreen);
